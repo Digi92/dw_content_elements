@@ -1,0 +1,33 @@
+{namespace v=FluidTYPO3\Vhs\ViewHelpers}
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"
+      xmlns:f="http://xsd.helmut-hummel.de/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<f:comment>
+    BacklogID: 1000 - Section partial
+    BacklogName: Related Link
+    Fields: tx_dwc_main_teaser_items (headline)
+</f:comment>
+
+<f:section name="Headline">
+
+    <f:comment>
+        Name: Related Link - Headline
+        Fields: headline (data.tx_dwc_headline)
+    </f:comment>
+
+    <f:if condition="{headline}">
+        <f:then>
+
+            <h5>{headline}</h5>
+
+        </f:then>
+        <f:else>
+
+            <h5><f:translate key="e1000RelatedLinks.headline" /></h5>
+
+        </f:else>
+    </f:if>
+
+</f:section>
+
+</html>

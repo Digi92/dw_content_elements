@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2013-02-28T10:05:57Z" product-name="dw_content_elements">
+		<header/>
+		<body>
+
+			<!-- tt_content -->
+			<trans-unit id="tx_dwc_headline">
+				<source>Headline:</source>
+			</trans-unit>
+
+			<!-- tx_dwc_related_link_item -->
+			<trans-unit id="tx_dwc_related_link_item">
+				<source>Links:</source>
+			</trans-unit>
+			<trans-unit id="tx_dwc_related_link_item.link_text">
+				<source>Link Text:</source>
+			</trans-unit>
+			<trans-unit id="tx_dwc_related_link_item.link">
+				<source>Link:</source>
+			</trans-unit>
+
+		</body>
+	</file>
+</xliff>

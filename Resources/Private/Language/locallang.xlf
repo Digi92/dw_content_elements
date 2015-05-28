@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2013-02-28T10:05:57Z" product-name="dw_content_elements">
+		<header/>
+		<body>
+
+            <!-- E1000RelatedLinks -->
+            <trans-unit id="e1000RelatedLinks.headline">
+                <source>Headline</source>
+            </trans-unit>
+
+        </body>
+	</file>
+</xliff>

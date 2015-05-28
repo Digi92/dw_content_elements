@@ -1,0 +1,28 @@
+config.tx_extbase{
+    persistence{
+        classes{
+
+            TYPO3\CMS\Extbase\Domain\Model\FileReference {
+                subclasses {
+                    Tx_DwContentElements_SysFileReference = Denkwerk\DwContentElements\Domain\Model\SysFileReference
+					
+          		}
+            }
+            Denkwerk\DwContentElements\Domain\Model\SysFileReference {
+                mapping {
+                    tableName = sys_file_reference
+                    columns {
+						tx_dwc_button_type.mapOnProperty = buttonType
+					}
+                }
+            }
+
+			Denkwerk\DwContentElements\Domain\Model\Category {
+                mapping {
+                    tableName = sys_category
+                }
+            }    
+            
+    	}
+    }
+}

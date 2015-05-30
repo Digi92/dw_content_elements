@@ -1,2 +1,11 @@
-<INCLUDE_TYPOSCRIPT: source="FILE: EXT:dw_content_elements/Configuration/TypoScript/GlobalSettings.ts">
-<INCLUDE_TYPOSCRIPT: source="FILE: EXT:dw_content_elements/Configuration/TypoScript/Elements.ts">
+plugin.tx_dwcontentelements {
+	view {
+		templateRootPath = EXT:dw_content_elements_source/Resources/Private/Templates/
+		partialRootPath = EXT:dw_content_elements_source/Resources/Private/Partials/
+		layoutRootPath = EXT:dw_content_elements_source/Resources/Private/Layouts/
+	}
+	settings {
+
+	}
+}
+

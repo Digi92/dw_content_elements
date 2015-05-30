@@ -7,7 +7,7 @@ if (!defined('TYPO3_MODE')) {
 $temporaryColumn = array(
 	'sub_categories' => array(
 		'exclude' => 1,
-		'label' => 'LLL:EXT:dw_content_elements/Resources/Private/Language/locallang_db.xlf:tx_dwc_price',
+		'label' => 'LLL:EXT:dw_content_elements/Resources/Private/Language/locallang_db.xlf:dwc.sub_categories',
         'config' => array(
             'type' => 'inline',
             'foreign_table' => 'sys_category',

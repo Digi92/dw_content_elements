@@ -1,5 +1,5 @@
 <?php
-namespace Denkwerk\DwContentElements\Controller;
+namespace Denkwerk\DwContentElementsSource\Controller;
 
     /***************************************************************
      *  Copyright notice
@@ -28,14 +28,15 @@ namespace Denkwerk\DwContentElements\Controller;
 /**
  * ElementsController
  *
- * @package dw_content_elements
+ * @package dw_content_elements_source
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class ElementsController extends BaseController {
+class ElementsController extends \Denkwerk\DwContentElements\Controller\BaseController {
 
     public function e1000RelatedLinksAction() {
 		$this->view->assign('irreRelations', $this->irreService->getRelations($this->contentObj, 'tx_dwc_related_link_item'));
+		$this->view->assign('test', 'hi');
 	}
 
 }

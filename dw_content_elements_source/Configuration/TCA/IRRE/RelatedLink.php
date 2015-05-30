@@ -83,7 +83,7 @@ $TCA['tx_dwc_related_link_item'] = array(
 		),
 		'link_text' => array(
             'exclude' => 1,
-            'label' => 'LLL:EXT:dw_content_elements/Resources/Private/Language/locallang_db.xml:tx_dwc_related_link_item.link_text',
+            'label' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwc_related_link_item.link_text',
 			'exclude' => 1,
 			'config' => array(
 				'type' => 'input',
@@ -94,7 +94,7 @@ $TCA['tx_dwc_related_link_item'] = array(
 		),
         'link' => array(
             'exclude' => 1,
-            'label' => 'LLL:EXT:dw_content_elements/Resources/Private/Language/locallang_db.xml:tx_dwc_related_link_item.link',
+            'label' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwc_related_link_item.link',
             'config' => array(
                 'type' => 'input',
                 'size' => '30',

@@ -1,3 +1,3 @@
-plugin.tx_dwcontentelements.settings {
+plugin.tx_dwcontentelementssource.settings {
 
 }

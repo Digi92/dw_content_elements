@@ -1,0 +1,5 @@
+# cat=general/paths; type=boolean; label=Add the content elements in a new tab on the new content element wizard
+addElementsToWizard = 1
+
+# cat=general/paths; type=input; label=Add the content elements in a new tab on the new content element wizard
+elementWizardTabTitle = Content Elements

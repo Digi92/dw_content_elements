@@ -94,4 +94,31 @@ class Pathes {
         return self::leadingSlash(implode('/', GeneralUtility::trimExplode('/', self::convertFolderArrayToString($pathes), true)));
     }
 
+    /**
+     * Return a directory and files recursive as array
+     *
+     * @param string $dir
+     * @return array
+     */
+    public static function dirToArray($dir) {
+        $result = array();
+
+        $cdir = scandir($dir);
+        foreach ($cdir as $key => $value)
+        {
+            if (!in_array($value,array(".","..")))
+            {
+                if (is_dir($dir . DIRECTORY_SEPARATOR . $value))
+                {
+                    $result[$value] = self::dirToArray($dir . DIRECTORY_SEPARATOR . $value);
+                }
+                else
+                {
+                    $result[] = $value;
+                }
+            }
+        }
+        return $result;
+    }
+
 }

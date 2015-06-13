@@ -13,7 +13,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
      public function preProcess(\TYPO3\CMS\Backend\View\PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row) {
          global $TCA;
         $contentElements = array();
-        include(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('dw_content_elements') . 'content_element_ctypes.php');
+        include(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('dw_content_elements_source') . 'setup_content_elements.php');
 
         if(in_array($row['CType'], $contentElements) === true) {
             $drawItem = FALSE;

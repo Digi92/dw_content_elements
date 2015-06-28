@@ -1,0 +1,23 @@
+{namespace v=FluidTYPO3\Vhs\ViewHelpers}
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"
+      xmlns:f="http://xsd.helmut-hummel.de/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<f:layout name="BackendDefault"/>
+<f:section name="Content">
+
+    <f:if condition="{hasCreatedSourceExt}">
+        <h3>Die Source Extension wurde erfolgreich erstellt.</h3>
+    </f:if>
+    <h1>Die Source Extension ist zurzeit nicht installiert.</h1>
+
+    <h2>Bitte installiern Sie diese Extension damit Ihre Content Elemente geladen werden können.</h2>
+    <h3>Zum Installieren:</h3>
+    <ul>
+        <li>1. Klicken Sie im Backend auf den Erweiterungsmanager.</li>
+        <li>2. Suchen Sie nach der Extension "Content Elements Source (dw_content_elements_source)".</li>
+        <li>3. Installieren Sie diese Extension (Klick auf den Grauen Legostein).</li>
+        <li>Nun werden Ihre Content Elemente geladen.</li>
+    </ul>
+
+</f:section>
+</html>

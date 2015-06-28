@@ -5,8 +5,6 @@ if (!defined('TYPO3_MODE')) {
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Content element configuration');
 
-require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('dw_content_elements_source') . '/setup_content_elements.php');
-
 $typoScript = '[GLOBAL] ';
 
 // Extension manager configuration
@@ -20,6 +18,11 @@ if((bool)$configuration['addElementsToWizard'] === true) {
             show = *
         }'
     );
+}
+
+//Source Extension Installiert
+if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elements_source')) {
+	require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('dw_content_elements_source') . '/setup_content_elements.php');
 }
 
 //Add new content elements
@@ -67,3 +70,20 @@ if(is_array($contentElements)) {
 
 //Add rendering typoScript
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript($_EXTKEY, 'setup', $typoScript, true);
+
+
+//Add backend module
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+	'Denkwerk.' . $_EXTKEY,   // vendor + extkey, seperated by a dot
+	'tools',                  // Backend Module group to place the module in
+	'DW Content Elements',    // module name
+	'',                       // position in the group
+	array(                    // Allowed controller -> action combinations
+		'Backend' => 'index, createSourceExt, loadSourceExt',
+	),
+	array(                    // Additional configuration
+		'access' => 'user,group',
+		'icon' => 'EXT:' . $_EXTKEY . '/ext_icon.png',
+		'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_db.xlf',
+	)
+);

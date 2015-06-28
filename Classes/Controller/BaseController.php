@@ -72,7 +72,6 @@ class BaseController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 			)
 		);
 
-
 		$view->assign('data', $this->data);
 	}
 

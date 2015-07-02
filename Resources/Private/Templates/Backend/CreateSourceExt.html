@@ -6,21 +6,15 @@
 <f:section name="Content">
 
     <f:if condition="{createFail}">
-        <h3>Die Source Extension konnte nicht erstellt werden!</h3>
+        <h3><f:translate key="backend.createSourceExt.error" /></h3>
     </f:if>
-    <h1>Keine Source Extension gefunden!</h1>
+    <h1><f:translate key="backend.createSourceExt.headline" /></h1>
 
-    <h3>Was ist die Source Extension?</h3>
-    <p>
-        In der Source Extension können Sie ihre Content Elemente erstellen und Versionieren (z.B. über GIT).
-        <br/>
-        Die Source Extension wird zwingent für Dw Content Elements benötigt, da diese Extension von sich
-        <br/>
-        aus keine eigenen Content Elemente mit bringt.
-    </p>
+    <h3><f:translate key="backend.createSourceExt.question.headline" /></h3>
+    <p><f:translate key="backend.createSourceExt.question.text" /></p>
 
     <f:form action="createSourceExt" controller="Backend" method="post" name="createSourceExt">
-        <f:form.submit value="Die Source Extension erstellen." name="createSourceExt" />
+        <f:form.submit value="{f:translate(key:'backend.createSourceExt.create')}" name="createSourceExt" />
     </f:form>
 
 </f:section>

@@ -5,65 +5,92 @@ if (!defined('TYPO3_MODE')) {
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Content element configuration');
 
-require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('dw_content_elements_source') . '/setup_content_elements.php');
+//Source Extension Installiert
+if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elements_source')) {
 
-$typoScript = '[GLOBAL] ';
+	$typoScript = '[GLOBAL] ';
 
-// Extension manager configuration
-$configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['dw_content_elements']);
+	// Extension manager configuration
+	$configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['dw_content_elements']);
 
-//Add content element wizard tab
-if((bool)$configuration['addElementsToWizard'] === true) {
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
-        mod.wizards.newContentElement.wizardItems.dwContentElements {
-            header = ' . $configuration['elementWizardTabTitle'] . '
-            show = *
-        }'
-    );
-}
+	//Add content element wizard tab
+	if ((bool)$configuration['addElementsToWizard'] === TRUE) {
+		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
+			mod.wizards.newContentElement.wizardItems.dwContentElements {
+				header = ' . $configuration['elementWizardTabTitle'] . '
+				show = *
+			}'
+		);
+	}
 
-//Add new content elements
-if(is_array($contentElements)) {
+	//Get all config files
+	$path = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\DwContentElements\Utility\Pathes');
+	$contentElements = $path->getAllDirFiles(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('dw_content_elements_source') . '/Configuration/Elements');
 
-    foreach ($contentElements as $key => $element) {
+	//Add new content elements
+	if (is_array($contentElements) && empty($contentElements) === false) {
 
-        if (isset($element['title'])) {
+		foreach ($contentElements as $key => $element) {
 
-            //Add element plugin
-            \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(array($element['title'], $key), 'CType');
+			//Load element config
+			$elementConfig = \Denkwerk\DwContentElements\Service\Ini::getInstance()
+				->setConfigFile('typo3conf/ext/dw_content_elements_source/Configuration/Elements/'. ucfirst($key) .'.ts')
+				->loadConfig();
 
-            //Set element showitem
-            if ((bool)$element['overWriteShowitem'] === TRUE) {
-                $showItem = trim((string)$element['fields'], ',');
-            } else {
-                $showItem = 'CType;;4;button;1-1-1, --palette--;Headline,' . trim((string)$element['fields'], ',') . ',
-            --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access,starttime, endtime, fe_group';
-            }
-            $TCA['tt_content']['types'][$key]['showitem'] = $showItem;
-            $TCA['tt_content']['types'][$key]['tx_dw_content_elements_title'] = $element['title'];
+			if (isset($elementConfig['title'])) {
 
-            //Set rendering typoScript
-            $typoScript .= '
-                tt_content.' . $key . ' < tt_content.list.20.dwcontentelementssource_contentrenderer
-                tt_content.' . $key . '.switchableControllerActions.Elements.1 = render';
+				//Add element plugin
+				\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(array($elementConfig['title'], lcfirst($key)), 'CType');
 
-            //Add content elements to the content elements wizard
-            if((bool)$configuration['addElementsToWizard'] === true) {
+				//Set element showitem
+				if ((bool)$elementConfig['overWriteShowitem'] === TRUE) {
+					$showItem = trim((string)$elementConfig['fields'], ',');
+				} else {
+					$showItem = 'CType;;4;button;1-1-1, --palette--;Headline,' . trim((string)$elementConfig['fields'], ',') . ',
+            		--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access,starttime, endtime, fe_group';
+				}
+				$TCA['tt_content']['types'][lcfirst($key)]['showitem'] = $showItem;
+				$TCA['tt_content']['types'][lcfirst($key)]['tx_dw_content_elements_title'] = (string)$elementConfig['title'];
 
-                \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
-                    mod.wizards.newContentElement.wizardItems.dwContentElements.elements.' . $key . ' {
-                        icon = ' . $element['icon'] . '
-                        title = ' . $element['title'] . '
-                        description = ' . $element['description'] . '
-                        tt_content_defValues.CType = ' . $key . '
+				//Set rendering typoScript
+				$typoScript .= '
+                tt_content.' . lcfirst($key) . ' < tt_content.list.20.dwcontentelementssource_contentrenderer
+                tt_content.' . lcfirst($key) . '.switchableControllerActions.Elements.1 = render';
+
+				//Add content elements to the content elements wizard
+				if ((bool)$configuration['addElementsToWizard'] === TRUE) {
+
+					\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
+                    mod.wizards.newContentElement.wizardItems.dwContentElements.elements.' . lcfirst($key) . ' {
+                        icon = ' . (string)$elementConfig['icon'] . '
+                        title = ' . (string)$elementConfig['title'] . '
+                        description = ' . (string)$elementConfig['description'] . '
+                        tt_content_defValues.CType = ' . lcfirst($key) . '
                     }
                 ');
-            }
+				}
 
-        }
+			}
 
-    }
+		}
+	}
+
+	//Add rendering typoScript
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript($_EXTKEY, 'setup', $typoScript, TRUE);
 }
 
-//Add rendering typoScript
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript($_EXTKEY, 'setup', $typoScript, true);
+//Add backend module
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+	'Denkwerk.' . $_EXTKEY,   // vendor + extkey, seperated by a dot
+	'tools',                  // Backend Module group to place the module in
+	'DW Content Elements',    // module name
+	'',                       // position in the group
+	array(                    // Allowed controller -> action combinations
+		'Backend' => 'index, createSourceExt, loadSourceExt',
+	),
+	array(                    // Additional configuration
+		'access' => 'user,group',
+		'icon' => 'EXT:' . $_EXTKEY . '/ext_icon.png',
+		'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_db.xlf',
+	)
+);

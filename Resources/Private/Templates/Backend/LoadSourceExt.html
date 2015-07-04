@@ -1,0 +1,23 @@
+{namespace v=FluidTYPO3\Vhs\ViewHelpers}
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"
+      xmlns:f="http://xsd.helmut-hummel.de/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<f:layout name="BackendDefault"/>
+<f:section name="Content">
+
+    <f:if condition="{hasCreatedSourceExt}">
+        <h3><f:translate key="backend.loadSourceExt.hasCreatedSourceExt" /></h3>
+    </f:if>
+    <h1><f:translate key="backend.loadSourceExt.headline" /></h1>
+
+    <h2><f:translate key="backend.loadSourceExt.text" /></h2>
+    <h3><f:translate key="backend.loadSourceExt.install.headline" /></h3>
+    <ul>
+        <li><f:translate key="backend.loadSourceExt.install.step.one" /></li>
+        <li><f:translate key="backend.loadSourceExt.install.step.two" /></li>
+        <li><f:translate key="backend.loadSourceExt.install.step.three" /></li>
+        <li><f:translate key="backend.loadSourceExt.install.step.four" /></li>
+    </ul>
+
+</f:section>
+</html>

@@ -1,11 +1,4 @@
 #
-# Table structure for table 'sys_category'
-#
-CREATE TABLE sys_category (
-	sub_categories int(11) DEFAULT '0' NOT NULL
-);
-
-#
 # Table structure for table 'tt_content'
 #
 CREATE TABLE tt_content (

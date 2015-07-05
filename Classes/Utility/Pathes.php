@@ -65,7 +65,19 @@ class Pathes {
      * @return string
      */
     public static function convertFolderArrayToString(array $list) {
-        return self::replaceBackSlashToSlash(implode('/', $list));
+		$result = '';
+
+		if(strpos($list[1], $list[0]) !== false){
+
+			$result = $list[1];
+
+		} else {
+
+			$result = self::replaceBackSlashToSlash(implode('/', $list));
+
+		}
+
+        return $result;
     }
 
 	/**
@@ -92,6 +104,7 @@ class Pathes {
                 array_push($pathes, $arg);
             }
         }
+
         return self::leadingSlash(implode('/', GeneralUtility::trimExplode('/', self::convertFolderArrayToString($pathes), true)));
     }
 

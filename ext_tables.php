@@ -23,6 +23,12 @@ if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elem
 		);
 	}
 
+	//Set own optgroup on the ctype select
+	$GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][] = array(
+		0 => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_db.xlf:mlang_tabs_tab',
+		1 => '--div--'
+	);
+
 	//Get all config files
 	$path = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\DwContentElements\Utility\Pathes');
 	$contentElements = $path->getAllDirFiles(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('dw_content_elements_source') . '/Configuration/Elements');
@@ -34,13 +40,13 @@ if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elem
 
 			//Load element config
 			$elementConfig = \Denkwerk\DwContentElements\Service\Ini::getInstance()
-				->setConfigFile('typo3conf/ext/dw_content_elements_source/Configuration/Elements/'. ucfirst($key) .'.ts')
+				->setConfigFile($element)
 				->loadConfig();
 
 			if (isset($elementConfig['title'])) {
 
 				//Add element plugin
-				\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(array($elementConfig['title'], lcfirst($key)), 'CType');
+				\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(array($elementConfig['title'], lcfirst($key)), 'CType', $_EXTKEY);
 
 				//Set element showitem
 				if ((bool)$elementConfig['overWriteShowitem'] === TRUE) {
@@ -79,6 +85,7 @@ if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elem
 	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript($_EXTKEY, 'setup', $typoScript, TRUE);
 }
 
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('mod.wizards.newContentElement.wizardItems.dwcontentelements.header = blabla');
 //Add backend module
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
 	'Denkwerk.' . $_EXTKEY,   // vendor + extkey, seperated by a dot

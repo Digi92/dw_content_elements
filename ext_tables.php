@@ -65,10 +65,9 @@ if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elem
 
 				//Add content elements to the content elements wizard
 				if ((bool)$configuration['addElementsToWizard'] === TRUE) {
-
 					\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
                     mod.wizards.newContentElement.wizardItems.dwContentElements.elements.' . lcfirst($key) . ' {
-                        icon = ' . (string)$elementConfig['icon'] . '
+                        icon = ' . ($elementConfig['icon'] ? (string)$elementConfig['icon'] : '../../typo3conf/ext/' . $_EXTKEY . '/ext_icon.png') . '
                         title = ' . (string)$elementConfig['title'] . '
                         description = ' . (string)$elementConfig['description'] . '
                         tt_content_defValues.CType = ' . lcfirst($key) . '

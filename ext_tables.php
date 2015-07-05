@@ -84,7 +84,6 @@ if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elem
 	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript($_EXTKEY, 'setup', $typoScript, TRUE);
 }
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('mod.wizards.newContentElement.wizardItems.dwcontentelements.header = blabla');
 //Add backend module
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
 	'Denkwerk.' . $_EXTKEY,   // vendor + extkey, seperated by a dot

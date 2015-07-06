@@ -1,7 +1,7 @@
 <?php
 
 /***************************************************************
- * Extension Manager/Repository config file for ext "dw_content_elements".
+ * Extension Manager/Repository config file for ext "dw_content_elements_source".
  *
  * Manual updates:
  * Only the data in the array - everything else is removed by next
@@ -9,8 +9,8 @@
  ***************************************************************/
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'Content Elements',
-	'description' => 'Custom content elements',
+	'title' => 'Content Elements Source',
+	'description' => 'This extension included your created content elements.',
 	'category' => 'misc',
 	'shy' => 0,
 	'version' => '1.0.0',
@@ -25,12 +25,11 @@ $EM_CONF[$_EXTKEY] = array(
 	'modify_tables' => '',
 	'clearcacheonload' => 1,
 	'lockType' => '',
-	'author' => 'Marcel Wieser',
-	'author_email' => 'typo3dev@marcel-wieser.de',
-	'author_company' => 'denkwerk GmbH',
+	'author' => 'Sascha Zander',
+	'author_email' => 'sascha.zander@denkwerk.com',
 	'CGLcompliance' => '',
 	'CGLcompliance_note' => '',
-	'priority' => 'top',
+	'priority' => 'bottom',
 	'constraints' => array(
 		'depends' => array(
 			'typo3' => '6.2.00-6.2.99',

@@ -4,11 +4,62 @@
 		<header/>
 		<body>
 
-            <!-- E1000RelatedLinks -->
-            <trans-unit id="e1000RelatedLinks.headline">
-                <source>Headline</source>
-            </trans-unit>
+			<!-- Backend Module Index -->
+			<trans-unit id="backend.index.headline">
+				<source>Info Seite zur Extension</source>
+			</trans-unit>
 
-        </body>
+			<!-- Backend Module CreateSourceExt-->
+			<trans-unit id="backend.createSourceExt.headline">
+				<source>Keine Source Extension gefunden!</source>
+			</trans-unit>
+			<trans-unit id="backend.createSourceExt.error">
+				<source>Die Source Extension konnte nicht erstellt werden!</source>
+			</trans-unit>
+			<trans-unit id="backend.createSourceExt.question.headline">
+				<source>Was ist die Source Extension?</source>
+			</trans-unit>
+			<trans-unit id="backend.createSourceExt.question.text">
+				<source>
+					<![CDATA[
+						In der Source Extension können Sie ihre Content Elemente erstellen und Versionieren (z.B. über GIT).
+						<br/>
+						Die Source Extension wird zwingent für Dw Content Elements benötigt, da diese Extension von sich
+						<br/>
+						aus keine eigenen Content Elemente mit bringt.
+					]]>
+				</source>
+			</trans-unit>
+			<trans-unit id="backend.createSourceExt.create">
+				<source>Die Source Extension erstellen.</source>
+			</trans-unit>
+
+			<!-- Backend Module LoadSourceExt -->
+			<trans-unit id="backend.loadSourceExt.headline">
+				<source>Die Source Extension ist zurzeit nicht installiert.</source>
+			</trans-unit>
+			<trans-unit id="backend.loadSourceExt.hasCreatedSourceExt">
+				<source>Die Source Extension wurde erfolgreich erstellt.</source>
+			</trans-unit>
+			<trans-unit id="backend.loadSourceExt.text">
+				<source>Bitte installiern Sie diese Extension damit Ihre Content Elemente geladen werden können.</source>
+			</trans-unit>
+			<trans-unit id="backend.loadSourceExt.install.headline">
+				<source>Zum Installieren:</source>
+			</trans-unit>
+			<trans-unit id="backend.loadSourceExt.install.step.one">
+				<source>1. Klicken Sie im Backend auf den Erweiterungsmanager.</source>
+			</trans-unit>
+			<trans-unit id="backend.loadSourceExt.install.step.two">
+				<source>2. Suchen Sie nach der Extension "Content Elements Source (dw_content_elements_source)".</source>
+			</trans-unit>
+			<trans-unit id="backend.loadSourceExt.install.step.three">
+				<source>3. Installieren Sie diese Extension (Klick auf den Grauen Legostein).</source>
+			</trans-unit>
+			<trans-unit id="backend.loadSourceExt.install.step.four">
+				<source>Nun werden Ihre Content Elemente geladen.</source>
+			</trans-unit>
+
+		</body>
 	</file>
 </xliff>

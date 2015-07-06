@@ -1,2 +1,0 @@
-tt_content.e1000RelatedLinks < tt_content.list.20.dwcontentelements_contentrenderer
-tt_content.e1000RelatedLinks.switchableControllerActions.Elements.1 = render

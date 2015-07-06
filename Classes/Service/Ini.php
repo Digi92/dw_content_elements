@@ -5,7 +5,7 @@ namespace Denkwerk\DwContentElements\Service;
     /* * *************************************************************
      *  Copyright notice
      *
-     *  (c) 2015 André Laugks <andre.laugks@denkwerk.com>, denkwerk GmbH
+     *  (c) 2015 Sascha Zander <sascha.zander@denkwerk.com>
      *
      *  All rights reserved
      *
@@ -34,35 +34,21 @@ namespace Denkwerk\DwContentElements\Service;
  */
 class Ini {
 
-    /**
-     * @var string
-     */
-    private $configFileAbsPath;
+	/**
+	 * @var string
+	 */
+	private $configFileAbsPath;
 
     /**
      * @var string
      */
     private $configFile;
 
-    /**
-     * @var
-     */
-    private $enviroment;
 
     /**
      * @var \Denkwerk\DwContentElements\Service\Ini|null
      */
     private static $instance = null;
-
-    /**
-     * @var \Zend_Config_Ini|null
-     */
-    private $config = null;
-
-    /**
-     * @var
-     */
-    private $options = array();
 
     /**
      * @return \Denkwerk\DwContentElements\Service\Ini|null
@@ -72,22 +58,6 @@ class Ini {
             self::$instance = new self;
         }
         return self::$instance;
-    }
-
-    /**
-     * @return null|\Zend_Config_Ini
-     */
-    public function getConfig() {
-        return $this->config;
-    }
-
-    /**
-     * @param mixed $enviroment
-	 * @return $this
-	 */
-    public function setEnviroment($enviroment) {
-        $this->enviroment = $enviroment;
-        return $this;
     }
 
     /**
@@ -102,54 +72,36 @@ class Ini {
     }
 
     /**
+	 * Get path to the configuration file
+	 *
      * @return string
      */
     public function getConfigFile() {
         return $this->configFile;
     }
 
-    /**
-     * Retrieve a value and return $default if there is no element set.
-     *
-     * @param string $name
-     * @param mixed $default
-     * @return mixed
-     */
-    public function get($name, $default = null)
-    {
-        return $this->config->get($name, $default);
-    }
-
-    /**
-     * Magic function so that $obj->value will work.
-     *
-     * @param string $name
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        return $this->config->get($name);
-    }
-
-    /**
-     * @return Ini|null
-     */
+	/**
+	 * Returns the configuration from the file set by configuration file
+	 *
+	 * @return array|bool
+	 */
     public function loadConfig() {
-        $r = null;
+		$result = false;
+
         $this->configFileAbsPath = \Denkwerk\DwContentElements\Utility\Pathes::concat(array(PATH_site, $this->configFile));
+
         if(is_file($this->configFileAbsPath) === true) {
-            $this->config = new \Zend_Config_Ini($this->configFileAbsPath, $this->enviroment, $this->options);
-            $r = $this;
+
+			/**
+			 * @var \Denkwerk\DwContentElements\Utility\TypoScriptParser $tsParser
+			 */
+			$tsParser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\\DwContentElements\\Utility\\TypoScriptParser');
+			$result = $tsParser->parseTypoScriptFile($this->configFileAbsPath);
+			$result['configFileAbsPath'] = $this->configFileAbsPath;
+
         }
-        return $r;
-    }
 
-    /**
-     * @return bool
-     */
-    public function hasConfigFile() {
-        return is_file($this->configFileAbsPath);
+        return $result;
     }
-
 
 }

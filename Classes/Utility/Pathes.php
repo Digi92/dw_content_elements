@@ -7,7 +7,8 @@ use \TYPO3\CMS\Core\Utility\GeneralUtility AS GeneralUtility;
  *  Copyright notice
  *
  *  (c) 2015 André Laugks <andre.laugks@denkwerk.com>, denkwerk GmbH
- *  
+ *  (c) 2015 Sascha Zander <sascha.zander@denkwerk.com>
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -64,7 +65,19 @@ class Pathes {
      * @return string
      */
     public static function convertFolderArrayToString(array $list) {
-        return self::replaceBackSlashToSlash(implode('/', $list));
+		$result = '';
+
+		if(strpos($list[1], $list[0]) !== false){
+
+			$result = $list[1];
+
+		} else {
+
+			$result = self::replaceBackSlashToSlash(implode('/', $list));
+
+		}
+
+        return $result;
     }
 
 	/**
@@ -91,7 +104,37 @@ class Pathes {
                 array_push($pathes, $arg);
             }
         }
+
         return self::leadingSlash(implode('/', GeneralUtility::trimExplode('/', self::convertFolderArrayToString($pathes), true)));
+    }
+
+    /**
+     * Return a files recursive as array
+	 * 
+	 * @param $dir
+	 * @param array $results
+	 * @return array
+	 */
+    public static function getAllDirFiles($dir, &$results = array()) {
+
+		$files = scandir($dir);
+
+		foreach($files as $key => $value){
+			$path = realpath($dir.DIRECTORY_SEPARATOR.$value);
+
+			if(is_file($path)) {
+
+				//Set the filename without extension as key
+				$results[str_replace('.' . pathinfo($path, PATHINFO_EXTENSION), '', $value)] = $path;
+
+			} else if(is_dir($path) && !in_array($value,array(".",".."))) {
+
+				self::getAllDirFiles($path, $results);
+
+			}
+		}
+
+        return $results;
     }
 
 }

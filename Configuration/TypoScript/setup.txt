@@ -1,2 +1,6 @@
-<INCLUDE_TYPOSCRIPT: source="FILE: EXT:dw_content_elements/Configuration/TypoScript/GlobalSettings.ts">
-<INCLUDE_TYPOSCRIPT: source="FILE: EXT:dw_content_elements/Configuration/TypoScript/Elements.ts">
+plugin.tx_dwcontentelements {
+	settings {
+
+	}
+}
+

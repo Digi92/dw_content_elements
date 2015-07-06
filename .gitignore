@@ -1,2 +1,5 @@
 # OSX template
 .DS_Store
+
+#IDE
+.idea

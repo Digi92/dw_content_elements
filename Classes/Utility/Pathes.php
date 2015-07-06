@@ -67,13 +67,15 @@ class Pathes {
     public static function convertFolderArrayToString(array $list) {
 		$result = '';
 
+        $list[0] = self::replaceBackSlashToSlash($list[0]);
+        $list[1] = self::replaceBackSlashToSlash($list[1]);
 		if(strpos($list[1], $list[0]) !== false){
 
 			$result = $list[1];
 
 		} else {
 
-			$result = self::replaceBackSlashToSlash(implode('/', $list));
+			$result = implode('/', $list);
 
 		}
 

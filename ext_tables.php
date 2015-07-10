@@ -53,26 +53,31 @@ if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elem
 					$showItem = trim((string)$elementConfig['fields'], ',');
 				} else {
 					$showItem = 'CType;;4;button;1-1-1, --palette--;Headline,' . trim((string)$elementConfig['fields'], ',') . ',
-            		--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access,starttime, endtime, fe_group';
+					--div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access,starttime, endtime, fe_group';
 				}
 				$TCA['tt_content']['types'][lcfirst($key)]['showitem'] = $showItem;
 				$TCA['tt_content']['types'][lcfirst($key)]['tx_dw_content_elements_title'] = (string)$elementConfig['title'];
 
+				//Fix for the extension GridElements. GridElements needs in all elements the fields "tx_gridelements_container,tx_gridelements_columns"
+				if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('gridelements')) {
+					$TCA['tt_content']['types'][lcfirst($key)]['showitem'] .= ',--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.extended,tx_gridelements_container,tx_gridelements_columns';
+				}
+
 				//Set rendering typoScript
 				$typoScript .= '
-                tt_content.' . lcfirst($key) . ' < tt_content.list.20.dwcontentelementssource_contentrenderer
-                tt_content.' . lcfirst($key) . '.switchableControllerActions.Elements.1 = render';
+				tt_content.' . lcfirst($key) . ' < tt_content.list.20.dwcontentelementssource_contentrenderer
+				tt_content.' . lcfirst($key) . '.switchableControllerActions.Elements.1 = render';
 
 				//Add content elements to the content elements wizard
 				if ((bool)$configuration['addElementsToWizard'] === TRUE) {
 					\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
-                    mod.wizards.newContentElement.wizardItems.dwContentElements.elements.' . lcfirst($key) . ' {
-                        icon = ' . ($elementConfig['icon'] ? (string)$elementConfig['icon'] : '../../typo3conf/ext/' . $_EXTKEY . '/ext_icon.png') . '
-                        title = ' . (string)$elementConfig['title'] . '
-                        description = ' . (string)$elementConfig['description'] . '
-                        tt_content_defValues.CType = ' . lcfirst($key) . '
-                    }
-                ');
+					mod.wizards.newContentElement.wizardItems.dwContentElements.elements.' . lcfirst($key) . ' {
+						icon = ' . ($elementConfig['icon'] ? (string)$elementConfig['icon'] : '../../typo3conf/ext/' . $_EXTKEY . '/ext_icon.png') . '
+						title = ' . (string)$elementConfig['title'] . '
+						description = ' . (string)$elementConfig['description'] . '
+					    tt_content_defValues.CType = ' . lcfirst($key) . '
+					}
+				');
 				}
 
 			}

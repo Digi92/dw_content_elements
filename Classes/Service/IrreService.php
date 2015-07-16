@@ -47,14 +47,14 @@ class IrreService {
 			$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
 				'*',
 				$tableName,
-				'foreign_uid = ' . $contentObj->data['uid'] . $contentObj->enableFields($tableName),
+				'foreign_uid = ' . $contentObj->data['uid'] . (TYPO3_MODE == 'BE' ? \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields($tableName) : $contentObj->enableFields($tableName)),
 				'',
 				'sorting'
 			);
 
 			$result = array();
 			foreach($rows as $row){
-				array_push($result, $this->getContentElements($contentObj, $row, $tableName));
+				array_push($result, self::getContentElements($contentObj, $row, $tableName));
 			}
 
 		}
@@ -77,7 +77,7 @@ class IrreService {
                 $elementRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
                     'uid',
                     'tt_content',
-                    'foreign_uid = ' . $data['uid'] . $contentObj->enableFields('tt_content') . 'AND parent_table = "' . $parentTable . '"',
+                    'foreign_uid = ' . $data['uid'] . (TYPO3_MODE == 'BE' ? \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields($tableName) : $contentObj->enableFields('tt_content')) . 'AND parent_table = "' . $parentTable . '"',
                     '',
                     'sorting'
                 );

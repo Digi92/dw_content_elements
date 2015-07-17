@@ -50,7 +50,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 
 		if(isset($contentElements[ucfirst($row['CType'])])) {
 			$drawItem = FALSE;
-			$itemContent = '';
+			$itemContent = '<table style="font-size: 11px;">';
 
 			//Load element config
 			$elementConfig = \Denkwerk\DwContentElements\Service\Ini::getInstance()
@@ -66,15 +66,15 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 			//Set preview for the showitem fields
 			$count = 0;
 			foreach($fields as $field) {
-				$itemContent .= self::renderFieldPreview($field['name'], $row, (isset($field['label']) ? $field['label'] : $parentObject->itemLabels[$field['name']]));
+				$itemContent .= self::renderFieldPreview($field['name'], $row, (isset($field['label']) && empty($field['label']) === false ? $field['label'] : $parentObject->itemLabels[$field['name']]));
 
 				$count++;
 				if($count >= 10){
-					$itemContent .= '<b>...</b>';
+					$itemContent .= '<td><b>...</b></td>';
 					break;
 				}
 			}
-
+			$itemContent .= '</table>';
 		}
 
 	}
@@ -93,24 +93,32 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 		$fieldValue = $row[$fieldName];
 
 		if(isset($fieldName) && isset($fieldValue)) {
+			$filedContent .= '<tr>';
 			$fieldConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getTcaFieldConfiguration($fieldTable, $fieldName);
 
 			switch ($fieldConfig['type']) {
 				case "input":
-					$filedContent .= '<b>' . $itemLabels . '</b> ' . (string)$fieldValue . '<br><br>';
+
+					//If field is has a link wizard
+					if(isset($fieldConfig['wizards']['link'])) {
+						$urlService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\\DwContentElements\\Service\\Url');
+						$fieldValue = $urlService->setPageUid($fieldValue)->getUrl();
+					}
+
+					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . (string)$fieldValue . '</td>';
 					break;
 				case "text":
-					$filedContent .= '<b>' . $itemLabels . '</b> ' . substr((string)$fieldValue, 0, 50) . '<br><br>';
+					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . substr((string)$fieldValue, 0, 50) . '</td>';
 					break;
 				case "check":
-					$filedContent .= '<b>' . $itemLabels . '</b> ' . ((bool)$fieldValue ? '&#10004;' : '&#10008;'). '<br><br>';
+					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . ((bool)$fieldValue ? '&#10004;' : '&#10008;'). '</td>';
 					break;
 				case "radio":
-					$filedContent .= '<b>' . $itemLabels . '</b> ' . (string)$fieldValue . '<br><br>';
+					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . (string)$fieldValue . '</td>';
 					break;
 				case "select":
 					//TODO: Wrong preview if the select use mm!!!
-					$filedContent .= '<b>' . $itemLabels . '</b><br>';
+					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td>';
 					$items = array();
 
 					//Get all items
@@ -121,61 +129,65 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 						case "checkbox":
 							$value = explode(',', $fieldValue);
 							foreach($items as $item) {
-								$filedContent .= '<p>' . $item[0] . ' ' . (in_array($item[1], $value) ? '&#10004;' : '&#10008;'). '</p>';
+								$filedContent .= '<td>' . $item[0] . '</td><td>' . (in_array($item[1], $value) ? '&#10004;' : '&#10008;'). '</td>';
 							}
 							break;
 						case "singlebox":
 							$value = explode(',', $fieldValue);
 							foreach($items as $item) {
-								$filedContent .= '<p>' . $item[0] . ' ' . (in_array($item[1], $value) ? '&#10004;' : '&#10008;'). '</p>';
+								$filedContent .= '<td>' . $item[0] . '</td><td>' . (in_array($item[1], $value) ? '&#10004;' : '&#10008;'). '</td>';
 							}
 							break;
 						default:
 							foreach($items as $item) {
 								if($item[1] === $fieldValue) {
-									$filedContent .= $item[0] . ' &#10004;<br/>';
+									$filedContent .= '<td>' .$item[0] . ' &#10004;</td>';
 								}
 							}
 					}
 
 					break;
 				case "group":
-					$filedContent .= '<b>' . $itemLabels . '</b> ' . (string)$fieldValue . '</br><br>';
+					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . (string)$fieldValue . '</td>';
 					break;
 				case "inline":
-					$filedContent .= '<b>' . $itemLabels . '</b>';
+					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td>';
 					if(isset($fieldConfig['foreign_table']) && $fieldConfig['foreign_table'] === 'sys_file_reference'){
 						//TODO: Need to add function to set the file title
 						$filePreview = \TYPO3\CMS\Backend\Utility\BackendUtility::thumbCode($row, $fieldTable, $fieldName, $GLOBALS['BACK_PATH'], '', NULL, 0, '', '', TRUE);
-						$filedContent .= ($filePreview != '' ? '</br>' . $filePreview : ' No File');
-						$filedContent .= '</br></br>' ;
+						$filedContent .= '<td>';
+						$filedContent .= ($filePreview != '' ? $filePreview : 'No File');
+						$filedContent .= '</td>';
 					} else {
 
 						if(isset($fieldConfig['foreign_table'])) {
 							$contentObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
 							$contentObj->data = $row;
 							$count = 0;
+							$filedContent .= '<td style="padding-right: 5px;">';
 							foreach(\Denkwerk\DwContentElements\Service\IrreService::getRelations($contentObj, $fieldConfig['foreign_table']) as $item) {
 								$irreItemLabel = $item[$GLOBALS['TCA'][$fieldConfig['foreign_table']]['ctrl']['label']];
-								$filedContent .= ($irreItemLabel != '' ? '</br> ' . $irreItemLabel : '</br> ' . \TYPO3\CMS\Backend\Utility\BackendUtility::getNoRecordTitle(TRUE));
+								$filedContent .= ($irreItemLabel != '' ? substr((string)$irreItemLabel, 0, 25) : \TYPO3\CMS\Backend\Utility\BackendUtility::getNoRecordTitle(TRUE));
+								$filedContent .= '</br>';
 
 								$count++;
 								if($count >= 5){
-									$filedContent .= '</br>...';
+									$filedContent .= '...';
 									break;
 								}
 
 							}
-							$filedContent .= '</br></br>';
+							$filedContent .= '</td>';
+
 						}
 
 					}
 
 					break;
 				default:
-					$filedContent .= '<b>' . $itemLabels . ' ' . $fieldValue . '</b><br><br>';
+					$filedContent .= '<td style="padding-right: 5px;"><b/>' . $itemLabels . '</b></td><td>' . $fieldValue . '</td>';
 			}
-
+			$filedContent .= '</tr>';
 		}
 
 		return $filedContent;

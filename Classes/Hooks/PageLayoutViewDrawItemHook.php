@@ -105,10 +105,10 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 						$fieldValue = $urlService->setPageUid($fieldValue)->getUrl();
 					}
 
-					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . (string)$fieldValue . '</td>';
+					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . strip_tags((string)$fieldValue) . '</td>';
 					break;
 				case "text":
-					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . substr((string)$fieldValue, 0, 50) . '</td>';
+					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . substr(strip_tags((string)$fieldValue), 0, 50) . '</td>';
 					break;
 				case "check":
 					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . ((bool)$fieldValue ? '&#10004;' : '&#10008;'). '</td>';

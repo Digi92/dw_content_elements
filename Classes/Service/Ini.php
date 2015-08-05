@@ -85,12 +85,12 @@ class Ini {
 	 *
 	 * @return array|bool
 	 */
-    public function loadConfig() {
+	public function loadConfig() {
 		$result = false;
 
-        $this->configFileAbsPath = \Denkwerk\DwContentElements\Utility\Pathes::concat(array(PATH_site, $this->configFile));
+		$this->configFileAbsPath = \Denkwerk\DwContentElements\Utility\Pathes::concat(array(realpath(PATH_site), realpath($this->configFile)));
 
-        if(is_file($this->configFileAbsPath) === true) {
+		if(is_file($this->configFileAbsPath) === true) {
 
 			/**
 			 * @var \Denkwerk\DwContentElements\Utility\TypoScriptParser $tsParser
@@ -99,9 +99,9 @@ class Ini {
 			$result = $tsParser->parseTypoScriptFile($this->configFileAbsPath);
 			$result['configFileAbsPath'] = $this->configFileAbsPath;
 
-        }
+		}
 
-        return $result;
-    }
+		return $result;
+	}
 
 }

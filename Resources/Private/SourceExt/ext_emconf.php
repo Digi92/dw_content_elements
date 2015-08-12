@@ -36,6 +36,7 @@ $EM_CONF[$_EXTKEY] = array(
 			'cms' => '',
 			'extbase' => '',
 			'vhs' => '2.2.0-2.9.99',
+			'dw_content_elements' => '',
 		),
 		'conflicts' => array(
 		),

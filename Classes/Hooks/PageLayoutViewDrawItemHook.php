@@ -108,7 +108,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . strip_tags((string)$fieldValue) . '</td>';
 					break;
 				case "text":
-					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . substr(strip_tags((string)$fieldValue), 0, 50) . '</td>';
+					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . substr(strip_tags((string)$fieldValue), 0, 50) . (strlen((string)$fieldValue) > 50 ? '...' : '') . '</td>';
 					break;
 				case "check":
 					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . ((bool)$fieldValue ? '&#10004;' : '&#10008;'). '</td>';
@@ -167,7 +167,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 							$filedContent .= '<td style="padding-right: 5px;">';
 							foreach(\Denkwerk\DwContentElements\Service\IrreService::getRelations($contentObj, $fieldConfig['foreign_table']) as $item) {
 								$irreItemLabel = $item[$GLOBALS['TCA'][$fieldConfig['foreign_table']]['ctrl']['label']];
-								$filedContent .= ($irreItemLabel != '' ? substr((string)$irreItemLabel, 0, 25) : \TYPO3\CMS\Backend\Utility\BackendUtility::getNoRecordTitle(TRUE));
+								$filedContent .= ($irreItemLabel != '' ? substr((string)$irreItemLabel, 0, 25) . (strlen((string)$irreItemLabel) > 25 ? '...' : '') : \TYPO3\CMS\Backend\Utility\BackendUtility::getNoRecordTitle(TRUE));
 								$filedContent .= '</br>';
 
 								$count++;

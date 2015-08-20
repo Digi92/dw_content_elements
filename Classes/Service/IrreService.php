@@ -42,6 +42,7 @@ class IrreService {
 	 * @return array
 	 */
 	public function getRelations($contentObj, $tableName){
+		$result = array();
 		if($contentObj->data[$tableName] > 0){
 
 			$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
@@ -52,7 +53,6 @@ class IrreService {
 				'sorting'
 			);
 
-			$result = array();
 			foreach($rows as $row){
 				array_push($result, self::getContentElements($contentObj, $row, $tableName));
 			}

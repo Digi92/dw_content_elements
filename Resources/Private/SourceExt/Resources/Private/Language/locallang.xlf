@@ -4,9 +4,17 @@
 		<header/>
 		<body>
 
-            <!-- E1000RelatedLinks -->
-            <trans-unit id="e1000RelatedLinks.headline">
+            <!-- E1000List -->
+            <trans-unit id="e1000List.headline">
                 <source>Headline</source>
+            </trans-unit>
+
+            <!-- tx_dwc_list_item -->
+            <trans-unit id="tx_dwc_list_item.headline">
+                <source>Headline</source>
+            </trans-unit>
+            <trans-unit id="tx_dwc_list_item.text">
+                <source>Text</source>
             </trans-unit>
 
         </body>

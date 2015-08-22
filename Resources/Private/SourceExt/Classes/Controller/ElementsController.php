@@ -34,8 +34,8 @@ namespace Denkwerk\DwContentElementsSource\Controller;
  */
 class ElementsController extends \Denkwerk\DwContentElements\Controller\BaseController {
 
-    public function e1000RelatedLinksAction() {
-		$this->view->assign('irreRelations', $this->irreService->getRelations($this->contentObj, 'tx_dwc_related_link_item'));
+    public function e1000ListAction() {
+		$this->view->assign('irreRelations', $this->irreService->getRelations($this->contentObj, 'tx_dwc_list_item'));
 	}
 
 }

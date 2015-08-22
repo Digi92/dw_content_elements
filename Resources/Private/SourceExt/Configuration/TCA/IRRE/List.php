@@ -3,13 +3,13 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-$TCA['tx_dwc_related_link_item'] = array(
-	'ctrl' => $TCA['tx_dwc_related_link_item']['ctrl'],
+$TCA['tx_dwc_list_item'] = array(
+	'ctrl' => $TCA['tx_dwc_list_item']['ctrl'],
 	'interface' => array(
-		'showRecordFieldList' => 'l10n_parent, l10n_diffsource, link_text, link',
+		'showRecordFieldList' => 'l10n_parent, l10n_diffsource, headline, text',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'l10n_parent, l10n_diffsource, link_text, link,
+		'1' => array('showitem' => 'l10n_parent, l10n_diffsource, headline, text,
 		--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access,starttime, endtime'),
 	),
 	'palettes' => array(
@@ -25,8 +25,8 @@ $TCA['tx_dwc_related_link_item'] = array(
 				'items' => array(
 					array('', 0),
 				),
-				'foreign_table' => 'tx_dwc_related_link_item',
-				'foreign_table_where' => 'AND tx_dwc_related_link_item.pid=###CURRENT_PID### AND tx_dwc_related_link_item.sys_language_uid IN (-1,0)',
+				'foreign_table' => 'tx_dwc_list_item',
+				'foreign_table_where' => 'AND tx_dwc_list_item.pid=###CURRENT_PID### AND tx_dwc_list_item.sys_language_uid IN (-1,0)',
 			),
 		),
 		'l10n_diffsource' => array(
@@ -81,37 +81,30 @@ $TCA['tx_dwc_related_link_item'] = array(
 				),
 			),
 		),
-		'link_text' => array(
-            'exclude' => 1,
-            'label' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwc_related_link_item.link_text',
+		'headline' => array(
+			'exclude' => 1,
+			'label' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwc_list_item.headline',
 			'exclude' => 1,
 			'config' => array(
 				'type' => 'input',
 				'size' => 30,
 				'eval' => 'trim,required'
 			),
+		),
+		'text' => array(
+            'exclude' => 1,
+            'label' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwc_list_item.text',
+			'exclude' => 1,
+			'config' => array(
+                'type' => 'text',
+                'cols' => '40',
+                'rows' => '15',
+				'eval' => 'trim'
+			),
 			'defaultExtras' => 'richtext:rte_transform[flag=rte_enabled|mode=ts_css]'
 		),
-        'link' => array(
-            'exclude' => 1,
-            'label' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwc_related_link_item.link',
-            'config' => array(
-                'type' => 'input',
-                'size' => '30',
-                'softref' => 'typolink[linklist]',
-                'wizards' => array(
-                    '_PADDING' => 2,
-                    'link' => array(
-                        'type' => 'popup',
-                        'title' => 'Link',
-                        'icon' => 'link_popup.gif',
-                        'script' => 'browse_links.php?mode=wizard',
-                        'JSopenParams' => 'height=300,width=500,status=0,menubar=0,scrollbars=1'
-                    )
-                ),
-                'eval' => 'trim,required'
-            ),
-        ),
+
+
 	),
 );
 

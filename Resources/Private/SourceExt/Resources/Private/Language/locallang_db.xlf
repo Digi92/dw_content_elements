@@ -9,15 +9,15 @@
 				<source>Headline:</source>
 			</trans-unit>
 
-			<!-- tx_dwc_related_link_item -->
-			<trans-unit id="tx_dwc_related_link_item">
-				<source>Links:</source>
+			<!-- tx_dwc_list_item -->
+			<trans-unit id="tx_dwc_list_item">
+				<source>List Items:</source>
 			</trans-unit>
-			<trans-unit id="tx_dwc_related_link_item.link_text">
-				<source>Link Text:</source>
+			<trans-unit id="tx_dwc_list_item.headline">
+				<source>Headline:</source>
 			</trans-unit>
-			<trans-unit id="tx_dwc_related_link_item.link">
-				<source>Link:</source>
+			<trans-unit id="tx_dwc_list_item.text">
+				<source>Text:</source>
 			</trans-unit>
 
 		</body>

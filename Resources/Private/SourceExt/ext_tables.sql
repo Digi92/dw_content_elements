@@ -7,18 +7,19 @@ CREATE TABLE tt_content (
 	tx_dwc_headline varchar(255) DEFAULT '' NOT NULL,
 
 	# IRRE Fields
-	tx_dwc_related_link_item int(11) DEFAULT '0' NOT NULL,
+	tx_dwc_list_item int(11) DEFAULT '0' NOT NULL,
 
 );
 
-CREATE TABLE tx_dwc_related_link_item (
+CREATE TABLE tx_dwc_list_item (
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
 
+	headline varchar(255) DEFAULT '' NOT NULL,
+	text text NOT NULL,
+
 	CType varchar(80) DEFAULT '' NOT NULL,
 	foreign_uid int(11) DEFAULT '0' NOT NULL,
-	link text NOT NULL,
-	link_text varchar(255) DEFAULT '' NOT NULL,
 
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,

@@ -7,19 +7,19 @@ if (!defined('TYPO3_MODE')) {
 
 //Palettes
 $TCA['tt_content']['palettes']['headerText'] = array();
-$TCA['tt_content']['palettes']['headerText']['showitem'] ='header, --linebreak--, subheader';
+$TCA['tt_content']['palettes']['headerText']['showitem'] ='tx_dwc_headline, --linebreak--, subheader';
 $TCA['tt_content']['palettes']['headerText']['canNotCollapse']='1';
 
 
 //=============================================== Einbindung Irrel BEGIN ===============================================//
 
-//----------------------------------------------- tx_dwc_related_link_item -----------------------------------------------//
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_dwc_related_link_item');
+//----------------------------------------------- tx_dwc_list_item -----------------------------------------------//
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_dwc_list_item');
 
-$TCA['tx_dwc_related_link_item'] = array(
+$TCA['tx_dwc_list_item'] = array(
 	'ctrl' => array(
-		'title'	=> 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xlf:tx_dwc_related_link_item',
-		'label' => 'link_text',
+		'title'	=> 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xlf:tx_dwc_list_item',
+		'label' => 'headline',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
@@ -38,17 +38,17 @@ $TCA['tx_dwc_related_link_item'] = array(
 			'starttime' => 'starttime',
 			'endtime' => 'endtime',
 		),
-		'searchFields' => 'link_text',
-		'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/IRRE/RelatedLink.php',
+		'searchFields' => 'headline, text',
+		'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/IRRE/List.php',
 	),
 );
 
-$GLOBALS['TCA']['tt_content']['columns']['tx_dwc_related_link_item'] = array(
+$GLOBALS['TCA']['tt_content']['columns']['tx_dwc_list_item'] = array(
 	'exclude' => 0,
-	'label' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xlf:tx_dwc_related_link_item',
+	'label' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xlf:tx_dwc_list_item',
 	'config' => array(
 		'type' => 'inline',
-		'foreign_table' => 'tx_dwc_related_link_item',
+		'foreign_table' => 'tx_dwc_list_item',
 		'foreign_field' => 'foreign_uid',
 		'maxitems'      => 9999,
 		'appearance' => array(

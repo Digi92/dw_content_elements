@@ -205,50 +205,36 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 	public function getMainFields($itemList, $table, array $row) {
 		$result = array();
 
-		/**
-		 * @var  \TYPO3\CMS\Backend\Form\FormEngine $formEngine
-		 */
-		$formEngine = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Form\\FormEngine');
-
-		//=============================== Beginn - Created field list ==========================================================//
-		// Explode the field list and possibly rearrange the order of the fields, if configured for
-		$fields = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $itemList, TRUE);
-		// Get the current "type" value for the record.
-		$typeNum = $formEngine->getRTypeNum($table, $row);
-		// Get excluded fields, added fiels and put it together:
-		$excludeElements = ($formEngine->excludeElements = $formEngine->getExcludeElements($table, $row, $typeNum));
-		$fields = $formEngine->mergeFieldsWithAddedFields($fields, $formEngine->getFieldsToAdd($table, $row, $typeNum), $table);
-		//================================= ENDE - Created field list ==========================================================//
+		$fieldsArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $itemList, TRUE);
 
 		// Set fields and replace palettes and divs
-		foreach ($fields as $fieldInfo) {
+		foreach ($fieldsArray as $fieldInfo) {
 
 			// Exploding subparts of the field configuration:
-			$parts = explode(';', $fieldInfo);
-			$theField = $parts[0];
+			$field = self::explodeSingleFieldShowItemConfiguration($fieldInfo);
 
-			if (!in_array($theField, $excludeElements)) {
+			if (!in_array($field['fieldName'], $excludeElements=array())) {
 
 				// If field exist add this to result
-				if ($GLOBALS['TCA'][$table]['columns'][$theField]) {
+				if ($GLOBALS['TCA'][$table]['columns'][$field['fieldName']]) {
 
 					//Translate the label
-					if($parts[1] !== NULL && strpos($parts[1], "LLL:EXT:") !== false){
-						$parts[1] = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($parts[1], '');
+					if($field['fieldLabel'] !== NULL && strpos($field['fieldLabel'], "LLL:EXT:") !== false){
+						$field['fieldLabel'] = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($field['fieldLabel'], '');
 					}
 
-					array_push($result, array('name' => $theField, 'label' => $parts[1]));
+					array_push($result, array('name' => $field['fieldName'], 'label' => $field['fieldLabel']));
 
 				}
-				elseif ($theField == '--div--') {
+				elseif ($field['fieldName'] == '--div--') {
 					// Do nothing!
 				}
-				elseif ($theField == '--palette--') {
+				elseif ($field['fieldName'] == '--palette--') {
 
-					if ($parts[2]) {
+					if ($field['paletteName']) {
 						// Load the palette TCEform elements
-						if ($GLOBALS['TCA'][$table] && is_array($GLOBALS['TCA'][$table]['palettes'][$parts[2]])) {
-							$palettesItemList = $GLOBALS['TCA'][$table]['palettes'][$parts[2]]['showitem'];
+						if ($GLOBALS['TCA'][$table] && is_array($GLOBALS['TCA'][$table]['palettes'][$field['paletteName']])) {
+							$palettesItemList = $GLOBALS['TCA'][$table]['palettes'][$field['paletteName']]['showitem'];
 							if ($palettesItemList) {
 								// Call the palette showitem with the function "getMainFields" and add the result to $result
 								foreach(self::getMainFields($palettesItemList, 'tt_content', $row) as $field){
@@ -262,5 +248,29 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 			}
 		}
 		return $result;
+	}
+
+
+	/**
+	 * A single field of TCA 'types' 'showitem' can have four semicolon separated configuration options:
+	 *   fieldName: Name of the field to be found in TCA 'columns' section
+	 *   fieldLabel: An alternative field label
+	 *   paletteName: Name of a palette to be found in TCA 'palettes' section that is rendered after this field
+	 *   extra: Special configuration options of this field
+	 *
+	 * @param string $field Semicolon separated field configuration
+	 * @throws \RuntimeException
+	 * @return array
+	 */
+	protected function explodeSingleFieldShowItemConfiguration($field) {
+		$fieldArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(';', $field);
+		if (empty($fieldArray[0])) {
+			throw new \RuntimeException('Field must not be empty', 1426448465);
+		}
+		return array(
+			'fieldName' => $fieldArray[0],
+			'fieldLabel' => $fieldArray[1] ?: NULL,
+			'paletteName' => $fieldArray[2] ?: NULL,
+		);
 	}
 }

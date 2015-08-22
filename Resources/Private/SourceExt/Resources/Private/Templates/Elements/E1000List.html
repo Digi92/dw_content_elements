@@ -1,0 +1,57 @@
+{namespace v=FluidTYPO3\Vhs\ViewHelpers}
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"
+	  xmlns:f="http://xsd.helmut-hummel.de/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<f:comment>
+	BacklogID: 1000
+	BacklogName: List
+	Fields: tx_dwc_headline, tx_dwc_list_item
+</f:comment>
+
+<f:layout name="Default"/>
+<f:section name="Content">
+
+	<article class="mod-list">
+		<div class="grid">
+			<div class="grid_col">
+
+                <f:render partial="Elements/E1000List/Sections" section="Headline" arguments="{headline: data.tx_dwc_headline}" />
+
+				<f:if condition="{irreRelations}">
+
+					<table style="width:300px">
+
+						<tr>
+							<th>&nbsp;</th>
+							<th><f:translate key="tx_dwc_list_item.headline" /></th>
+							<th><f:translate key="tx_dwc_list_item.text" /></th>
+						</tr>
+
+						<f:for each="{irreRelations}" as="item" iteration="iteration">
+
+							<tr>
+
+								<td>{iteration.cycle}.</td>
+
+								<f:if condition="{item.headline}">
+									<td>{item.headline}</td>
+								</f:if>
+
+								<f:if condition="{item.text}">
+									<td>{item.text -> f:format.html()}</td>
+								</f:if>
+
+							</tr>
+
+						</f:for>
+
+					</table>
+
+				</f:if>
+
+			</div>
+		</div>
+	</article>
+
+</f:section>
+</html>

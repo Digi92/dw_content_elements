@@ -1,0 +1,22 @@
+{
+    "name": "dw-typo3/dw-content-elements",
+    "type": "typo3-cms-extension",
+    "description": "Custom content elements builder",
+    "homepage": "https://github.com/Digi92/dw_content_elements",
+    "require": {
+        "typo3/cms-core": ">=6.2.0,<7.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Denkwerk\\DwContentElements\\": "Classes"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sascha Zander",
+            "email": "sascha.zander@denkwerk.com",
+            "homepage": "https://github.com/Digi92",
+            "role": "Developer"
+        }
+    ]
+}

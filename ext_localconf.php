@@ -15,3 +15,14 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php'][
 	// non-cachable controller-action-combinations (they must already be enabled)
 	array()
 );
+
+/**
+ * Only a hotfix for the bug: Missing rendering configuration for the content elements
+ * Die Rendering Definition sollte unter $GLOBALS['TSFE']->tmpl->setup['tt_content.'] stehen.
+ * Es kann unter nicht geklärten bedingungen vorkommen das diese Konfiguration nicht im Cache ist oder geladen wird
+ *
+ * @ToDo: Remove Hotfix or refactor
+ */
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Frontend\\ContentObject\\CaseContentObject'] = array(
+	'className' => 'Denkwerk\\DwContentElements\\Xclass\\CaseContentObject',
+);

@@ -8,60 +8,74 @@
     <h1><f:translate key="backend.index.headline" /></h1>
 
 
-    <h2>Wie erstelle ich ein Content Element?</h2>
+    <h2>Erstellen eines Content Elements</h2>
 
     <ul>
-        <li>Um ein Content Element anzulegen benÃ¶tigst du nur 2 Dateien.</li>
-        <li>1. Erstelle eine Config-Datei unter /typo3conf/ext/dw_content_elements_source/Configuration/Elements/E1000MYContentElement.ts</li>
-        <li>In der Config-Datei werden alle Einstellungen vorgenommen z.b. der Titel und Felder gesetzt.</li>
-        <li>
-            Die Config-Datei kÃ¶nnte so aussehen:<br/>
-            (Durch Screenshot mit Config und Dateibaum ersetzen)
-            title = DWCE List<br/>
-            description = List Description<br/>
-            icon = ../../typo3conf/ext/dw_content_elements_source/Resources/Public/Thumbnails/E1000List.png<br/>
-            fields = --palette--;Headline;headerText, tx_dwc_list_item<br/>
-            overWriteShowitem = 0
+        <li>Zum Erstellen eines Content Elements braucht es nur zwei Dateien: eine Config-Datei und das FLUID-Template</li>
+        <li><b>Config-Datei:</b> wird unter /typo3conf/ext/dw_content_elements_source/Configuration/Elements/<b>E1000MyContentElement.ts</b> angelegt (UpperCamelCase!).</li>
+        <li>Hier werden alle Konfigurationen gesetzt: Titel Beschreibung, Preview icon, Datenbankfelder und overwriteShowItem.</li>
+        <li>Beispiel für eine Config-Datei:<br />
+					<code>
+						title = E1000 My Content Element<br />
+						description = Content Element with header, subheader <br />
+						icon = ../../typo3conf/ext/dw_content_elements_source/Resources/Public/Thumbnails/E1000MyContentElement_icon.png<br />
+						fields = header, subheader<br />
+						overWriteShowitem = 0<br />
+					</code>
         </li>
-        <li>ErklÃ¤rung der Einstellungs mÃ¶glichkeiten</li>
-        <li>2. Das Fluid Template diese Datei muss genau so wie die Config-Datei heiÃŸen und liegt unter /typo3conf/ext/dw_content_elements_source/Resources/Private/Templates/Elements/E1000MYContentElement.html</li>
-        <li>Hier kannst du das HTML und Fluid einfÃ¼gen und die Frontend Ausgabe bauen, alle Datten des Content Elements kannst du Ã¼ber die Variable "data" auslesen.</li>
-        <li>
-            So kÃ¶nnte das Fluid Template aussehen:<br/>
-            (Screenshot des Fluid Templates und Dateibaum)
+        <li><b>FLUID-Template:</b> erhält den gleichen Namen der Conig-Datei und wird unter /typo3conf/ext/dw_content_elements_source/Resources/Private/Templates/Elements/E1000MyContentElement.html abgelegt</li>
+        <li>Das FLUID-Template enthält das Markup zur Frontend-Ausgabe. Variable Daten Content Elements werden über das Feld 'data' ausgelesen (bspw. {data.header}.</li>
+        <li>Beispiel für ein FLUID-Template::<br />
+          <code>
+						{namespace v=FluidTYPO3\Vhs\ViewHelpers}						
+						<html xmlns="http://www.w3.org/1999/xhtml" lang="en"
+								xmlns:f="http://xsd.helmut-hummel.de/ns/TYPO3/CMS/Fluid/ViewHelpers">
+							<f:comment>
+								BacklogID: M1000
+								BacklogName: My Content Element
+								Fields: header, subheader
+							</f:comment>
+
+							<f:layout name="Default"/>
+							<f:section name="Content">
+							
+								<h1>{data.header}</h1>
+								<f:if condition="{data.subheader}">
+									<p>{data.subheader}</p>
+								</f:if>
+								
+							</f:section>
+						</html>
+					</code>
         </li>
         <li>Jetzt musst du noch einmal den Cache Leeren und dann kannst du das Content Element benutzen ;)</li>
     </ul>
 
-    <h2>Wie erstelle ich ein IRRE Content Element?</h2>
+    <h2>Erstellen eines IRRE Elements</h2>
 
     <ul>
-        <li>Um ein IRRE Content Element zu erstellen legen Sie zuerst ein normales an.</li>
-        <li>Jetzt legen Sie in der /typo3conf/ext/dw_content_elements_source/ext_tables.php die IRRE Tabelle und das entsprechende TCA Feld fÃ¼r die tt_content Tabelle an.</li>
-        <li>Nun fÃ¼gen Sie die Datenbankfeld in der /typo3conf/ext/dw_content_elements_source/ext_tables.sql hinzu.</li>
-        <li>Dann Konfigurieren Sie das TCA fÃ¼r die IRRE Tabelle und speichenr dieses unter /typo3conf/ext/dw_content_elements_source/Configuration/TCA/IRRE ab.</li>
-        <li>Als letztes legen Sie in der /typo3conf/ext/dw_content_elements_source/Classes/Controller/ElementsController.php noch eine Action mit dem Namen ihres Content Elements an wo soe folgende Zeile einfÃ¼gen:</li>
+        <li>IRRE Elemente werden innerhalb eines Conten Elements erzeugt. Dieses muss zuvor angelegt werden (siehe oben).</li>
+        <li>In der ext_tables.php (/typo3conf/ext/dw_content_elements_source/ext_tables.php) wird erweitert um die IRRE Tabelle und das entsprechende TCA der tt_content Tabelle. Ein entsprechendes Beispiel ist in der ext_tables.php schon angelegt und kann mit den eigenen genutzt werden. Geben sie hier auch den Namen der Konfigurations-Datei an (/typo3conf/ext/dw_content_elements_source/Configuration/TCA/IRRE_Bsp.php).</li>
+        <li>Die ext_tables.sql (/typo3conf/ext/dw_content_elements_source/ext_tables.sql ) muss um das entsprechende Datenbankfeld des IRRE Elements erweitert werden.</li>
+        <li>In der Konfigurations-Datei (/typo3conf/ext/dw_content_elements_source/Configuration/TCA/IRRE_Bsp.php) wird das TCA der IRRE Tabelle definiert.</li>
+        <li>Für den Frontend-Aufruf werden im ElementsController (/typo3conf/ext/dw_content_elements_source/Classes/Controller/ElementsController.php) folgende Zeilen hinzugefügt:</li>
         <li>$this->view->assign('irreRelations', $this->irreService->getRelations($this->contentObj, 'NAMEDERIRRETABELLE'));</li>
-        <li>Dadurch haben Sie nun in ihren Fluid Template eine Array Variable names "irreRelations" in dem Ihre IRRE gespeichert ist.</li>
+        <li>Hierdurch erhält das FLUID-Template ein Array "irreRelations" welche die Daten der IRRE Tabelle enthalten.</li>
     </ul>
 
-    <h2>Wie setze/nutze ich Settings?</h2>
+    <h2>Settings</h2>
 
     <ul>
-        <li>
-            Um Settings oder globale Constanten nutzen zu kÃ¶nnen,<br/>
-            musst du diese nur in die /typo3conf/ext/dw_content_elements_source/Configuration/TypoScript/setup.txt eintragen.
-        </li>
-        <li>Dadurch kannst du diese in Fluid Template Ã¼ber die Variable "settings" abrufen.</li>
+        <li>Settings und globale Constanten werden in der setup.txt verwaltet (/typo3conf/ext/dw_content_elements_source/Configuration/TypoScript/setup.txt eintragen).</li>
+        <li>Im FLUID-Template können diese mit der Variable "settings" abgefragt werden.</li>
     </ul>
 
     <h2>ToDos</h2>
-
     <ul>
-        <li>Screenshots zur verdeutlichung hinzufÃ¼gen.</li>
-        <li>Layout anpassen (Weiche fÃ¼r TYPO3 V6.2 und V7.4).</li>
-        <li>Texte Ã¼berarbeiten und mindestens noch ins Englische Ãœbersetzen.</li>
-        <li>Dokumentation mit allen einstellungs mÃ¶glichkeiten erstellen.</li>
+        <li>Screenshots zur verdeutlichung hinzufügen.</li>
+        <li>Layout anpassen (Weiche für TYPO3 V6.2 und V7.4).</li>
+        <li>Texte überarbeiten und mindestens noch ins Englische Übersetzen.</li>
+        <li>Dokumentation mit allen einstellungs möglichkeiten erstellen.</li>
     </ul>
 
 </f:section>

@@ -64,9 +64,9 @@ if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elem
 				}
 
 				//Set rendering typoScript
-				$typoScript .= '
-				tt_content.' . lcfirst($key) . ' < tt_content.list.20.dwcontentelementssource_contentrenderer
-				tt_content.' . lcfirst($key) . '.switchableControllerActions.Elements.1 = render';
+				$typoScript .= "\n
+				tt_content." . lcfirst($key) . " < tt_content.list.20.dwcontentelementssource_contentrenderer \n
+				tt_content." . lcfirst($key) . ".switchableControllerActions.Elements.1 = render";
 
 				//Add content elements to the content elements wizard
 				if ((bool)$configuration['addElementsToWizard'] === TRUE) {

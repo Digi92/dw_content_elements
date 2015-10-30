@@ -48,7 +48,7 @@ class CaseContentObject extends \TYPO3\CMS\Frontend\ContentObject\AbstractConten
 		 *
 		 * @ToDo: Remove Hotfix or refactor
 		 */
-		if(array_key_exists($key,$conf) === false){
+		if(array_key_exists($key,$conf) === false && empty($key) === false){
 
 			//Get all config files of the content elements
 			$path = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\DwContentElements\Utility\Pathes');

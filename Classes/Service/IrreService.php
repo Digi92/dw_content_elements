@@ -41,7 +41,7 @@ class IrreService {
 	 * @param string $tableName
 	 * @return array
 	 */
-	public function getRelations($contentObj, $tableName){
+    static public function getRelations($contentObj, $tableName){
 		$result = array();
 		if($contentObj->data[$tableName] > 0){
 
@@ -69,7 +69,7 @@ class IrreService {
      * @param string $parentTable
      * @return array
      */
-    public function getContentElements($contentObj, $data, $parentTable) {
+    static public function getContentElements($contentObj, $data, $parentTable) {
 
         if(is_array($data)) {
 

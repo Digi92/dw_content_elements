@@ -77,7 +77,7 @@ class IrreService {
                 $elementRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
                     'uid',
                     'tt_content',
-                    'foreign_uid = ' . $data['uid'] . (TYPO3_MODE == 'BE' ? \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields($tableName) : $contentObj->enableFields('tt_content')) . 'AND parent_table = "' . $parentTable . '"',
+                    'foreign_uid = ' . $data['uid'] . (TYPO3_MODE == 'BE' ? \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields('tt_content') : $contentObj->enableFields('tt_content')) . 'AND parent_table = "' . $parentTable . '"',
                     '',
                     'sorting'
                 );

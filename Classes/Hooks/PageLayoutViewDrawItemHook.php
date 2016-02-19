@@ -101,8 +101,9 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 
 					//If field is has a link wizard
 					if(isset($fieldConfig['wizards']['link'])) {
+						/*** @var \Denkwerk\DwContentElements\Service\Url $urlService */
 						$urlService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\\DwContentElements\\Service\\Url');
-						$fieldValue = $urlService->setPageUid($fieldValue)->getUrl();
+						$fieldValue = $urlService->getUrl($row['pid'], $fieldValue);
 					}
 
 					$filedContent .= '<td style="padding-right: 5px;"><b>' . $itemLabels . '</b></td><td>' . strip_tags((string)$fieldValue) . '</td>';

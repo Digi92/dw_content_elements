@@ -59,7 +59,7 @@ class Url {
 	/**
 	 * Load the $GLOBALS['TSFE'] for the given page. Is need to created typolinks
 	 *
-	 * @param int $id
+     * @param int $id Id of the current page
 	 * @param int $typeNum
 	 * @return bool
 	 */

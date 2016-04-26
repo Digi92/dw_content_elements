@@ -100,7 +100,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 				case "input":
 
 					//If field is has a link wizard
-					if(isset($fieldConfig['wizards']['link'])) {
+					if(isset($fieldConfig['wizards']['link']) && empty($fieldValue) === false) {
 						/*** @var \Denkwerk\DwContentElements\Service\Url $urlService */
 						$urlService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\\DwContentElements\\Service\\Url');
 						$fieldValue = $urlService->getUrl($row['pid'], $fieldValue);

@@ -62,7 +62,8 @@ class IrreService
                     $tableName,
                     'foreign_uid = ' . $contentObj->data['uid'] .
                     (TYPO3_MODE == 'BE' ?
-                        \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields($tableName) :
+                        \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields($tableName)
+                        . ' AND ' . $tableName . '.deleted=0' :
                         $contentObj->enableFields($tableName)
                     ),
                     '',
@@ -128,7 +129,8 @@ class IrreService
                     'tt_content',
                     'foreign_uid = ' . $data['uid'] .
                     (TYPO3_MODE == 'BE' ?
-                        \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields('tt_content') :
+                        \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields('tt_content')
+                        . ' AND tt_content.deleted=0' :
                         $contentObj->enableFields('tt_content')
                     ) . 'AND parent_table = "' . $parentTable . '"',
                     '',

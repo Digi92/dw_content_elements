@@ -121,7 +121,7 @@ if (count($providers) > 0) {
                     foreach ($providerConfig['controllerActions'] as $controller => $actions) {
                         $actionArray = explode(',', $actions);
                         foreach ($actionArray as $index => $action) {
-        				    $typoScript .= "tt_content." . lcfirst($key) . ".switchableControllerActions." . $controller . "." . $index . " = " . $action . " \n";
+        				    $typoScript .= "tt_content." . lcfirst($key) . ".switchableControllerActions." . $controller . "." . ($index + 1) . " = " . $action . " \n";
                         }
                     }
 

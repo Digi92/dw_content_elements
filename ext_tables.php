@@ -55,7 +55,7 @@ if (count($providers) > 0) {
     	//Add content element wizard tab
     	if ((bool)$providerConfig['addElementsToWizard'] === TRUE && (bool)$configuration['addElementsToWizard'] === TRUE) {
     		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
-    			mod.wizards.newContentElement.wizardItems.dwContentElements {
+    			mod.wizards.newContentElement.wizardItems.' . $providerNameCamelCase . ' {
     				header = ' . $providerConfig['elementWizardTabTitle'] . '
     				show = *
     			}'

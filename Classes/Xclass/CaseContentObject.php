@@ -52,30 +52,64 @@ class CaseContentObject extends \TYPO3\CMS\Frontend\ContentObject\AbstractConten
 
 			//Get all config files of the content elements
 			$path = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\DwContentElements\Utility\Pathes');
-			$contentElements = $path->getAllDirFiles(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('dw_content_elements_source') . '/Configuration/Elements');
+            $providers = array();
 
-			//If it is a content element of the extension dw_content_elements
-			if(isset($contentElements[ucfirst($key)])) {
+            // get configurations from localconf
+            $configurations = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['dw_content_elements'];
 
-				//Set missing configuration
-				$conf[$key] = 'USER';
-				$conf[$key. '.'] = array(
-					'userFunc' => 'TYPO3\CMS\Extbase\Core\Bootstrap->run',
-					'extensionName' => 'DwContentElementsSource',
-					'pluginName' => 'ContentRenderer',
-					'vendorName' => 'Denkwerk',
-					'switchableControllerActions.' => array(
-						'Elements.' => array(
-							1 => 'render'
-						)
-					)
-				);
+            if (isset($configurations['provider']) && count($configurations['provider'])) {
+                foreach ($configurations['provider'] as $extKey => $config) {
+                    if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded($extKey) && is_array($config)) {
+                        $providers[$extKey] = $config;
+                    }
+                }
+            } else if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elements_source')) {
+                $providers['dw_content_elements_source'] = array(
+                    'pluginName' => 'ContentRenderer',
+                    'controllerActions' => array('Elements' => 'render'),
+                    'namespace' => 'Denkwerk.DwContentElementsSource'
+                );
+            }
 
-				//Set the missing rendering configuration in the global template service variable
-				$GLOBALS['TSFE']->tmpl->setup['tt_content.'] = $conf;
-			}
-		}
-		//=============================================HOTFIX ENDE====================================================
+            foreach ($providers as $provider => $providerConf) {
+
+                // build elements path
+                $elementsPath = (isset($providerConfig['elementsPath']) && !empty($providerConf['elementsPath'])) ?
+                    $providerConfig['elementsPath'] :
+                    '/Configuration/Elements';
+
+    			$contentElements = $path->getAllDirFiles(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($provider) . $elementsPath);
+
+    			//If it is a content element of the extension dw_content_elements
+    			if(isset($contentElements[ucfirst($key)])) {
+
+                    $namespaceParts = explode('.', $providerConf, 2);
+                    $controllerActions = array();
+
+                    foreach ($providerConf['controllerActions'] as $controller => $actions) {
+                        $actionsArray = explode(',', $actions);
+                        $controllerActions[$controller . '.'] = array();
+                        foreach ($actionsArray as $index => $action) {
+                            $controllerActions[$controller . '.'][$index + 1] = $action;
+                        }
+                    }
+
+    				//Set missing configuration
+    				$conf[$key] = 'USER';
+    				$conf[$key. '.'] = array(
+    					'userFunc' => 'TYPO3\CMS\Extbase\Core\Bootstrap->run',
+    					'extensionName' => $namespaceParts[1],
+    					'pluginName' => $providerConfi['pluginName'],
+    					'vendorName' => $namespaceParts[0],
+    					'switchableControllerActions.' => $controllerActions
+    				);
+
+    				//Set the missing rendering configuration in the global template service variable
+    				$GLOBALS['TSFE']->tmpl->setup['tt_content.'] = $conf;
+    			}
+    		}
+        }
+    		//=============================================HOTFIX ENDE====================================================
 
 		$key = strlen($conf[$key]) ? $key : 'default';
 		$name = $conf[$key];

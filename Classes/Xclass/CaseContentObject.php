@@ -83,7 +83,7 @@ class CaseContentObject extends \TYPO3\CMS\Frontend\ContentObject\AbstractConten
     			//If it is a content element of the extension dw_content_elements
     			if(isset($contentElements[ucfirst($key)])) {
 
-                    $namespaceParts = explode('.', $providerConf, 2);
+                    $namespaceParts = explode('.', $providerConf['namespace'], 2);
                     $controllerActions = array();
 
                     foreach ($providerConf['controllerActions'] as $controller => $actions) {
@@ -99,7 +99,7 @@ class CaseContentObject extends \TYPO3\CMS\Frontend\ContentObject\AbstractConten
     				$conf[$key. '.'] = array(
     					'userFunc' => 'TYPO3\CMS\Extbase\Core\Bootstrap->run',
     					'extensionName' => $namespaceParts[1],
-    					'pluginName' => $providerConfi['pluginName'],
+    					'pluginName' => $providerConf['pluginName'],
     					'vendorName' => $namespaceParts[0],
     					'switchableControllerActions.' => $controllerActions
     				);

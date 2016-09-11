@@ -7,76 +7,38 @@
 
     <h1><f:translate key="backend.index.headline" /></h1>
 
+    <h2><f:translate key="backend.index.subheadline" /></h2>
 
-    <h2>Erstellen eines Content Elements</h2>
+    <p><f:translate key="backend.index.documentation.introduction" /></p>
 
-    <ul>
-        <li>Zum Erstellen eines Content Elements braucht es nur zwei Dateien: eine Config-Datei und das FLUID-Template</li>
-        <li><b>Config-Datei:</b> wird unter /typo3conf/ext/dw_content_elements_source/Configuration/Elements/<b>E1000MyContentElement.ts</b> angelegt (UpperCamelCase!).</li>
-        <li>Hier werden alle Konfigurationen gesetzt: Titel Beschreibung, Preview icon, Datenbankfelder und overwriteShowItem.</li>
-        <li>Beispiel für eine Config-Datei:<br />
-					<code>
-						title = E1000 My Content Element<br />
-						description = Content Element with header, subheader <br />
-						icon = ../../typo3conf/ext/dw_content_elements_source/Resources/Public/Thumbnails/E1000MyContentElement_icon.png<br />
-						fields = header, subheader<br />
-						overWriteShowitem = 0<br />
-					</code>
-        </li>
-        <li><b>FLUID-Template:</b> erhält den gleichen Namen der Conig-Datei und wird unter /typo3conf/ext/dw_content_elements_source/Resources/Private/Templates/Elements/E1000MyContentElement.html abgelegt</li>
-        <li>Das FLUID-Template enthält das Markup zur Frontend-Ausgabe. Variable Daten Content Elements werden über das Feld 'data' ausgelesen (bspw. {data.header}.</li>
-        <li>Beispiel für ein FLUID-Template::<br />
-          <code>
-						{namespace v=FluidTYPO3\Vhs\ViewHelpers}						
-						<html xmlns="http://www.w3.org/1999/xhtml" lang="en"
-								xmlns:f="http://xsd.helmut-hummel.de/ns/TYPO3/CMS/Fluid/ViewHelpers">
-							<f:comment>
-								BacklogID: M1000
-								BacklogName: My Content Element
-								Fields: header, subheader
-							</f:comment>
 
-							<f:layout name="Default"/>
-							<f:section name="Content">
-							
-								<h1>{data.header}</h1>
-								<f:if condition="{data.subheader}">
-									<p>{data.subheader}</p>
-								</f:if>
-								
-							</f:section>
-						</html>
-					</code>
-        </li>
-        <li>Jetzt musst du noch einmal den Cache Leeren und dann kannst du das Content Element benutzen ;)</li>
-    </ul>
+    <h3><f:translate key="backend.index.documentation.config.headline" /></h3>
+    <f:translate key="backend.index.documentation.config.list" />
 
-    <h2>Erstellen eines IRRE Elements</h2>
+    <h3><f:translate key="backend.index.documentation.template.headline" /></h3>
+    <f:translate key="backend.index.documentation.template.list"
+                 arguments="{0: '{f:image(src: \'EXT:dw_content_elements/Resources/Public/Backend/Images/Documentation/example_element_template.png\', alt:\'Example element template\')}'}"
+    />
 
-    <ul>
-        <li>IRRE Elemente werden innerhalb eines Conten Elements erzeugt. Dieses muss zuvor angelegt werden (siehe oben).</li>
-        <li>In der ext_tables.php (/typo3conf/ext/dw_content_elements_source/ext_tables.php) wird erweitert um die IRRE Tabelle und das entsprechende TCA der tt_content Tabelle. Ein entsprechendes Beispiel ist in der ext_tables.php schon angelegt und kann mit den eigenen genutzt werden. Geben sie hier auch den Namen der Konfigurations-Datei an (/typo3conf/ext/dw_content_elements_source/Configuration/TCA/IRRE_Bsp.php).</li>
-        <li>Die ext_tables.sql (/typo3conf/ext/dw_content_elements_source/ext_tables.sql ) muss um das entsprechende Datenbankfeld des IRRE Elements erweitert werden.</li>
-        <li>In der Konfigurations-Datei (/typo3conf/ext/dw_content_elements_source/Configuration/TCA/IRRE_Bsp.php) wird das TCA der IRRE Tabelle definiert.</li>
-        <li>Für den Frontend-Aufruf werden im ElementsController (/typo3conf/ext/dw_content_elements_source/Classes/Controller/ElementsController.php) folgende Zeilen hinzugefügt:</li>
-        <li>$this->view->assign('irreRelations', $this->irreService->getRelations($this->contentObj, 'NAMEDERIRRETABELLE'));</li>
-        <li>Hierdurch erhält das FLUID-Template ein Array "irreRelations" welche die Daten der IRRE Tabelle enthalten.</li>
-    </ul>
+    <h3><f:translate key="backend.index.documentation.irre.headline" /></h3>
+    <f:translate key="backend.index.documentation.irre.list" />
 
-    <h2>Settings</h2>
+    <h3><f:translate key="backend.index.documentation.ts.headline" /></h3>
+    <f:translate key="backend.index.documentation.ts.list" />
 
-    <ul>
-        <li>Settings und globale Constanten werden in der setup.txt verwaltet (/typo3conf/ext/dw_content_elements_source/Configuration/TypoScript/setup.txt eintragen).</li>
-        <li>Im FLUID-Template können diese mit der Variable "settings" abgefragt werden.</li>
-    </ul>
-
-    <h2>ToDos</h2>
-    <ul>
-        <li>Screenshots zur verdeutlichung hinzufügen.</li>
-        <li>Layout anpassen (Weiche für TYPO3 V6.2 und V7.4).</li>
-        <li>Texte überarbeiten und mindestens noch ins Englische Übersetzen.</li>
-        <li>Dokumentation mit allen einstellungs möglichkeiten erstellen.</li>
-    </ul>
+    <f:comment>
+        <h2>ToDos</h2>
+        <ul>
+            <li>Layout anpassen (Weiche fÃ¼r TYPO3 V6.2 und V7.4).</li>
+            <li>Texte Ã¼berarbeiten und mindestens noch ins Englische Ã¼bersetzen.</li>
+            <li>Dokumentation mit allen einstellungs mÃ¶glichkeiten erstellen.</li>
+        </ul>
+    </f:comment>
 
 </f:section>
 </html>
+
+
+
+
+

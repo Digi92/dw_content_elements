@@ -7,6 +7,7 @@ use \TYPO3\CMS\Core\Utility\GeneralUtility AS GeneralUtility;
  *  Copyright notice
  *
  *  (c) 2014 André Laugks <andre.laugks@denkwerk.com>, denkwerk GmbH
+ *  (c) 2016 Sascha Zander <sascha.zander@denkwerk.com>, denkwerk GmbH
  *
  *  All rights reserved
  *
@@ -36,78 +37,69 @@ use \TYPO3\CMS\Core\Utility\GeneralUtility AS GeneralUtility;
 class Url {
 
 	/**
-	 * @var integer
+	 * Create link for frontend pages
+	 *
+	 * @param $currentPageUid Pid of the current page
+	 * @param $linkParameter The string from the link wizard
+	 * @return string
 	 */
-	protected $pageUid;
+	public function getUrl($currentPageUid, $linkParameter) {
+		$result = '';
 
-	/**
-	 * @var integer
-	 */
-	protected $rootPid;
+		// If the TSFE can't load, we can NOT create a typolink
+		if($currentPageUid > 0 && empty($linkParameter) === false && $this->initTSFE($currentPageUid)) {
+			/** @var $cObj \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
+			$cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+			$result = $cObj->typolink_URL(array('parameter' => $linkParameter));
+		}
 
-	/**
-	 * @var string
-	 */
-	protected $url;
-
-	/**
-	 * @param null $rootPid
-	 * @param null $pageUid
-	 */
-	public function __construct($rootPid = null, $pageUid = null) {
-		//$this->rootPid = $rootPid;
-		//$this->pageUid = $pageUid;
+		return $result;
 	}
 
 	/**
-	 * @return int
+	 * Load the $GLOBALS['TSFE'] for the given page. Is need to created typolinks
+	 *
+     * @param int $id Id of the current page
+	 * @param int $typeNum
+	 * @return bool
 	 */
-	public function getPageUid() {
-		return $this->pageUid;
-	}
-
-	/**
-	* @param string $url
-	 */
-	public function setUrl($url) {
-		$this->url = $url;
-	}
-
-
-	/**
-	 * @param integer $pageUid
-	 * @return $this
-	 */
-	public function setPageUid($pageUid) {
-		$this->pageUid = $pageUid;
-		return $this;
-	}
-
-	public function getUrl() {
-		$this->initTSFE($this->rootPid);
-		/** @var $cObj \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
-		$cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
-		return $cObj->typolink_URL(array('parameter' => $this->pageUid));
-	}
-
 	private function initTSFE($id = 1, $typeNum = 0) {
-		\TYPO3\CMS\Frontend\Utility\EidUtility::initTCA();
-		if (!is_object($GLOBALS['TT'])) {
-			$GLOBALS['TT'] = new \TYPO3\CMS\Core\TimeTracker\NullTimeTracker;
-			$GLOBALS['TT']->start();
-		}
-		$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController',  $GLOBALS['TYPO3_CONF_VARS'], $id, $typeNum);
-		$GLOBALS['TSFE']->connectToDB();
-		$GLOBALS['TSFE']->initFEuser();
-		$GLOBALS['TSFE']->determineId();
-		$GLOBALS['TSFE']->initTemplate();
-		$GLOBALS['TSFE']->getConfigArray();
+		$hasTsTemplate = false;
+		$rootline = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($id);
 
-		if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('realurl')) {
-			$rootline = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($id);
-			$host = \TYPO3\CMS\Backend\Utility\BackendUtility::firstDomainRecord($rootline);
-			$_SERVER['HTTP_HOST'] = $host;
+		// Check the rootline pages if there is an sysTemplate with configuration. We need this for initialize the TSFE.
+		if(empty($rootline) === FALSE && is_array($rootline)) {
+			foreach($rootline as $page){
+				$row = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('uid','sys_template','pid=' . (int)$page['uid'] . ' AND deleted=0 AND hidden=0','sorting',1);
+				if(isset($row[0])) {
+					$hasTsTemplate = true;
+					break;
+				}
+			}
 		}
+
+		if($hasTsTemplate) {
+			\TYPO3\CMS\Frontend\Utility\EidUtility::initTCA();
+			if (!is_object($GLOBALS['TT'])) {
+				$GLOBALS['TT'] = new \TYPO3\CMS\Core\TimeTracker\NullTimeTracker;
+				$GLOBALS['TT']->start();
+			}
+
+			$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController',  $GLOBALS['TYPO3_CONF_VARS'], $id, $typeNum);
+			$GLOBALS['TSFE']->connectToDB();
+			$GLOBALS['TSFE']->initFEuser();
+			$GLOBALS['TSFE']->determineId();
+			$GLOBALS['TSFE']->initTemplate();
+			$GLOBALS['TSFE']->getConfigArray();
+
+			if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('realurl')) {
+				$host = \TYPO3\CMS\Backend\Utility\BackendUtility::firstDomainRecord($rootline);
+				$_SERVER['HTTP_HOST'] = $host;
+			}
+		}
+
+		return $hasTsTemplate;
+
 	}
 
 

@@ -4,6 +4,11 @@
 		<header/>
 		<body>
 
+            <!-- Extend Elements Palette -->
+            <trans-unit id="palettes.dwcAdditionalFields">
+                <source>Additional fields</source>
+            </trans-unit>
+
 			<!-- Backend Module -->
 			<trans-unit id="mlang_tabs_tab">
 				<source>Dw Content Elements</source>

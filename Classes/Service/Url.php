@@ -88,6 +88,11 @@ class Url {
 			$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController',  $GLOBALS['TYPO3_CONF_VARS'], $id, $typeNum);
 			$GLOBALS['TSFE']->connectToDB();
 			$GLOBALS['TSFE']->initFEuser();
+
+            if (TYPO3_MODE === 'BE') {
+                $GLOBALS['TSFE']->initializeBackendUser();
+            }
+
 			$GLOBALS['TSFE']->determineId();
 			$GLOBALS['TSFE']->initTemplate();
 			$GLOBALS['TSFE']->getConfigArray();

@@ -27,7 +27,6 @@ namespace Denkwerk\DwContentElements\UserFunc;
  *
  * @package dw_content_elements
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
  */
 class Tca
 {
@@ -45,10 +44,15 @@ class Tca
 
         //Get all config files
         $path = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\DwContentElements\Utility\Pathes');
-        $contentElements = $path->getAllDirFiles(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('dw_content_elements_source') . '/Configuration/Elements');
+        $contentElements = $path->getAllDirFiles(
+            \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('dw_content_elements_source') .
+            '/Configuration/Elements'
+        );
 
         // If it is an dwc content element
-        if(isset($params['row']['CType']) && isset($contentElements[ucfirst($params['row']['CType'])])) {
+        if (isset($params['row']['CType']) &&
+            isset($contentElements[ucfirst($params['row']['CType'])])
+        ) {
             $title = '';
 
             //Load element config
@@ -57,8 +61,9 @@ class Tca
                 ->loadConfig();
 
             // If the content element has the config "previewListFields" set the value of this fields
-            if(isset($elementConfig['previewListFields']) && empty($elementConfig['previewListFields']) == false) {
-
+            if (isset($elementConfig['previewListFields']) &&
+                empty($elementConfig['previewListFields']) == false
+            ) {
                 //Get all preview field values
                 $row = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
                     $elementConfig['previewListFields'],
@@ -66,7 +71,7 @@ class Tca
                     'uid=' . $params['row']['uid']
                 );
 
-                if(empty($row) === false) {
+                if (empty($row) === false) {
                     // Removed all empty entries and make a comma separated string
                     $title = implode(', ', array_filter($row));
                 }
@@ -74,7 +79,7 @@ class Tca
             }
 
             // If no title set use the content element name
-            if(empty($title)) {
+            if (empty($title)) {
                 $title = (isset($elementConfig['title']) ? $elementConfig['title'] : $params['CType']);
             }
 
@@ -84,5 +89,4 @@ class Tca
 
         return $params;
     }
-
 }

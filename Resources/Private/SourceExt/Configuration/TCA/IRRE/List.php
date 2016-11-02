@@ -1,6 +1,6 @@
 <?php
 if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
+    die('Access denied.');
 }
 
 $TCA['tx_dwc_list_item'] = array(
@@ -120,5 +120,3 @@ $TCA['tx_dwc_list_item'] = array(
 
     ),
 );
-
-?>

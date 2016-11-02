@@ -1,9 +1,10 @@
 <?php
 
 namespace Denkwerk\DwContentElements\Utility;
-use \TYPO3\CMS\Core\Utility\GeneralUtility AS GeneralUtility;
 
-/* * *************************************************************
+use \TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
+
+/***************************************************************
  *  Copyright notice
  *
  *  (c) 2015 André Laugks <andre.laugks@denkwerk.com>, denkwerk GmbH
@@ -26,117 +27,121 @@ use \TYPO3\CMS\Core\Utility\GeneralUtility AS GeneralUtility;
  *  GNU General Public License for more details.
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
- * ************************************************************* */
+ * **************************************************************/
 
-/**
- *
- *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
- */
 
 /**
  * ToDo: Wie mit Pfaden unter Windows umgehen, c:/, d:/?
  *
  * Class Pathes
- * @package Denkwerk\DwContentElements\Utility
+ * @package dw_content_elements
+ * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class Pathes {
+class Pathes
+{
 
     /**
      *
      * @param $path
      * @return string
      */
-    private function leadingSlash($path) {
+    private function leadingSlash($path)
+    {
         $slash = '/';
         /**
          * Workaround for Windows.
          */
-        if(preg_match('/^[a-z]\:/i', $path)) {
+        if (preg_match('/^[a-z]\:/i', $path)) {
             $slash = '';
         }
         return $slash . $path;
     }
 
     /**
-	 *
+     *
      * @param array $list
      * @return string
      */
-    public static function convertFolderArrayToString(array $list) {
-		$result = '';
+    public static function convertFolderArrayToString(array $list)
+    {
+        $result = '';
 
         $list[0] = self::replaceBackSlashToSlash($list[0]);
         $list[1] = self::replaceBackSlashToSlash($list[1]);
-		if(strpos($list[1], $list[0]) !== false){
-
-			$result = $list[1];
-
-		} else {
-
-			$result = implode('/', $list);
-
-		}
+        if (strpos($list[1], $list[0]) !== false) {
+            $result = $list[1];
+        } else {
+            $result = implode('/', $list);
+        }
 
         return $result;
     }
 
-	/**
-	 *
-	 * @param $path
-	 * @return mixed
-	 */
-	private static function replaceBackSlashToSlash($path) {
-		return str_replace('\\', '/', $path);
-	}
+    /**
+     *
+     * @param $path
+     * @return mixed
+     */
+    private static function replaceBackSlashToSlash($path)
+    {
+        return str_replace('\\', '/', $path);
+    }
 
     /**
      *
      * @param array|string array or string
      * @return string
      */
-    public static function concat() {
+    public static function concat()
+    {
         $pathes = array();
-        foreach(func_get_args() AS $arg) {
-            if(is_array($arg) === true){
+        foreach (func_get_args() as $arg) {
+            if (is_array($arg) === true) {
                 $pathes = array_merge($pathes, $arg);
             }
-            if(is_string($arg) === true){
+            if (is_string($arg) === true) {
                 array_push($pathes, $arg);
             }
         }
 
-        return self::leadingSlash(implode('/', GeneralUtility::trimExplode('/', self::convertFolderArrayToString($pathes), true)));
+        return self::leadingSlash(
+            implode(
+                '/',
+                GeneralUtility::trimExplode(
+                    '/',
+                    self::convertFolderArrayToString($pathes),
+                    true
+                )
+            )
+        );
     }
 
     /**
      * Return a files recursive as array
-	 * 
-	 * @param $dir
-	 * @param array $results
-	 * @return array
-	 */
-    public static function getAllDirFiles($dir, &$results = array()) {
+     *
+     * @param $dir
+     * @param array $results
+     * @return array
+     */
+    public static function getAllDirFiles($dir, &$results = array())
+    {
 
-		$files = scandir($dir);
+        $files = scandir($dir);
 
-		foreach($files as $key => $value){
-			$path = realpath($dir.DIRECTORY_SEPARATOR.$value);
+        foreach ($files as $key => $value) {
+            $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
 
-			if(is_file($path)) {
+            if (is_file($path)) {
+                //Set the filename without extension as key
+                $results[str_replace('.' . pathinfo($path, PATHINFO_EXTENSION), '', $value)] = $path;
 
-				//Set the filename without extension as key
-				$results[str_replace('.' . pathinfo($path, PATHINFO_EXTENSION), '', $value)] = $path;
+            } elseif (is_dir($path) &&
+                !in_array($value, array(".", ".."))
+            ) {
+                self::getAllDirFiles($path, $results);
 
-			} else if(is_dir($path) && !in_array($value,array(".",".."))) {
-
-				self::getAllDirFiles($path, $results);
-
-			}
-		}
-
+            }
+        }
         return $results;
     }
-
 }

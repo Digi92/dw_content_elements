@@ -25,54 +25,56 @@ namespace Denkwerk\DwContentElements\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class TypoScriptParser {
+/**
+ * TypoScriptParser
+ *
+ * @package dw_content_elements
+ * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ */
+class TypoScriptParser
+{
 
-	/**
-	 * Parsing the input TypoScript text piece
-	 *
-	 * @param $tsString
-	 * @return array|bool
-	 */
-	public function parseTypoScript($tsString) {
-		$result = false;
+    /**
+     * Parsing the input TypoScript text piece
+     *
+     * @param $tsString
+     * @return array|bool
+     */
+    public function parseTypoScript($tsString)
+    {
+        $result = false;
 
-		if(empty($tsString) === false && is_string($tsString)) {
+        if (empty($tsString) === false && is_string($tsString)) {
 
-			/**
-			 * @var \TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser $tsParserObject
-			 */
-			$tsParserObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
-			$tsParserObject->parse($tsString);
-			$result = $tsParserObject->setup;
+            /**
+             * @var \TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser $tsParserObject
+             */
+            $tsParserObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                'TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser'
+            );
+            $tsParserObject->parse($tsString);
+            $result = $tsParserObject->setup;
+        }
+        return $result;
+    }
 
-		}
+    /**
+     * Parsing the TypoScript from the given file
+     *
+     * @param $filePath
+     * @return array|bool
+     */
+    public function parseTypoScriptFile($filePath)
+    {
+        $result = false;
 
-		return $result;
+        if (is_file($filePath) && pathinfo($filePath, PATHINFO_EXTENSION) === 'ts') {
+            $fileContent = file_get_contents($filePath);
 
-	}
-
-	/**
-	 * Parsing the TypoScript from the given file
-	 *
-	 * @param $filePath
-	 * @return array|bool
-	 */
-	public function parseTypoScriptFile($filePath) {
-		$result = false;
-
-		if(is_file($filePath) && pathinfo($filePath, PATHINFO_EXTENSION) === 'ts') {
-
-			$fileContent = file_get_contents($filePath);
-
-			if(empty($fileContent) === false) {
-
-				$result = self::parseTypoScript($fileContent);
-
-			}
-
-		}
-
-		return $result;
-	}
-
+            if (empty($fileContent) === false) {
+                $result = self::parseTypoScript($fileContent);
+            }
+        }
+        return $result;
+    }
 }

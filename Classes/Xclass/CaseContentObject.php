@@ -13,45 +13,49 @@ namespace Denkwerk\DwContentElements\Xclass;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
 /**
  * Contains CASE class object.
  *
  * @author Xavier Perseguers <typo3@perseguers.ch>
  * @author Steffen Kamper <steffen@typo3.org>
  */
-class CaseContentObject extends \TYPO3\CMS\Frontend\ContentObject\AbstractContentObject {
+class CaseContentObject extends \TYPO3\CMS\Frontend\ContentObject\AbstractContentObject
+{
 
-	/**
-	 * Rendering the cObject, CASE
-	 *
-	 * @param array $conf Array of TypoScript properties
-	 * @return string Output
-	 */
-	public function render($conf = array()) {
+    /**
+     * Rendering the cObject, CASE
+     *
+     * @param array $conf Array of TypoScript properties
+     * @return string Output
+     */
+    public function render($conf = array())
+    {
 
-		if (!empty($conf['if.']) && !$this->cObj->checkIf($conf['if.'])) {
-			return '';
-		}
+        if (!empty($conf['if.']) && !$this->cObj->checkIf($conf['if.'])) {
+            return '';
+        }
 
-		$setCurrent = isset($conf['setCurrent.']) ? $this->cObj->stdWrap($conf['setCurrent'], $conf['setCurrent.']) : $conf['setCurrent'];
-		if ($setCurrent) {
-			$this->cObj->data[$this->cObj->currentValKey] = $setCurrent;
-		}
-		$key = isset($conf['key.']) ? $this->cObj->stdWrap($conf['key'], $conf['key.']) : $conf['key'];
+        $setCurrent = isset($conf['setCurrent.']) ?
+            $this->cObj->stdWrap($conf['setCurrent'], $conf['setCurrent.']) : $conf['setCurrent'];
+        if ($setCurrent) {
+            $this->cObj->data[$this->cObj->currentValKey] = $setCurrent;
+        }
+        $key = isset($conf['key.']) ? $this->cObj->stdWrap($conf['key'], $conf['key.']) : $conf['key'];
 
-		/**
-		 * ============================================HOTFIX BEGIN===================================================
-		 *
-		 * Only a hotfix for the bug: Missing rendering configuration for the content elements
-		 * Die Rendering Definition sollte unter $GLOBALS['TSFE']->tmpl->setup['tt_content.'] stehen.
-		 * Es kann unter nicht geklärten bedingungen vorkommen das diese Konfiguration nicht im Cache ist oder geladen wird
-		 *
-		 * @ToDo: Remove Hotfix or refactor
-		 */
-		if(array_key_exists($key,$conf) === false && empty($key) === false){
-
-			//Get all config files of the content elements
-			$path = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\DwContentElements\Utility\Pathes');
+        /**
+         * ============================================HOTFIX BEGIN===================================================
+         *
+         * Only a hotfix for the bug: Missing rendering configuration for the content elements
+         * Die Rendering Definition sollte unter $GLOBALS['TSFE']->tmpl->setup['tt_content.'] stehen.
+         * Es kann unter nicht geklärten bedingungen vorkommen das diese Konfiguration nicht im
+         * Cache ist oder geladen wird
+         *
+         * @ToDo: Remove Hotfix or refactor
+         */
+        if (array_key_exists($key, $conf) === false && empty($key) === false) {
+            //Get all config files of the content elements
+            $path = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\DwContentElements\Utility\Pathes');
             $providers = array();
 
             // get configurations from localconf
@@ -59,11 +63,11 @@ class CaseContentObject extends \TYPO3\CMS\Frontend\ContentObject\AbstractConten
 
             if (isset($configurations['provider']) && count($configurations['provider'])) {
                 foreach ($configurations['provider'] as $extKey => $config) {
-                    if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded($extKey) && is_array($config)) {
+                    if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded($extKey) && is_array($config)) {
                         $providers[$extKey] = $config;
                     }
                 }
-            } else if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elements_source')) {
+            } elseif (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elements_source')) {
                 $providers['dw_content_elements_source'] = array(
                     'pluginName' => 'ContentRenderer',
                     'controllerActions' => array('Elements' => 'render'),
@@ -72,17 +76,17 @@ class CaseContentObject extends \TYPO3\CMS\Frontend\ContentObject\AbstractConten
             }
 
             foreach ($providers as $provider => $providerConf) {
-
                 // build elements path
                 $elementsPath = (isset($providerConfig['elementsPath']) && !empty($providerConf['elementsPath'])) ?
                     $providerConfig['elementsPath'] :
                     '/Configuration/Elements';
 
-    			$contentElements = $path->getAllDirFiles(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($provider) . $elementsPath);
+                $contentElements = $path->getAllDirFiles(
+                    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($provider) . $elementsPath
+                );
 
-    			//If it is a content element of the extension dw_content_elements
-    			if(isset($contentElements[ucfirst($key)])) {
-
+                //If it is a content element of the extension dw_content_elements
+                if (isset($contentElements[ucfirst($key)])) {
                     $namespaceParts = explode('.', $providerConf['namespace'], 2);
                     $controllerActions = array();
 
@@ -94,31 +98,30 @@ class CaseContentObject extends \TYPO3\CMS\Frontend\ContentObject\AbstractConten
                         }
                     }
 
-    				//Set missing configuration
-    				$conf[$key] = 'USER';
-    				$conf[$key. '.'] = array(
-    					'userFunc' => 'TYPO3\CMS\Extbase\Core\Bootstrap->run',
-    					'extensionName' => $namespaceParts[1],
-    					'pluginName' => $providerConf['pluginName'],
-    					'vendorName' => $namespaceParts[0],
-    					'switchableControllerActions.' => $controllerActions
-    				);
+                    //Set missing configuration
+                    $conf[$key] = 'USER';
+                    $conf[$key . '.'] = array(
+                        'userFunc' => 'TYPO3\CMS\Extbase\Core\Bootstrap->run',
+                        'extensionName' => $namespaceParts[1],
+                        'pluginName' => $providerConf['pluginName'],
+                        'vendorName' => $namespaceParts[0],
+                        'switchableControllerActions.' => $controllerActions
+                    );
 
-    				//Set the missing rendering configuration in the global template service variable
-    				$GLOBALS['TSFE']->tmpl->setup['tt_content.'] = $conf;
-    			}
-    		}
+                    //Set the missing rendering configuration in the global template service variable
+                    $GLOBALS['TSFE']->tmpl->setup['tt_content.'] = $conf;
+                }
+            }
         }
-    		//=============================================HOTFIX ENDE====================================================
+        //=============================================HOTFIX ENDE====================================================
 
-		$key = strlen($conf[$key]) ? $key : 'default';
-		$name = $conf[$key];
+        $key = strlen($conf[$key]) ? $key : 'default';
+        $name = $conf[$key];
 
-		$theValue = $this->cObj->cObjGetSingle($name, $conf[$key . '.'], $key);
-		if (isset($conf['stdWrap.'])) {
-			$theValue = $this->cObj->stdWrap($theValue, $conf['stdWrap.']);
-		}
-		return $theValue;
-	}
-
+        $theValue = $this->cObj->cObjGetSingle($name, $conf[$key . '.'], $key);
+        if (isset($conf['stdWrap.'])) {
+            $theValue = $this->cObj->stdWrap($theValue, $conf['stdWrap.']);
+        }
+        return $theValue;
+    }
 }

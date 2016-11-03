@@ -75,7 +75,6 @@ class Tca
                     // Removed all empty entries and make a comma separated string
                     $title = implode(', ', array_filter($row));
                 }
-
             }
 
             // If no title set use the content element name

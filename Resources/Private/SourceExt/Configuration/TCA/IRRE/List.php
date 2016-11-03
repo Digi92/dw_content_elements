@@ -39,7 +39,8 @@ $TCA['tx_dwc_list_item'] = array(
                     array('', 0),
                 ),
                 'foreign_table' => 'tx_dwc_list_item',
-                'foreign_table_where' => 'AND tx_dwc_list_item.pid=###CURRENT_PID### AND tx_dwc_list_item.sys_language_uid IN (-1,0)',
+                'foreign_table_where' => 'AND tx_dwc_list_item.pid=###CURRENT_PID### 
+                    AND tx_dwc_list_item.sys_language_uid IN (-1,0)',
             ),
         ),
         'l10n_diffsource' => array(
@@ -96,8 +97,8 @@ $TCA['tx_dwc_list_item'] = array(
         ),
         'headline' => array(
             'exclude' => 1,
-            'label' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwc_list_item.headline',
-            'exclude' => 1,
+            'label' =>
+            'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwc_list_item.headline',
             'config' => array(
                 'type' => 'input',
                 'size' => 30,
@@ -106,8 +107,8 @@ $TCA['tx_dwc_list_item'] = array(
         ),
         'text' => array(
             'exclude' => 1,
-            'label' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwc_list_item.text',
-            'exclude' => 1,
+            'label' =>
+            'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwc_list_item.text',
             'config' => array(
                 'type' => 'text',
                 'cols' => '40',
@@ -116,7 +117,5 @@ $TCA['tx_dwc_list_item'] = array(
             ),
             'defaultExtras' => 'richtext:rte_transform[flag=rte_enabled|mode=ts_css]'
         ),
-
-
     ),
 );

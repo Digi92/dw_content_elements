@@ -73,7 +73,6 @@ class Div
                     $key = 'extra_field_0' . $i;
                     $a[] = $key;
                 }
-
             }
         }
 

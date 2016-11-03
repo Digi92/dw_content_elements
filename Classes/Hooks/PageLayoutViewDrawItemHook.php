@@ -46,8 +46,13 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
      * @param    array $row :           Record row of tt_content
      * @return    void
      */
-    public function preProcess(\TYPO3\CMS\Backend\View\PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row)
-    {
+    public function preProcess(
+        \TYPO3\CMS\Backend\View\PageLayoutView &$parentObject,
+        &$drawItem,
+        &$headerContent,
+        &$itemContent,
+        array &$row
+    ) {
 
         //Get all config files
         $path = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\DwContentElements\Utility\Pathes');
@@ -153,16 +158,29 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                         $fieldValue = $urlService->getUrl($row['pid'], $fieldValue);
                     }
 
-                    $filedContent .= '<p style="padding-right: 5px;margin:0;"><b>' . $itemLabels . '</b><br />' . strip_tags((string)$fieldValue) . '</p>';
+                    $filedContent .= '<p style="padding-right: 5px;margin:0;">
+                            <b>' . $itemLabels . '</b><br />' .
+                            strip_tags((string)$fieldValue) .
+                        '</p>';
                     break;
                 case "text":
-                    $filedContent .= '<p style="padding-right: 5px;margin:0;"><b>' . $itemLabels . '</b><br />' . substr(strip_tags((string)$fieldValue), 0, 100) . (strlen((string)$fieldValue) > 100 ? '...' : '') . '</p>';
+                    $filedContent .= '<p style="padding-right: 5px;margin:0;">
+                            <b>' . $itemLabels . '</b><br />' .
+                            substr(strip_tags((string)$fieldValue), 0, 100) .
+                            (strlen((string)$fieldValue) > 100 ? '...' : '') .
+                        '</p>';
                     break;
                 case "check":
-                    $filedContent .= '<p style="padding-right: 5px;margin:0;"><b>' . $itemLabels . '</b><br />' . ((bool)$fieldValue ? '&#10004;' : '&#10008;') . '</p>';
+                    $filedContent .= '<p style="padding-right: 5px;margin:0;">
+                            <b>' . $itemLabels . '</b><br />' .
+                            ((bool)$fieldValue ? '&#10004;' : '&#10008;') .
+                        '</p>';
                     break;
                 case "radio":
-                    $filedContent .= '<p style="padding-right: 5px;margin:0;"><b>' . $itemLabels . '</b><br />' . (string)$fieldValue . '</p>';
+                    $filedContent .= '<p style="padding-right: 5px;margin:0;">
+                            <b>' . $itemLabels . '</b><br />' .
+                            (string)$fieldValue .
+                        '</p>';
                     break;
                 case "select":
                     //TODO: Wrong preview if the select use mm!!!
@@ -242,7 +260,11 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                             $contentObj->data = $row;
                             $count = 0;
                             $filedContent .= '<p style="padding-right: 5px;margin:0;">';
-                            foreach (\Denkwerk\DwContentElements\Service\IrreService::getRelations($contentObj, $fieldConfig['foreign_table']) as $item) {
+
+                            foreach (\Denkwerk\DwContentElements\Service\IrreService::getRelations(
+                                $contentObj,
+                                $fieldConfig['foreign_table']
+                            ) as $item) {
                                 $irreItemLabel = $item[$GLOBALS['TCA'][$fieldConfig['foreign_table']]['ctrl']['label']];
                                 $filedContent .= ($irreItemLabel != '' ? substr((string)$irreItemLabel, 0, 25) .
                                     (strlen((string)$irreItemLabel) > 25 ? '...' : '') :
@@ -309,7 +331,6 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                     }
 
                     array_push($result, array('name' => $field['fieldName'], 'label' => $field['fieldLabel']));
-
                 } elseif ($field['fieldName'] == '--div--') {
                     // Do nothing!
                 } elseif ($field['fieldName'] == '--palette--') {

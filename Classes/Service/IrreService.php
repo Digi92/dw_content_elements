@@ -94,7 +94,6 @@ class IrreService
                     $result = $rows;
                 }
             }
-
         } else {
             // Write into the sys_log about the missing field
             \Denkwerk\DwContentElements\Utility\Logger::simpleErrorLog(
@@ -145,5 +144,4 @@ class IrreService
 
         return $data;
     }
-
 }

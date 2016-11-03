@@ -46,7 +46,8 @@ if (count($providers) > 0) {
         }
 
         if (!isset($providerConfig['pluginCategory']) || empty($providerConfig['pluginCategory'])) {
-            $providerConfig['pluginCategory'] = 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_db.xlf:mlang_tabs_tab';
+            $providerConfig['pluginCategory'] =
+                'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_db.xlf:mlang_tabs_tab';
         }
 
         // generate camelcase version of the provider
@@ -106,33 +107,42 @@ if (count($providers) > 0) {
                     if ((bool)$elementConfig['overWriteShowitem'] === true) {
                         $showItem = trim((string)$elementConfig['fields'], ',');
                     } else {
-                        $showItem = 'CType;;4;button;1-1-1, --palette--;Headline,' . trim((string)$elementConfig['fields'], ',') . ',
+                        $showItem = 'CType;;4;button;1-1-1, --palette--;Headline,'
+                            . trim((string)$elementConfig['fields'], ',') . ',
     						--div--;LLL:EXT:cms/locallang_tca.xlf:pages.tabs.access,
     					    --palette--;LLL:EXT:cms/locallang_tca.xlf:pages.palettes.visibility;hiddenonly,
     					    --palette--;LLL:EXT:cms/locallang_tca.xlf:pages.palettes.access;access';
                     }
                     $TCA['tt_content']['types'][lcfirst($key)]['showitem'] = $showItem;
-                    $TCA['tt_content']['types'][lcfirst($key)]['tx_dw_content_elements_title'] = (string)$elementConfig['title'];
+                    $TCA['tt_content']['types'][lcfirst($key)]['tx_dw_content_elements_title'] =
+                        (string)$elementConfig['title'];
 
                     //Add tab extends and if the palette "dwcAdditionalFields" exists add the fields of it
                     $TCA['tt_content']['types'][lcfirst($key)]['showitem'] .= ',
                         --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended,
-                        --palette--;LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_db.xlf:palettes.dwcAdditionalFields;dwcAdditionalFields';
+                        --palette--;LLL:EXT:' . $_EXTKEY .
+                        '/Resources/Private/Language/locallang_db.xlf:palettes.dwcAdditionalFields;dwcAdditionalFields';
 
                     // Fix for the extension GridElements. GridElements needs in all elements the
                     // fields "tx_gridelements_container,tx_gridelements_columns"
                     if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('gridelements')) {
-                        $TCA['tt_content']['types'][lcfirst($key)]['showitem'] .= ',tx_gridelements_container,tx_gridelements_columns';
+                        $TCA['tt_content']['types'][lcfirst($key)]['showitem'] .=
+                            ',tx_gridelements_container,tx_gridelements_columns';
                     }
 
                     //Set rendering typoScript
                     $typoScript .= "\n
-    				tt_content." . lcfirst($key) . " < tt_content.list.20." . strtolower($providerNameCamelCase) . "_" . strtolower($providerConfig['pluginName']) . " \n";
+                    tt_content." . lcfirst($key) .
+                        " < tt_content.list.20." .
+                        strtolower($providerNameCamelCase) . "_" . strtolower($providerConfig['pluginName']) . " \n";
 
                     foreach ($providerConfig['controllerActions'] as $controller => $actions) {
                         $actionArray = explode(',', $actions);
                         foreach ($actionArray as $index => $action) {
-                            $typoScript .= "tt_content." . lcfirst($key) . ".switchableControllerActions." . $controller . "." . ($index + 1) . " = " . $action . " \n";
+                            $typoScript .= "tt_content." .
+                                lcfirst($key) . ".switchableControllerActions." .
+                                $controller . "." . ($index + 1) . " = " .
+                                $action . " \n";
                         }
                     }
 
@@ -141,17 +151,19 @@ if (count($providers) > 0) {
                         (bool)$configuration['addElementsToWizard'] === true
                     ) {
                         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
-        					mod.wizards.newContentElement.wizardItems.' . $providerNameCamelCase . '.elements.' . lcfirst($key) . ' {
-        						icon = ' . ($elementConfig['icon'] ? (string)$elementConfig['icon'] : '../../typo3conf/ext/' . $_EXTKEY . '/ext_icon.png') . '
+        					mod.wizards.newContentElement.wizardItems.' .
+                            $providerNameCamelCase . '.elements.' . lcfirst($key) . ' {
+        						icon = ' . ($elementConfig['icon'] ?
+                                    (string)$elementConfig['icon'] :
+                                    '../../typo3conf/ext/' . $_EXTKEY . '/ext_icon.png'
+                                ) . '
         						title = ' . (string)$elementConfig['title'] . '
         						description = ' . (string)$elementConfig['description'] . '
         					    tt_content_defValues.CType = ' . lcfirst($key) . '
         					}
         				');
                     }
-
                 }
-
             }
         }
     }

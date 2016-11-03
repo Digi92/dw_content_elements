@@ -134,12 +134,10 @@ class Pathes
             if (is_file($path)) {
                 //Set the filename without extension as key
                 $results[str_replace('.' . pathinfo($path, PATHINFO_EXTENSION), '', $value)] = $path;
-
             } elseif (is_dir($path) &&
                 !in_array($value, array(".", ".."))
             ) {
                 self::getAllDirFiles($path, $results);
-
             }
         }
         return $results;

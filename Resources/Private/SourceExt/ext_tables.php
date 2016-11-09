@@ -45,6 +45,7 @@ $TCA['tx_dwc_list_item'] = array(
         'searchFields' => 'headline, text',
         'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) .
             'Configuration/TCA/IRRE/List.php',
+        'iconfile' => 'EXT:' . $_EXTKEY . '/Resources/Public/Icons/IRRE.gif'
     ),
 );
 

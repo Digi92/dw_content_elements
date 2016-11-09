@@ -69,7 +69,7 @@ if (count($providers) > 0) {
 
         //Set own optgroup on the ctype select
         $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][] = array(
-            0 => 'LLL:EXT:' . $providerConfig['pluginCategory'],
+            0 => $providerConfig['pluginCategory'],
             1 => '--div--'
         );
 

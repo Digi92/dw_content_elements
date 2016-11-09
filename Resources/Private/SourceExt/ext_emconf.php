@@ -35,7 +35,6 @@ $EM_CONF[$_EXTKEY] = array(
             'typo3' => '6.2.0-7.99.99',
             'cms' => '',
             'extbase' => '',
-            'vhs' => '',
             'dw_content_elements' => '',
         ),
         'conflicts' => array(),

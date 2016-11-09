@@ -27,6 +27,7 @@ namespace Denkwerk\DwContentElements\UserFunc;
  *
  * @package dw_content_elements
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ *
  */
 class Tca
 {
@@ -39,7 +40,7 @@ class Tca
      */
     public function setTtContentTitle(&$params)
     {
-        // Set teh title by using the header field like the TYPO3 default settings
+        // Set the title by using the header field like the TYPO3 default settings
         $params['title'] = $params['row']['header'];
 
         //Get all config files
@@ -51,6 +52,7 @@ class Tca
 
         // If it is an dwc content element
         if (isset($params['row']['CType']) &&
+            !is_array($params['row']['CType']) &&
             isset($contentElements[ucfirst($params['row']['CType'])])
         ) {
             $title = '';

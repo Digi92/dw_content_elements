@@ -137,6 +137,27 @@
 			<trans-unit id="backend.loadSourceExt.install.step.four">
 				<source>Nun werden Ihre Content Elemente geladen.</source>
 			</trans-unit>
+            <trans-unit id="backend.loadSourceExt.install.composermode.headline">
+                <source>Achtung im Composer Mode!</source>
+            </trans-unit>
+            <trans-unit id="backend.loadSourceExt.install.composermode.list">
+                <source>
+                    <![CDATA[
+						<ul>
+                            <li>Im Composer Mode werden die Klassen Ihrer Source Extension nicht geladen.</li>
+                            <li>Damit diese geladen werden müssen sie in Ihrer <strong>Composer.json</strong> folgendes hinzufügen: <br />
+                                <code>
+                                    "autoload": {<br />
+                                        "psr-4": {<br />
+                                            "Denkwerk\\DwContentElementsSource\\": "typo3conf/ext/dw_content_elements_source/Classes"<br />
+                                        }<br />
+                                    }
+                                </code>
+                            </li>
+                        </ul>
+					]]>
+                </source>
+            </trans-unit>
 
 		</body>
 	</file>

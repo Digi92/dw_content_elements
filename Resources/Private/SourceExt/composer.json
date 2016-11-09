@@ -1,15 +1,15 @@
 {
-    "name": "dw-typo3/dw-content-elements",
+    "name": "dw-typo3/dw-content-elements_source",
     "type": "typo3-cms-extension",
-    "version": "1.5.0",
-    "description": "Custom content elements builder",
-    "homepage": "https://github.com/Digi92/dw_content_elements",
+    "version": "1.0.10",
+    "description": "Custom content elements source extension",
     "require": {
-        "typo3/cms-core": ">=6.2.0,<7.9"
+        "typo3/cms-core": ">=6.2.0,<7.9",
+        "dw-typo3/dw_content_elements": "*"
     },
     "autoload": {
         "psr-4": {
-            "Denkwerk\\DwContentElements\\": "Classes"
+            "Denkwerk\\DwContentElementsSource\\": "Classes"
         }
     },
     "authors": [

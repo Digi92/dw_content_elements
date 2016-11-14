@@ -104,7 +104,12 @@ class Pathes
             }
         }
 
-        return self::leadingSlash(
+        /** @var \Denkwerk\DwContentElements\Utility\Pathes $pathesUtility */
+        $pathesUtility = GeneralUtility::makeInstance(
+            'Denkwerk\\DwContentElements\\Utility\\Pathes'
+        );
+
+        return $pathesUtility->leadingSlash(
             implode(
                 '/',
                 GeneralUtility::trimExplode(

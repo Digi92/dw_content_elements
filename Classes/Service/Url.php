@@ -41,8 +41,8 @@ class Url
     /**
      * Create link for frontend pages
      *
-     * @param $currentPageUid Pid of the current page
-     * @param $linkParameter The string from the link wizard
+     * @param int $currentPageUid Pid of the current page
+     * @param string $linkParameter The string from the link wizard
      * @return string
      */
     public function getUrl($currentPageUid, $linkParameter)
@@ -50,7 +50,16 @@ class Url
         $result = '';
 
         // If the TSFE can't load, we can NOT create a typolink
-        if ($currentPageUid > 0 && empty($linkParameter) === false && $this->initTSFE($currentPageUid)) {
+        $currentPage = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord(
+            'pages',
+            $currentPageUid
+        );
+        if ($currentPageUid > 0 &&
+            $currentPage['doktype'] <= 200 &&
+            $currentPage['hidden'] != 1 &&
+            empty($linkParameter) === false &&
+            $this->initTSFE($currentPageUid)
+        ) {
             /** @var $cObj \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
             $cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
                 'TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer'

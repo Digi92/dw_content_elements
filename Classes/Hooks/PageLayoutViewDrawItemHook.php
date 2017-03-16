@@ -188,21 +188,66 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                     $items = array();
 
                     //Get all items
-                    $formEngine = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                        'TYPO3\\CMS\\Backend\\Form\\FormEngine'
-                    );
-                    $items = $formEngine->getSelectItems(
-                        'tt_content',
-                        $fieldName,
-                        $row,
-                        array(
-                            'fieldConf' => $GLOBALS['TCA'][$fieldTable]['columns'][$fieldName],
-                            'fieldTSConfig' => null
-                        )
-                    );
+                    if (version_compare(TYPO3_branch, '7.6', '<')) {
 
-                    switch ($fieldConfig['renderMode']) {
+                        $formEngine = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                            'TYPO3\\CMS\\Backend\\Form\\FormEngine'
+                        );
+                        $items = $formEngine->getSelectItems(
+                            'tt_content',
+                            $fieldName,
+                            $row,
+                            array(
+                                'fieldConf' => $GLOBALS['TCA'][$fieldTable]['columns'][$fieldName],
+                                'fieldTSConfig' => null
+                            )
+                        );
+                        $fieldType = $fieldConfig['renderMode'];
+
+                    } else {
+
+                        /** @var \TYPO3\CMS\Backend\Form\NodeFactory $nodeFactory */
+                        $nodeFactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                            'TYPO3\\CMS\\Backend\\Form\\NodeFactory'
+                        );
+
+                        $formDataCompilerInput = array(
+                            'tableName' => $fieldTable,
+                            'vanillaUid' => (int)$row['uid'],
+                            'command' => 'edit',
+                            'returnUrl' => ''
+                        );
+
+                        /** @var \TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord $formDataGroup */
+                        $formDataGroup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                            'TYPO3\\CMS\\Backend\\Form\\FormDataGroup\\TcaDatabaseRecord'
+                        );
+
+                        /** @var \TYPO3\CMS\Backend\Form\FormDataCompiler $formDataCompiler */
+                        $formDataCompiler = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                            'TYPO3\\CMS\\Backend\\Form\\FormDataCompiler',
+                            $formDataGroup
+                        );
+                        $formData = $formDataCompiler->compile($formDataCompilerInput);
+
+                        $formData['renderType'] = 'outerWrapContainer';
+
+                        $processedNodeStructure = $nodeFactory->create($formData);
+                        $processedNodeStructureAsArray = (array)$processedNodeStructure;
+
+                        $processedNodeStructureAsArray = array_values($processedNodeStructureAsArray);
+
+                        //Get all items
+                        if (!empty($processedNodeStructureAsArray[1]['processedTca']['columns'][$fieldName]['config']['items'])) {
+                            $items = $processedNodeStructureAsArray[1]['processedTca']['columns'][$fieldName]['config']['items'];
+                        }
+                        $fieldType = $fieldConfig['renderType'];
+                        
+                    }
+
+                    switch($fieldType) {
                         case "checkbox":
+                        case "selectCheckBox":
                             $value = explode(',', $fieldValue);
                             foreach ($items as $item) {
                                 $filedContent .= $item[0] . '<br />' .
@@ -210,6 +255,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                             }
                             break;
                         case "singlebox":
+                        case "selectSingleBox":
                             $value = explode(',', $fieldValue);
                             foreach ($items as $item) {
                                 $filedContent .= $item[0] . '<br />' .

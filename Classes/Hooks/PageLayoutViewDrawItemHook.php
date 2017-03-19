@@ -149,13 +149,33 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 
             switch ($fieldConfig['type']) {
                 case "input":
-                    //If field is has a link wizard
+                    //If field has a link wizard
                     if (isset($fieldConfig['wizards']['link']) && empty($fieldValue) === false) {
                         /*** @var \Denkwerk\DwContentElements\Service\Url $urlService */
                         $urlService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
                             'Denkwerk\\DwContentElements\\Service\\Url'
                         );
                         $fieldValue = $urlService->getUrl($row['pid'], $fieldValue);
+                    }
+
+                    // If field has an eval type, format the value by respect eval type
+                    if (isset($fieldConfig['eval'])) {
+                        foreach (explode(",", $fieldConfig['eval']) as $evaluation) {
+                            switch (trim($evaluation)) {
+                                case "date":
+                                    $fieldValue = date('Y-m-d', $fieldValue);
+                                    break;
+                                case "datetime":
+                                    $fieldValue = date('Y-m-d H:i', $fieldValue);
+                                    break;
+                                case "time":
+                                    $fieldValue = gmdate('H:i', $fieldValue);
+                                    break;
+                                case "timesec":
+                                    $fieldValue = gmdate('H:i:s', $fieldValue);
+                                    break;
+                            }
+                        }
                     }
 
                     $filedContent .= '<p style="padding-right: 5px;margin:0;">
@@ -189,7 +209,6 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 
                     //Get all items
                     if (version_compare(TYPO3_branch, '7.6', '<')) {
-
                         $formEngine = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
                             'TYPO3\\CMS\\Backend\\Form\\FormEngine'
                         );
@@ -242,30 +261,34 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                             $items = $processedNodeStructureAsArray[1]['processedTca']['columns'][$fieldName]['config']['items'];
                         }
                         $fieldType = $fieldConfig['renderType'];
-                        
                     }
 
-                    switch($fieldType) {
+                    switch ($fieldType) {
                         case "checkbox":
                         case "selectCheckBox":
                             $value = explode(',', $fieldValue);
                             foreach ($items as $item) {
-                                $filedContent .= $item[0] . '<br />' .
-                                    (in_array($item[1], $value) ? '&#10004;' : '&#10008;');
+                                $filedContent .= $item[0] . ' ' .
+                                    (in_array($item[1], $value) ? '&#10004;' : '&#10008;') .
+                                    '<br />';
                             }
                             break;
                         case "singlebox":
                         case "selectSingleBox":
+                        case "selectMultipleSideBySide":
                             $value = explode(',', $fieldValue);
+                            $selectedContent = array();
                             foreach ($items as $item) {
-                                $filedContent .= $item[0] . '<br />' .
-                                    (in_array($item[1], $value) ? '&#10004;' : '&#10008;');
+                                if (in_array($item[1], $value)) {
+                                    $selectedContent[] = $item[0];
+                                }
                             }
+                            $filedContent .= implode("<br />", $selectedContent);
                             break;
                         default:
                             foreach ($items as $item) {
                                 if ($item[1] == $fieldValue) {
-                                    $filedContent .= $item[0] . ' &#10004;';
+                                    $filedContent .= $item[0];
                                 }
                             }
                     }

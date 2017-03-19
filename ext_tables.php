@@ -150,13 +150,49 @@ if (count($providers) > 0) {
                     if ((bool)$providerConfig['addElementsToWizard'] === true &&
                         (bool)$configuration['addElementsToWizard'] === true
                     ) {
+                        if (version_compare(TYPO3_branch, '7.6', '<')) {
+                            // Fallback for TYPO3 6.2
+
+                            // Fallback icon
+                            $iconPath = '../../typo3conf/ext/' . $_EXTKEY . '/ext_icon.png';
+
+                            // Set custom icon
+                            if ($elementConfig['icon']) {
+                                $iconPath =  (string)$elementConfig['icon'];
+                            }
+
+                            // Add the icon to the content element config
+                            $icon = 'icon = ' . $iconPath;
+
+                        } else {
+                            // Fallback icon
+                            $iconIdentifier = 'content-textpic';
+
+                            // Registration the content element icon, if set
+                            if ($elementConfig['icon']) {
+                                /** @var \TYPO3\CMS\Core\Imaging\IconRegistry $iconRegistry */
+                                $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                                    'TYPO3\\CMS\\Core\\Imaging\\IconRegistry'
+                                );
+                                $iconIdentifier = 'dwc-' . lcfirst($key);
+                                $iconRegistry->registerIcon(
+                                    $iconIdentifier,
+                                    \TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider::class,
+                                    array(
+                                        'source' => (string)$elementConfig['icon']
+                                    )
+                                );
+                            }
+
+                            // Add the icon to the content element config
+                            $icon = 'iconIdentifier = ' . $iconIdentifier;
+                        }
+
+                        // Set conten element wizardItems
                         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
         					mod.wizards.newContentElement.wizardItems.' .
                             $providerNameCamelCase . '.elements.' . lcfirst($key) . ' {
-        						icon = ' . ($elementConfig['icon'] ?
-                                    (string)$elementConfig['icon'] :
-                                    '../../typo3conf/ext/' . $_EXTKEY . '/ext_icon.png'
-                                ) . '
+                                ' . $icon . '
         						title = ' . (string)$elementConfig['title'] . '
         						description = ' . (string)$elementConfig['description'] . '
         					    tt_content_defValues.CType = ' . lcfirst($key) . '

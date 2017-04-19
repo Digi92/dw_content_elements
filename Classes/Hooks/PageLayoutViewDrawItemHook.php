@@ -222,7 +222,6 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                             )
                         );
                         $fieldType = $fieldConfig['renderMode'];
-
                     } else {
 
                         /** @var \TYPO3\CMS\Backend\Form\NodeFactory $nodeFactory */
@@ -257,8 +256,11 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                         $processedNodeStructureAsArray = array_values($processedNodeStructureAsArray);
 
                         //Get all items
-                        if (!empty($processedNodeStructureAsArray[1]['processedTca']['columns'][$fieldName]['config']['items'])) {
-                            $items = $processedNodeStructureAsArray[1]['processedTca']['columns'][$fieldName]['config']['items'];
+                        if (!empty($processedNodeStructureAsArray[1]['processedTca']
+                        ['columns'][$fieldName]['config']['items'])
+                        ) {
+                            $items = $processedNodeStructureAsArray[1]['processedTca']
+                            ['columns'][$fieldName]['config']['items'];
                         }
                         $fieldType = $fieldConfig['renderType'];
                     }

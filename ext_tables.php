@@ -163,7 +163,6 @@ if (count($providers) > 0) {
 
                             // Add the icon to the content element config
                             $icon = 'icon = ' . $iconPath;
-
                         } else {
                             // Fallback icon
                             $iconIdentifier = 'content-textpic';

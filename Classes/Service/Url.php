@@ -47,24 +47,37 @@ class Url
      */
     public function getUrl($currentPageUid, $linkParameter)
     {
-        $result = '';
+        $result = $linkParameter;
 
-        // If the TSFE can't load, we can NOT create a typolink
-        $currentPage = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord(
-            'pages',
-            $currentPageUid
-        );
-        if ($currentPageUid > 0 &&
-            $currentPage['doktype'] <= 200 &&
-            $currentPage['hidden'] != 1 &&
-            empty($linkParameter) === false &&
-            $this->initTSFE($currentPageUid)
+        // if we load tsfe in backend context in 7.6, we will get an empty require.js file and therefore
+        // some js functions in page module like drag'n'drop (gridelements) won't work anymore.
+        // for now, we just disable the tsfe initalization
+        if(
+            VersionNumberUtility::convertVersionNumberToInteger(
+                VersionNumberUtility::getNumericTypo3Version()
+            )
+            <
+            VersionNumberUtility::convertVersionNumberToInteger(
+                '7.6.0'
+            )
         ) {
-            /** @var $cObj \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
-            $cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                'TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer'
+            // If the TSFE can't load, we can NOT create a typolink
+            $currentPage = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord(
+                'pages',
+                $currentPageUid
             );
-            $result = $cObj->typolink_URL(array('parameter' => $linkParameter));
+            if ($currentPageUid > 0 &&
+                $currentPage['doktype'] <= 200 &&
+                $currentPage['hidden'] != 1 &&
+                empty($linkParameter) === false &&
+                $this->initTSFE($currentPageUid)
+            ) {
+                /** @var $cObj \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
+                $cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                    'TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer'
+                );
+                $result = $cObj->typolink_URL(array('parameter' => $linkParameter));
+            }
         }
 
         return $result;

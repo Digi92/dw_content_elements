@@ -2,6 +2,7 @@
 
 namespace Denkwerk\DwContentElements\Service;
 
+use \TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use \TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
 
 /***************************************************************

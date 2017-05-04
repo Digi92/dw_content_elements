@@ -119,7 +119,7 @@ if (count($providers) > 0) {
 
                     //Add tab extends and if the palette "dwcAdditionalFields" exists add the fields of it
                     $TCA['tt_content']['types'][lcfirst($key)]['showitem'] .= ',
-                        --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended,
+                        --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xml:pages.tabs.extended,
                         --palette--;LLL:EXT:' . $_EXTKEY .
                         '/Resources/Private/Language/locallang_db.xlf:palettes.dwcAdditionalFields;dwcAdditionalFields';
 
@@ -129,6 +129,9 @@ if (count($providers) > 0) {
                         $TCA['tt_content']['types'][lcfirst($key)]['showitem'] .=
                             ',tx_gridelements_container,tx_gridelements_columns';
                     }
+                    
+                    $TCA['tt_content']['types'][lcfirst($key)]['showitem'] .=
+                        ',colPos';
 
                     //Set rendering typoScript
                     $typoScript .= "\n

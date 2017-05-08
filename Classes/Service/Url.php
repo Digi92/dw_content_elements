@@ -4,6 +4,7 @@ namespace Denkwerk\DwContentElements\Service;
 
 use \TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use \TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
+use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 
 /***************************************************************
  *  Copyright notice
@@ -53,10 +54,9 @@ class Url
         // if we load tsfe in backend context in 7.6, we will get an empty require.js file and therefore
         // some js functions in page module like drag'n'drop (gridelements) won't work anymore.
         // for now, we just disable the tsfe initalization
-        if(
-            VersionNumberUtility::convertVersionNumberToInteger(
-                VersionNumberUtility::getNumericTypo3Version()
-            )
+        if (VersionNumberUtility::convertVersionNumberToInteger(
+            VersionNumberUtility::getNumericTypo3Version()
+        )
             <
             VersionNumberUtility::convertVersionNumberToInteger(
                 '7.6.0'

@@ -25,6 +25,7 @@ namespace Denkwerk\DwContentElements\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 
 /**
  * Class BaseController
@@ -68,10 +69,10 @@ class BaseController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
     /**
      * Initializeview
      *
-     * @param \TYPO3\CMS\Extbase\Mvc\View\ViewInterface $view The initializeview
+     * @param ViewInterface $view The initializeview
      * @return void
      */
-    protected function initializeView($view)
+    protected function initializeView(ViewInterface $view)
     {
         $this->classReflection = new \ReflectionClass($this);
 

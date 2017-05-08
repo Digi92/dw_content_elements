@@ -13,7 +13,7 @@ $EM_CONF[$_EXTKEY] = array(
     'description' => 'Custom content elements',
     'category' => 'misc',
     'shy' => 0,
-    'version' => '1.5.5',
+    'version' => '1.6.0',
     'dependencies' => 'cms,extbase',
     'conflicts' => '',
     'loadOrder' => '',
@@ -32,7 +32,7 @@ $EM_CONF[$_EXTKEY] = array(
     'priority' => 'top',
     'constraints' => array(
         'depends' => array(
-            'typo3' => '6.2.0-7.99.99',
+            'typo3' => '7.6.13-7.99.99',
             'cms' => '',
             'extbase' => '',
         ),

@@ -107,7 +107,7 @@ if (count($providers) > 0) {
                     if ((bool)$elementConfig['overWriteShowitem'] === true) {
                         $showItem = trim((string)$elementConfig['fields'], ',');
                     } else {
-                        $showItem = 'CType;;4;button;1-1-1, --palette--;Headline,'
+                        $showItem = 'CType;;4;button;1-1-1, colPos, --palette--;Headline,'
                             . trim((string)$elementConfig['fields'], ',') . ',
     						--div--;LLL:EXT:cms/locallang_tca.xlf:pages.tabs.access,
     					    --palette--;LLL:EXT:cms/locallang_tca.xlf:pages.palettes.visibility;hiddenonly,
@@ -119,7 +119,7 @@ if (count($providers) > 0) {
 
                     //Add tab extends and if the palette "dwcAdditionalFields" exists add the fields of it
                     $TCA['tt_content']['types'][lcfirst($key)]['showitem'] .= ',
-                        --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.extended,
+                        --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xml:pages.tabs.extended,
                         --palette--;LLL:EXT:' . $_EXTKEY .
                         '/Resources/Private/Language/locallang_db.xlf:palettes.dwcAdditionalFields;dwcAdditionalFields';
 

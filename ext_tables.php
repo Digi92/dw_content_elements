@@ -129,6 +129,9 @@ if (count($providers) > 0) {
                         $TCA['tt_content']['types'][lcfirst($key)]['showitem'] .=
                             ',tx_gridelements_container,tx_gridelements_columns';
                     }
+                    
+                    $TCA['tt_content']['types'][lcfirst($key)]['showitem'] .=
+                        ',colPos';
 
                     //Set rendering typoScript
                     $typoScript .= "\n

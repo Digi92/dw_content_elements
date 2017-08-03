@@ -64,7 +64,8 @@ class Tca
 
             // If the content element has the config "previewListFields" set the value of this fields
             if (isset($elementConfig['previewListFields']) &&
-                empty($elementConfig['previewListFields']) == false
+                empty($elementConfig['previewListFields']) == false &&
+                is_numeric($params['row']['uid'])
             ) {
                 //Get all preview field values
                 $row = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(

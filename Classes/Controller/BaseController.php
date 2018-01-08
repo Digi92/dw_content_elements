@@ -77,17 +77,8 @@ class BaseController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         $this->classReflection = new \ReflectionClass($this);
 
         $this->contentObj = $this->configurationManager->getContentObject();
-        $this->data = $this->contentObj->data;
 
-        $this->data['tx_dwc_links'] = \Denkwerk\DwContentElements\Utility\Div::mergeArrays(
-            array(
-                explode("\n", $this->data['tx_dwc_links_link']),
-                explode("\n", $this->data['tx_dwc_links_text']),
-                explode("\n", $this->data['tx_dwc_links_title'])
-            )
-        );
-
-        $view->assign('data', $this->data);
+        $view->assign('data', $this->contentObj->data);
     }
 
     /**

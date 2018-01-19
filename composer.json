@@ -1,11 +1,11 @@
 {
     "name": "dw-typo3/dw-content-elements",
     "type": "typo3-cms-extension",
-    "version": "1.6.2",
+    "version": "1.7.0",
     "description": "Custom content elements builder",
     "homepage": "https://github.com/Digi92/dw_content_elements",
     "require": {
-        "typo3/cms-core": ">=6.2.0,<7.9"
+        "typo3/cms-core": ">=7.6.13,<8.9"
     },
     "autoload": {
         "psr-4": {

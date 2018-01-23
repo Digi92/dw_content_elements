@@ -109,9 +109,9 @@ if (count($providers) > 0) {
                     } else {
                         $showItem = 'CType;;4;button;1-1-1, colPos, --palette--;Headline,'
                             . trim((string)$elementConfig['fields'], ',') . ',
-    						--div--;LLL:EXT:cms/locallang_tca.xlf:pages.tabs.access,
-    					    --palette--;LLL:EXT:cms/locallang_tca.xlf:pages.palettes.visibility;hiddenonly,
-    					    --palette--;LLL:EXT:cms/locallang_tca.xlf:pages.palettes.access;access';
+    						--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:pages.tabs.access,
+    					    --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:pages.palettes.visibility;hiddenonly,
+    					    --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:pages.palettes.access;access';
                     }
                     $TCA['tt_content']['types'][lcfirst($key)]['showitem'] = $showItem;
                     $TCA['tt_content']['types'][lcfirst($key)]['tx_dw_content_elements_title'] =

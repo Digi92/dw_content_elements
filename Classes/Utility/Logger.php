@@ -1,6 +1,10 @@
 <?php
 namespace Denkwerk\DwContentElements\Utility;
 
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -55,13 +59,19 @@ class Logger
             'log_data' => serialize(array()),
             'tablename' => $tableName,
             'recuid' => $recuid,
-            'IP' => (string)\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+            'IP' => (string)GeneralUtility::getIndpEnv('REMOTE_ADDR'),
             'tstamp' => time(),
             'event_pid' => $eventPid,
             'NEWid' => '',
             'workspace' => 0
         );
-        $GLOBALS['TYPO3_DB']->exec_INSERTquery('sys_log', $fieldsValues);
-        $GLOBALS['TYPO3_DB']->sql_insert_id();
+        /** @var Connection $connection */
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('sys_log');
+        $connection->insert(
+            'sys_log',
+            $fieldsValues
+        );
+        $connection->lastInsertId('sys_log');
     }
 }

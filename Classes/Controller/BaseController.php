@@ -95,12 +95,12 @@ class BaseController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName(
                 'typo3conf/ext/' . $this->request->getControllerExtensionKey() .
                 '/Resources/Private/Templates/' . substr($this->classReflection->getShortName(), 0, -10) . '/' .
-                ucfirst($this->data['CType']) . '.' . $this->request->getFormat()
+                ucfirst($this->contentObj->data['CType']) . '.' . $this->request->getFormat()
             )
         );
 
-        if ($this->classReflection->hasMethod($this->data['CType'] . 'Action')) {
-            $this->forward($this->data['CType']);
+        if ($this->classReflection->hasMethod($this->contentObj->data['CType'] . 'Action')) {
+            $this->forward($this->contentObj->data['CType']);
         }
     }
 }

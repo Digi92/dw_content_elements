@@ -3,3 +3,6 @@ addElementsToWizard = 1
 
 # cat=general/paths; type=input; label=Add the content elements in a new tab on the new content element wizard
 elementWizardTabTitle = Content Elements
+
+# cat=general/paths; type=input; label=Add the plugins category (optgroup) title
+pluginCategory = LLL:EXT:dw_content_elements/Resources/Private/Language/locallang_db.xlf:mlang_tabs_tab

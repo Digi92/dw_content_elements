@@ -9,19 +9,16 @@ There is an configuration array with the extension key in `$GLOBALS['TYPO3_CONF_
 where you can define your own providers of content elements. Here is an example:
 
 ```php
-$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['dw_content_elements'] = array(
-    'providers' => array(
-        'my_content_elements' => array(
-            'pluginName' => 'MyContentElements',
-            'pluginCategory' => 'My own content elements',
-            'controllerActions' => array('Elements' => 'render'),
-            'namespace' => 'Denkwerk.MyContentElements',
-            'elementsPath' => '/Configuration/Elements',
-            'elementWizardTabTitle' => 'My content elements',
-            'addElementsToWizard' => TRUE
-        )
-    )
-);
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['dw_content_elements']['providers']['my_content_elements'] = [
+    'pluginName' => 'MyContentElements',
+    'pluginCategory' => 'My own content elements',
+    'controllerActions' => ['Elements' => 'render'],
+    'namespace' => 'Denkwerk.MyContentElements',
+    'elementsPath' => '/Configuration/Elements',
+    'elementWizardTabTitle' => 'My content elements',
+    'addElementsToWizard' => TRUE
+];
+
 ```
 
 ### Options

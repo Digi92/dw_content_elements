@@ -27,6 +27,9 @@ namespace Denkwerk\DwContentElements\Hooks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Denkwerk\DwContentElements\Service\IniService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  *
  * @package dw_content_elements
@@ -54,79 +57,81 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
         array &$row
     ) {
 
-        //Get all config files
-        $path = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\DwContentElements\Utility\Pathes');
-        $providers = array();
-
-        // get configurations from localconf
-        $configurations = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['dw_content_elements'];
-
-        if (isset($configurations['provider']) && count($configurations['provider'])) {
-            foreach ($configurations['provider'] as $extKey => $config) {
-                if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded($extKey) && is_array($config)) {
-                    $providers[$extKey] = $config;
-                }
-            }
-        } elseif (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elements_source')) {
-            $providers['dw_content_elements_source'] = array(
-                'pluginName' => 'ContentRenderer',
-                'controllerActions' => array('Elements' => 'render'),
-                'namespace' => 'Denkwerk.DwContentElementsSource'
-            );
-        }
-
-        foreach ($providers as $provider => $providerConf) {
-            // build elements path
-            $elementsPath = (isset($providerConfig['elementsPath']) && !empty($providerConf['elementsPath'])) ?
-                $providerConfig['elementsPath'] :
-                '/Configuration/Elements';
-
-            $contentElements = $path->getAllDirFiles(
-                \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($provider) . $elementsPath
-            );
-
-            if (isset($contentElements[ucfirst($row['CType'])])) {
-                $drawItem = false;
-                $itemContent = '<div style="font-size: 11px;">';
-
-                //Load element config
-                $elementConfig = \Denkwerk\DwContentElements\Service\Ini::getInstance()
-                    ->setConfigFile($contentElements[ucfirst($row['CType'])])
-                    ->loadConfig();
-
-                //Get all preview showitem fields
-                if (isset($elementConfig['previewFields'])) {
-                    $fields = self::getMainFields($elementConfig['previewFields'], 'tt_content', $row);
-                } else {
-                    //Get all showitem fields
-                    $fields = self::getMainFields($elementConfig['fields'], 'tt_content', $row);
-                }
-
-                //Set content element title
-                $headerContent = '<b>' . $elementConfig['title'] . '</b><br />';
-
-                //Set preview for the showitem fields
-                $count = 0;
-                foreach ($fields as $field) {
-                    $itemContent .= self::renderFieldPreview(
-                        $field['name'],
-                        $row,
-                        (isset($field['label']) &&
-                        empty($field['label']) === false ?
-                            $field['label'] :
-                            $parentObject->itemLabels[$field['name']]
-                        )
-                    );
-
-                    $count++;
-                    if ($count >= 10) {
-                        $itemContent .= '<p><b>...</b></p>';
-                        break;
-                    }
-                }
-                $itemContent .= '</div>';
-            }
-        }
+//        //Get all config files
+//        $path = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\DwContentElements\Utility\Pathes');
+//        $providers = array();
+//
+//        // get configurations from localconf
+//        $configurations = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['dw_content_elements'];
+//
+//        if (isset($configurations['provider']) && count($configurations['provider'])) {
+//            foreach ($configurations['provider'] as $extKey => $config) {
+//                if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded($extKey) && is_array($config)) {
+//                    $providers[$extKey] = $config;
+//                }
+//            }
+//        } elseif (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elements_source')) {
+//            $providers['dw_content_elements_source'] = array(
+//                'pluginName' => 'ContentRenderer',
+//                'controllerActions' => array('Elements' => 'render'),
+//                'namespace' => 'Denkwerk.DwContentElementsSource'
+//            );
+//        }
+//
+//        foreach ($providers as $provider => $providerConf) {
+//            // build elements path
+//            $elementsPath = (isset($providerConfig['elementsPath']) && !empty($providerConf['elementsPath'])) ?
+//                $providerConfig['elementsPath'] :
+//                '/Configuration/Elements';
+//
+//            $contentElements = $path->getAllDirFiles(
+//                \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($provider) . $elementsPath
+//            );
+//
+//            if (isset($contentElements[ucfirst($row['CType'])])) {
+//                $drawItem = false;
+//                $itemContent = '<div style="font-size: 11px;">';
+//
+//                //Load element config
+//                /** @var IniService $iniService */
+//                $iniService = GeneralUtility::makeInstance(IniService::class);
+////                $elementConfig = $iniService->loadAllContentElementsConfig();
+////                    ->setConfigFile($contentElements[ucfirst($row['CType'])])
+////                    ->loadConfig();
+//
+//                //Get all preview showitem fields
+//                if (isset($elementConfig['previewFields'])) {
+//                    $fields = self::getMainFields($elementConfig['previewFields'], 'tt_content', $row);
+//                } else {
+//                    //Get all showitem fields
+//                    $fields = self::getMainFields($elementConfig['fields'], 'tt_content', $row);
+//                }
+//
+//                //Set content element title
+//                $headerContent = '<b>' . $elementConfig['title'] . '</b><br />';
+//
+//                //Set preview for the showitem fields
+//                $count = 0;
+//                foreach ($fields as $field) {
+//                    $itemContent .= self::renderFieldPreview(
+//                        $field['name'],
+//                        $row,
+//                        (isset($field['label']) &&
+//                        empty($field['label']) === false ?
+//                            $field['label'] :
+//                            $parentObject->itemLabels[$field['name']]
+//                        )
+//                    );
+//
+//                    $count++;
+//                    if ($count >= 10) {
+//                        $itemContent .= '<p><b>...</b></p>';
+//                        break;
+//                    }
+//                }
+//                $itemContent .= '</div>';
+//            }
+//        }
     }
 
     /**

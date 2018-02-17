@@ -1,11 +1,12 @@
 <?php
+
 namespace Denkwerk\DwContentElements\UserFunc;
 
 /***************************************************************
  *  Copyright notice
  *
  *  (c) 2016 Sylt Steen <sylt-luwe.steen@denkwerk.com>
- *  (c) 2016 Sascha Zander <sascha.zander@denkwerk.com>
+ *  (c) 2018 Sascha Zander <sascha.zander@denkwerk.com>
  *
  *  All rights reserved
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -22,18 +23,41 @@ namespace Denkwerk\DwContentElements\UserFunc;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Denkwerk\DwContentElements\Service\IniProviderService;
+use Denkwerk\DwContentElements\Service\IniService;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
- * Class with functions for TCA
+ * Class Tca
+ * @package Denkwerk\DwContentElements\UserFunc
  *
- * @package dw_content_elements
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
+ * Note: Override preview in the list view
  */
 class Tca
 {
+    /**
+     * @var IniService $iniService
+     */
+    protected $iniService = null;
 
     /**
-     * Preprocesses the preview rendering of a content element in the list view.
+     * @var IniProviderService $iniProviderService
+     */
+    protected $iniProviderService = null;
+
+    /**
+     * InjectorService constructor.
+     */
+    function __construct()
+    {
+        $this->iniService = GeneralUtility::makeInstance(IniService::class);
+        $this->iniProviderService = GeneralUtility::makeInstance(IniProviderService::class);
+    }
+
+    /**
+     * Preprocessed the preview rendering of a content element in the list view.
      *
      * @param $params
      * @return mixed
@@ -43,36 +67,49 @@ class Tca
         // Set the title by using the header field like the TYPO3 default settings
         $params['title'] = $params['row']['header'];
 
-        //Get all config files
-        $path = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\DwContentElements\Utility\Pathes');
-        $contentElements = $path->getAllDirFiles(
-            \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('dw_content_elements_source') .
-            '/Configuration/Elements'
-        );
+        // Load all provider configurations as array
+        $providers = $this->iniProviderService->loadProvider();
+
+        // Load all content elements config files
+        $elementsConfigFilesArray = [];
+        if (count($providers) > 0) {
+            foreach ($providers as $provider => $providerConfig) {
+                $providerElementsConfigFiles = $this->iniService->loadAllContentElementsConfigFiles(
+                    $provider,
+                    $providerConfig
+                );
+                $elementsConfigFilesArray = array_merge($elementsConfigFilesArray, $providerElementsConfigFiles);
+            }
+        }
 
         // If it is an dwc content element
         if (isset($params['row']['CType']) &&
             !is_array($params['row']['CType']) &&
-            isset($contentElements[ucfirst($params['row']['CType'])])
+            is_array($elementsConfigFilesArray) &&
+            isset($elementsConfigFilesArray[ucfirst($params['row']['CType'])])
         ) {
             $title = '';
 
-            //Load element config
-            $elementConfig = \Denkwerk\DwContentElements\Service\Ini::getInstance()
-                ->setConfigFile($contentElements[ucfirst($params['row']['CType'])])
-                ->loadConfig();
+            //Load content element config
+            $elementConfig = $this->iniService->loadConfig(
+                $elementsConfigFilesArray[ucfirst($params['row']['CType'])]
+            );
 
             // If the content element has the config "previewListFields" set the value of this fields
             if (isset($elementConfig['previewListFields']) &&
                 empty($elementConfig['previewListFields']) == false &&
                 is_numeric($params['row']['uid'])
             ) {
-                //Get all preview field values
-                $row = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
-                    $elementConfig['previewListFields'],
-                    'tt_content',
-                    'uid=' . $params['row']['uid']
-                );
+                /** @var QueryBuilder $queryBuilder */
+                $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+                    ->getQueryBuilderForTable('tt_content');
+                $result = $queryBuilder
+                    ->select($elementConfig['previewListFields'])
+                    ->from('tt_content')
+                    ->where('uid=' . $params['row']['uid'])
+                    ->setMaxResults(1)
+                    ->execute();
+                $row = $result->fetch();
 
                 if (empty($row) === false) {
                     // Removed all empty entries and make a comma separated string

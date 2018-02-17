@@ -1,4 +1,5 @@
 <?php
+
 namespace Denkwerk\DwContentElements\Utility;
 
 /***************************************************************
@@ -25,6 +26,9 @@ namespace Denkwerk\DwContentElements\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser as CoreTypoScriptParser;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * TypoScriptParser
  *
@@ -44,17 +48,17 @@ class TypoScriptParser
     {
         $result = false;
 
-        if (empty($tsString) === false && is_string($tsString)) {
-
-            /**
-             * @var \TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser $tsParserObject
-             */
-            $tsParserObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                'TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser'
+        if (empty($tsString) === false &&
+            is_string($tsString)
+        ) {
+            /** @var CoreTypoScriptParser $tsParserObject */
+            $tsParserObject = GeneralUtility::makeInstance(
+                CoreTypoScriptParser::class
             );
             $tsParserObject->parse($tsString);
             $result = $tsParserObject->setup;
         }
+
         return $result;
     }
 
@@ -68,13 +72,16 @@ class TypoScriptParser
     {
         $result = false;
 
-        if (is_file($filePath) && pathinfo($filePath, PATHINFO_EXTENSION) === 'ts') {
+        if (is_file($filePath) &&
+            pathinfo($filePath, PATHINFO_EXTENSION) === 'ts'
+        ) {
             $fileContent = file_get_contents($filePath);
 
             if (empty($fileContent) === false) {
                 $result = self::parseTypoScript($fileContent);
             }
         }
+
         return $result;
     }
 }

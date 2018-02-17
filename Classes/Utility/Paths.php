@@ -2,8 +2,6 @@
 
 namespace Denkwerk\DwContentElements\Utility;
 
-use \TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
-
 /***************************************************************
  *  Copyright notice
  *
@@ -29,18 +27,20 @@ use \TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * **************************************************************/
 
+use \TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
 
 /**
  * ToDo: Wie mit Pfaden unter Windows umgehen, c:/, d:/?
  *
- * Class Pathes
+ * Class Paths
  * @package dw_content_elements
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class Pathes
+class Paths
 {
 
     /**
+     * Add a leading slash to the given path
      *
      * @param $path
      * @return string
@@ -54,10 +54,12 @@ class Pathes
         if (preg_match('/^[a-z]\:/i', $path)) {
             $slash = '';
         }
-        return $slash . $path;
+
+        return $slash.$path;
     }
 
     /**
+     * Convert folder array to string
      *
      * @param array $list
      * @return string
@@ -78,6 +80,7 @@ class Pathes
     }
 
     /**
+     * Function replace the double backslashes "\\" with a slash "/"
      *
      * @param $path
      * @return mixed
@@ -88,33 +91,34 @@ class Pathes
     }
 
     /**
+     * Concat paths to string
      *
      * @param array|string array or string
      * @return string
      */
     public static function concat()
     {
-        $pathes = array();
+        $paths = array();
         foreach (func_get_args() as $arg) {
             if (is_array($arg) === true) {
-                $pathes = array_merge($pathes, $arg);
+                $paths = array_merge($paths, $arg);
             }
             if (is_string($arg) === true) {
-                array_push($pathes, $arg);
+                array_push($paths, $arg);
             }
         }
 
-        /** @var \Denkwerk\DwContentElements\Utility\Pathes $pathesUtility */
-        $pathesUtility = GeneralUtility::makeInstance(
-            'Denkwerk\\DwContentElements\\Utility\\Pathes'
+        /** @var Paths $pathsUtility */
+        $pathsUtility = GeneralUtility::makeInstance(
+            Paths::class
         );
 
-        return $pathesUtility->leadingSlash(
+        return $pathsUtility->leadingSlash(
             implode(
                 '/',
                 GeneralUtility::trimExplode(
                     '/',
-                    self::convertFolderArrayToString($pathes),
+                    self::convertFolderArrayToString($paths),
                     true
                 )
             )
@@ -130,21 +134,21 @@ class Pathes
      */
     public static function getAllDirFiles($dir, &$results = array())
     {
-
         $files = scandir($dir);
 
         foreach ($files as $key => $value) {
-            $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
+            $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
 
             if (is_file($path)) {
                 //Set the filename without extension as key
-                $results[str_replace('.' . pathinfo($path, PATHINFO_EXTENSION), '', $value)] = $path;
+                $results[str_replace('.'.pathinfo($path, PATHINFO_EXTENSION), '', $value)] = $path;
             } elseif (is_dir($path) &&
                 !in_array($value, array(".", ".."))
             ) {
                 self::getAllDirFiles($path, $results);
             }
         }
+
         return $results;
     }
 }

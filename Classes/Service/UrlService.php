@@ -37,10 +37,10 @@ use TYPO3\CMS\Frontend\Utility\EidUtility;
  ************************************************************** */
 
 /**
- * Class Url
+ * Class UrlService
  * @package Denkwerk\DwContentElements\Service
  */
-class Url
+class UrlService
 {
     /**
      * Create link for frontend pages
@@ -53,34 +53,22 @@ class Url
     {
         $result = $linkParameter;
 
-        // if we load tsfe in backend context in 7.6, we will get an empty require.js file and therefore
-        // some js functions in page module like drag'n'drop (gridelements) won't work anymore.
-        // for now, we just disable the tsfe initalization
-        if (VersionNumberUtility::convertVersionNumberToInteger(
-            VersionNumberUtility::getNumericTypo3Version()
-        )
-            <
-            VersionNumberUtility::convertVersionNumberToInteger(
-                '7.6.0'
-            )
+        // If the TSFE can't load, we can NOT create a typolink
+        $currentPage = BackendUtility::getRecord(
+            'pages',
+            $currentPageUid
+        );
+        if ($currentPageUid > 0 &&
+            $currentPage['doktype'] <= 200 &&
+            $currentPage['hidden'] != 1 &&
+            empty($linkParameter) === false &&
+            $this->initTSFE($currentPageUid)
         ) {
-            // If the TSFE can't load, we can NOT create a typolink
-            $currentPage = BackendUtility::getRecord(
-                'pages',
-                $currentPageUid
+            /** @var ContentObjectRenderer $cObj */
+            $cObj = GeneralUtility::makeInstance(
+                ContentObjectRenderer::class
             );
-            if ($currentPageUid > 0 &&
-                $currentPage['doktype'] <= 200 &&
-                $currentPage['hidden'] != 1 &&
-                empty($linkParameter) === false &&
-                $this->initTSFE($currentPageUid)
-            ) {
-                /** @var ContentObjectRenderer $cObj */
-                $cObj = GeneralUtility::makeInstance(
-                    ContentObjectRenderer::class
-                );
-                $result = $cObj->typolink_URL(array('parameter' => $linkParameter));
-            }
+            $result = $cObj->typolink_URL(array('parameter' => $linkParameter));
         }
 
         return $result;
@@ -96,13 +84,13 @@ class Url
     private function initTSFE($id = 1, $typeNum = 0)
     {
         $hasTsTemplate = false;
-        $rootline = BackendUtility::BEgetRootLine($id);
+        $rootLine = BackendUtility::BEgetRootLine($id);
 
-        // Check the rootline pages if there is an sysTemplate with configuration. We need this for initialize the TSFE.
-        if (empty($rootline) === false &&
-            is_array($rootline)
+        // Check the root line pages if there is an sysTemplate with configuration. We need this for initialize the TSFE.
+        if (empty($rootLine) === false &&
+            is_array($rootLine)
         ) {
-            foreach ($rootline as $page) {
+            foreach ($rootLine as $page) {
                 $row = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
                     'uid',
                     'sys_template',
@@ -142,7 +130,7 @@ class Url
             $GLOBALS['TSFE']->getConfigArray();
 
             if (ExtensionManagementUtility::isLoaded('realurl')) {
-                $host = BackendUtility::firstDomainRecord($rootline);
+                $host = BackendUtility::firstDomainRecord($rootLine);
                 $_SERVER['HTTP_HOST'] = $host;
             }
         }

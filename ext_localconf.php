@@ -6,10 +6,6 @@ if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
 
-/** ToDo: Needed in TYPO3 8.7? */
-$GLOBALS['TCA']['tt_content']['columns']['colPos']['config']['itemsProcFunc'] =
-    'Denkwerk\DwContentElements\Backend\ItemsProcFuncs\ColPosList->itemsProcFunc';
-
 /**
  * Only a hotfix for the bug: Missing rendering configuration for the content elements
  * Die Rendering Definition sollte unter $GLOBALS['TSFE']->tmpl->setup['tt_content.'] stehen.

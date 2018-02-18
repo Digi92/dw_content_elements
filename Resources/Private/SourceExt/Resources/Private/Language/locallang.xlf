@@ -9,11 +9,11 @@
                 <source>Headline</source>
             </trans-unit>
 
-            <!-- tx_dwc_list_item -->
-            <trans-unit id="tx_dwc_list_item.headline">
+            <!-- tx_dwcontentelementssource_domain_model_listitem -->
+            <trans-unit id="tx_dwcontentelementssource_domain_model_listitem.headline">
                 <source>Headline</source>
             </trans-unit>
-            <trans-unit id="tx_dwc_list_item.text">
+            <trans-unit id="tx_dwcontentelementssource_domain_model_listitem.text">
                 <source>Text</source>
             </trans-unit>
 

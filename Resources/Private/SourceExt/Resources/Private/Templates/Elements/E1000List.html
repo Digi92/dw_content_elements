@@ -4,7 +4,7 @@
 <f:comment>
 	BacklogID: 1000
 	BacklogName: List
-	Fields: tx_dwc_headline, tx_dwc_list_item
+	Fields: tx_dwc_headline, subheader, tx_dwcontentelementssource_domain_model_listitem
 </f:comment>
 
 <f:layout name="Default"/>
@@ -16,14 +16,18 @@
 
                 <f:render partial="Elements/E1000List/Sections" section="Headline" arguments="{headline: data.tx_dwc_headline}" />
 
+				<f:if condition="{data.subheader}">
+					<h2>{data.subheader}</h2>
+				</f:if>
+
 				<f:if condition="{irreRelations}">
 
 					<table style="width:300px">
 
 						<tr>
 							<th>&nbsp;</th>
-							<th><f:translate key="tx_dwc_list_item.headline" /></th>
-							<th><f:translate key="tx_dwc_list_item.text" /></th>
+							<th><f:translate key="tx_dwcontentelementssource_domain_model_listitem.headline" /></th>
+							<th><f:translate key="tx_dwcontentelementssource_domain_model_listitem.text" /></th>
 						</tr>
 
 						<f:for each="{irreRelations}" as="item" iteration="iteration">

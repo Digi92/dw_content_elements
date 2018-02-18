@@ -98,13 +98,17 @@ class Tca
             // If the content element has the config "previewListFields" set the value of this fields
             if (isset($elementConfig['previewListFields']) &&
                 empty($elementConfig['previewListFields']) == false &&
+                is_array($previewListFields = array_map(
+                    'trim',
+                    explode(',', $elementConfig['previewListFields'])
+                )) &&
                 is_numeric($params['row']['uid'])
             ) {
                 /** @var QueryBuilder $queryBuilder */
                 $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
                     ->getQueryBuilderForTable('tt_content');
                 $result = $queryBuilder
-                    ->select($elementConfig['previewListFields'])
+                    ->select(...$previewListFields)
                     ->from('tt_content')
                     ->where('uid=' . $params['row']['uid'])
                     ->setMaxResults(1)

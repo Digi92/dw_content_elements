@@ -64,7 +64,8 @@ class IniProviderService
                 array(
                     'pluginName' => 'ContentRenderer',
                     'controllerActions' => array('Elements' => 'render'),
-                    'namespace' => 'Denkwerk.DwContentElementsSource'
+                    'namespace' => 'Denkwerk.DwContentElementsSource',
+                    'elementsPath' => '/Configuration/Elements'
                 )
             );
         }
@@ -83,7 +84,9 @@ class IniProviderService
         // Extension manager configuration: used as default configuration
         $extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['dw_content_elements']);
 
-        if (is_array($config)) {
+        if (is_array($config) &&
+            is_array($extensionConfiguration)
+        ) {
             // Add/Replace extension configuration with provider configuration
             $config = array_replace($extensionConfiguration, $config);
         }

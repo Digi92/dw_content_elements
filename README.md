@@ -15,8 +15,8 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['dw_content_elements']['providers']['my_c
     'controllerActions' => ['Elements' => 'render'],
     'namespace' => 'Denkwerk.MyContentElements',
     'elementsPath' => '/Configuration/Elements',
-    'elementWizardTabTitle' => 'My content elements',
-    'addElementsToWizard' => TRUE
+    'addElementsToWizard' => TRUE,
+    'elementWizardTabTitle' => 'My content elements'
 ];
 
 ```
@@ -29,5 +29,7 @@ There are some mandatory options:
 - `pluginCategory`: The plugins category (optgroup)
 - `controllerActions`: The controller actions
 - `namespace`: The plugins namespace, vendor and plugin namespace separated by dots
+- `addElementsToWizard`: If true, add a tab with the elements of this provider into the new elements wizard
+- `elementWizardTabTitle`: The label of the new elements wizard tab
 
 It is recommended that you set you own `elementWizardTabTitle` for better overview.

@@ -7,11 +7,11 @@ CREATE TABLE tt_content (
 	tx_dwc_headline varchar(255) DEFAULT '' NOT NULL,
 
 	# IRRE Fields
-	tx_dwc_list_item int(11) DEFAULT '0' NOT NULL,
+	tx_dwcontentelementssource_domain_model_listitem int(11) DEFAULT '0' NOT NULL,
 
 );
 
-CREATE TABLE tx_dwc_list_item (
+CREATE TABLE tx_dwcontentelementssource_domain_model_listitem (
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
 

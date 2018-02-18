@@ -72,7 +72,7 @@ class InjectorService
 
         if (count($providers) > 0) {
             foreach ($providers as $provider => $providerConfig) {
-                //Set own optgroup on the ctype select
+                // Set own optgroup on the ctype select
                 $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][] = array(
                     0 => $providerConfig['pluginCategory'],
                     1 => '--div--',
@@ -89,7 +89,7 @@ class InjectorService
                         if (isset($elementConfig['title']) &&
                             isset($elementConfig['fields'])
                         ) {
-                            //Add element plugin
+                            // Add element plugin
                             ExtensionManagementUtility::addPlugin(
                                 array(
                                     $elementConfig['title'],
@@ -99,21 +99,21 @@ class InjectorService
                                 $provider
                             );
 
-                            //Set element showitem
+                            // Set element showitem
                             if ((bool)$elementConfig['overWriteShowitem'] === true) {
                                 $showItem = trim((string)$elementConfig['fields'], ',');
                             } else {
                                 $showItem = 'CType;;4;button;1-1-1, colPos, --palette--;Headline,'
                                     . trim((string)$elementConfig['fields'], ',') . ',
-                                    --div--;LLL:EXT:cms/locallang_tca.xlf:pages.tabs.access,
-                                    --palette--;LLL:EXT:cms/locallang_tca.xlf:pages.palettes.visibility;hiddenonly,
-                                    --palette--;LLL:EXT:cms/locallang_tca.xlf:pages.palettes.access;access';
+                                    --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
+                                    --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:pages.palettes.visibility;hiddenonly,
+                                    --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:pages.palettes.access;access';
                             }
                             $GLOBALS['TCA']['tt_content']['types'][lcfirst($key)]['showitem'] = $showItem;
                             $GLOBALS['TCA']['tt_content']['types'][lcfirst($key)]['tx_dw_content_elements_title'] =
                                 (string)$elementConfig['title'];
 
-                            //Add tab extends and if the palette "dwcAdditionalFields" exists add the fields of it
+                            // Add tab extends and if the palette "dwcAdditionalFields" exists add the fields of it
                             $GLOBALS['TCA']['tt_content']['types'][lcfirst($key)]['showitem'] .= ',
                                 --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xml:pages.tabs.extended,
                                 --palette--;LLL:EXT:dw_content_elements/Resources/Private/Language/locallang_db.xlf:palettes.dwcAdditionalFields;dwcAdditionalFields';

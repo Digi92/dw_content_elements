@@ -25,18 +25,26 @@ namespace Denkwerk\DwContentElementsSource\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Denkwerk\DwContentElements\Controller\BaseController;
+
 /**
- * ElementsController
- *
- * @package dw_content_elements_source
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
+ * Class ElementsController
+ * @package Denkwerk\DwContentElementsSource\Controller
  */
-class ElementsController extends \Denkwerk\DwContentElements\Controller\BaseController
+class ElementsController extends BaseController
 {
 
+    /**
+     * e1000ListAction
+     */
     public function e1000ListAction()
     {
-        $this->view->assign('irreRelations', $this->irreService->getRelations($this->contentObj, 'tx_dwc_list_item'));
+        $this->view->assign(
+            'irreRelations',
+            $this->irreService->getRelations(
+                $this->contentObj,
+                'tx_dwcontentelementssource_domain_model_listitem'
+            )
+        );
     }
 }

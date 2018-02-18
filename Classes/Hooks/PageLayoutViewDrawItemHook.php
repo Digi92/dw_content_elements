@@ -30,7 +30,7 @@ namespace Denkwerk\DwContentElements\Hooks;
 use Denkwerk\DwContentElements\Service\IniProviderService;
 use Denkwerk\DwContentElements\Service\IniService;
 use Denkwerk\DwContentElements\Service\IrreService;
-use Denkwerk\DwContentElements\Service\Url;
+use Denkwerk\DwContentElements\Service\UrlService;
 use TYPO3\CMS\Backend\Form\FormDataCompiler;
 use TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord;
 use TYPO3\CMS\Backend\Form\NodeFactory;
@@ -178,9 +178,9 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                     if (isset($fieldConfig['wizards']['link']) &&
                         empty($fieldValue) === false
                     ) {
-                        /*** @var Url $urlService */
+                        /*** @var UrlService $urlService */
                         $urlService = GeneralUtility::makeInstance(
-                            Url::class
+                            UrlService::class
                         );
                         $fieldValue = $urlService->getUrl(
                             $row['pid'],

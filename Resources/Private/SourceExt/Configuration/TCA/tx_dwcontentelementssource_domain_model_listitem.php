@@ -1,10 +1,64 @@
 <?php
+
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+
 if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
 
-$TCA['tx_dwc_list_item'] = array(
-    'ctrl' => $TCA['tx_dwc_list_item']['ctrl'],
+//Set/Override tca table columns
+$temporaryColumn = array(
+    'tx_dwcontentelementssource_domain_model_listitem' => array(
+        'exclude' => 0,
+        'label' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xlf:tx_dwcontentelementssource_domain_model_listitem',
+        'config' => array(
+            'type' => 'inline',
+            'foreign_table' => 'tx_dwcontentelementssource_domain_model_listitem',
+            'foreign_field' => 'foreign_uid',
+            'maxitems' => 9999,
+            'appearance' => array(
+                'collapseAll' => 1,
+                'levelLinksPosition' => 'top',
+                'showSynchronizationLink' => 1,
+                'showPossibleLocalizationRecords' => 1,
+                'showAllLocalizationLink' => 1
+            ),
+        ),
+    ),
+);
+
+//Add the tca columns to table
+ExtensionManagementUtility::addTCAcolumns(
+    'tt_content',
+    $temporaryColumn
+);
+
+//Set/Override tca table columns
+return [
+    'ctrl' => array(
+        'title' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xlf:tx_dwcontentelementssource_domain_model_listitem',
+        'label' => 'headline',
+        'tstamp' => 'tstamp',
+        'crdate' => 'crdate',
+        'cruser_id' => 'cruser_id',
+        'dividers2tabs' => true,
+        'hideTable' => true,
+        'sortby' => 'sorting',
+        'versioningWS' => 2,
+        'versioning_followPages' => true,
+        'origUid' => 't3_origuid',
+        'languageField' => 'sys_language_uid',
+        'transOrigPointerField' => 'l10n_parent',
+        'transOrigDiffSourceField' => 'l10n_diffsource',
+        'delete' => 'deleted',
+        'enablecolumns' => array(
+            'disabled' => 'hidden',
+            'starttime' => 'starttime',
+            'endtime' => 'endtime',
+        ),
+        'searchFields' => 'headline, text',
+        'iconfile' => 'EXT:dw_content_elements_source/Resources/Public/Icons/IRRE.gif'
+    ),
     'interface' => array(
         'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, headline, text',
     ),
@@ -39,9 +93,9 @@ $TCA['tx_dwc_list_item'] = array(
                 'items' => array(
                     array('', 0),
                 ),
-                'foreign_table' => 'tx_dwc_list_item',
-                'foreign_table_where' => 'AND tx_dwc_list_item.pid=###CURRENT_PID### 
-                    AND tx_dwc_list_item.sys_language_uid IN (-1,0)',
+                'foreign_table' => 'tx_dwcontentelementssource_domain_model_listitem',
+                'foreign_table_where' => 'AND tx_dwcontentelementssource_domain_model_listitem.pid=###CURRENT_PID### 
+                    AND tx_dwcontentelementssource_domain_model_listitem.sys_language_uid IN (-1,0)',
             ),
         ),
         'l10n_diffsource' => array(
@@ -99,7 +153,7 @@ $TCA['tx_dwc_list_item'] = array(
         'headline' => array(
             'exclude' => 1,
             'label' =>
-            'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwc_list_item.headline',
+                'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwcontentelementssource_domain_model_listitem.headline',
             'config' => array(
                 'type' => 'input',
                 'size' => 30,
@@ -109,7 +163,7 @@ $TCA['tx_dwc_list_item'] = array(
         'text' => array(
             'exclude' => 1,
             'label' =>
-            'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwc_list_item.text',
+                'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwcontentelementssource_domain_model_listitem.text',
             'config' => array(
                 'type' => 'text',
                 'cols' => '40',
@@ -119,4 +173,4 @@ $TCA['tx_dwc_list_item'] = array(
             'defaultExtras' => 'richtext:rte_transform[flag=rte_enabled|mode=ts_css]'
         ),
     ),
-);
+];

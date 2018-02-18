@@ -3,6 +3,11 @@ if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
 
+//Palettes
+$GLOBALS['TCA']['tt_content']['palettes']['headerText'] = array();
+$GLOBALS['TCA']['tt_content']['palettes']['headerText']['showitem'] = 'tx_dwc_headline, --linebreak--, subheader';
+$GLOBALS['TCA']['tt_content']['palettes']['headerText']['canNotCollapse'] = '1';
+
 //Set/Override tca table columns
 $temporaryColumn = array(
     'tx_dwc_headline' => array(

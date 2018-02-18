@@ -67,17 +67,11 @@ class InjectorService
      */
     public function injectTca()
     {
-        $extKey = 'dw_content_elements';
         // Load all provider configurations as array
         $providers = $this->iniProviderService->loadProvider();
 
         if (count($providers) > 0) {
-            $typoScript = '[GLOBAL] ';
-
             foreach ($providers as $provider => $providerConfig) {
-                // Generate camelcase version of the provider
-                $providerNameCamelCase = $this->getCamelCaseProviderName($provider);
-
                 //Set own optgroup on the ctype select
                 $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][] = array(
                     0 => $providerConfig['pluginCategory'],
@@ -95,7 +89,6 @@ class InjectorService
                         if (isset($elementConfig['title']) &&
                             isset($elementConfig['fields'])
                         ) {
-
                             //Add element plugin
                             ExtensionManagementUtility::addPlugin(
                                 array(
@@ -123,8 +116,7 @@ class InjectorService
                             //Add tab extends and if the palette "dwcAdditionalFields" exists add the fields of it
                             $GLOBALS['TCA']['tt_content']['types'][lcfirst($key)]['showitem'] .= ',
                                 --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xml:pages.tabs.extended,
-                                --palette--;LLL:EXT:' . $extKey .
-                                '/Resources/Private/Language/locallang_db.xlf:palettes.dwcAdditionalFields;dwcAdditionalFields';
+                                --palette--;LLL:EXT:dw_content_elements/Resources/Private/Language/locallang_db.xlf:palettes.dwcAdditionalFields;dwcAdditionalFields';
 
                             // Fix for the extension GridElements. GridElements needs in all elements the
                             // fields "tx_gridelements_container,tx_gridelements_columns"
@@ -132,34 +124,10 @@ class InjectorService
                                 $GLOBALS['TCA']['tt_content']['types'][lcfirst($key)]['showitem'] .=
                                     ',tx_gridelements_container,tx_gridelements_columns';
                             }
-
-                            //Set rendering typoScript
-                            $typoScript .= "\n
-                             tt_content." . lcfirst($key) .
-                                " < tt_content.list.20." .
-                                strtolower($providerNameCamelCase) . "_" . strtolower($providerConfig['pluginName']) . " \n";
-
-                            foreach ($providerConfig['controllerActions'] as $controller => $actions) {
-                                $actionArray = explode(',', $actions);
-                                foreach ($actionArray as $index => $action) {
-                                    $typoScript .= "tt_content." .
-                                        lcfirst($key) . ".switchableControllerActions." .
-                                        $controller . "." . ($index + 1) . " = " .
-                                        $action . " \n";
-                                }
-                            }
                         }
                     }
                 }
             }
-
-            //Add rendering typoScript
-            ExtensionManagementUtility::addTypoScript(
-                $extKey,
-                'setup',
-                $typoScript,
-                true
-            );
         }
     }
 
@@ -180,75 +148,150 @@ class InjectorService
                 // Generate camelcase version of the provider
                 $providerNameCamelCase = $this->getCamelCaseProviderName($provider);
 
-                // Add extension plugin
-                ExtensionUtility::configurePlugin(
-                    // unique plugin name
-                    $providerConfig['namespace'],
-                    $providerConfig['pluginName'],
-                    // accessible controller-action-combinations
-                    $providerConfig['controllerActions'],
-                    // non-cachable controller-action-combinations (they must already be enabled)
-                    array()
+                // Load all content elements configurations
+                $contentElements = $this->iniService->loadAllContentElementsConfig(
+                    $provider,
+                    $providerConfig
+                );
+
+                // Add plugin config of the content elements
+                $this->addPluginConfigForElements(
+                    $contentElements,
+                    $providerNameCamelCase,
+                    $providerConfig
                 );
 
                 // Add content elements to the content elements wizard
                 if (isset($providerConfig['addElementsToWizard']) &&
                     (bool)$providerConfig['addElementsToWizard'] === true
                 ) {
-                    // Add new wizards tab
-                    ExtensionManagementUtility::addPageTSConfig(
-                        'mod.wizards.newContentElement.wizardItems.' . $providerNameCamelCase . ' {
-                            header = ' . $providerConfig['elementWizardTabTitle'] . '
-                            show = *
-                        }'
+                    $this->addElementsToWizard(
+                        $contentElements,
+                        $providerNameCamelCase,
+                        $providerConfig['elementWizardTabTitle']
                     );
+                }
+            }
+        }
+    }
 
-                    // Load all content elements configurations
-                    $contentElements = $this->iniService->loadAllContentElementsConfig($provider, $providerConfig);
+    /**
+     * Add plugin config of the content elements
+     *
+     * @param $contentElements
+     * @param $providerNameCamelCase
+     * @param $providerConfig
+     * @return void
+     */
+    public function addPluginConfigForElements($contentElements, $providerNameCamelCase, $providerConfig)
+    {
+        $typoScript = '[GLOBAL] ';
 
-                    // Add all content elements to wizards
-                    if (is_array($contentElements) &&
-                        empty($contentElements) === false
-                    ) {
-                        foreach ($contentElements as $key => $elementConfig) {
-                            if (isset($elementConfig['title']) &&
-                                isset($elementConfig['fields'])
-                            ) {
-                                // Fallback icon
-                                $iconIdentifier = 'content-textpic';
+        // Add extension plugin
+        ExtensionUtility::configurePlugin(
+        // unique plugin name
+            $providerConfig['namespace'],
+            $providerConfig['pluginName'],
+            // accessible controller-action-combinations
+            $providerConfig['controllerActions'],
+            // non-cachable controller-action-combinations (they must already be enabled)
+            array()
+        );
 
-                                // Registration the content element icon, if set
-                                if ($elementConfig['icon']) {
-                                    /** @var IconRegistry $iconRegistry */
-                                    $iconRegistry = GeneralUtility::makeInstance(
-                                        IconRegistry::class
-                                    );
-                                    $iconIdentifier = 'dwc-' . lcfirst($key);
-                                    $iconRegistry->registerIcon(
-                                        $iconIdentifier,
-                                        BitmapIconProvider::class,
-                                        array(
-                                            'source' => (string)$elementConfig['icon'],
-                                        )
-                                    );
-                                }
+        // Add all content elements to wizards
+        if (is_array($contentElements) &&
+            empty($contentElements) === false
+        ) {
+            foreach ($contentElements as $key => $elementConfig) {
+                if (isset($elementConfig['title']) &&
+                    isset($elementConfig['fields'])
+                ) {
+                    //Set rendering typoScript
+                    $typoScript .= "\n
+                             tt_content." . lcfirst($key) .
+                        " < tt_content.list.20." .
+                        strtolower($providerNameCamelCase) . "_" . strtolower($providerConfig['pluginName']) . " \n";
 
-                                // Add the icon to the content element config
-                                $icon = 'iconIdentifier = ' . $iconIdentifier;
-
-                                // Set content element wizardItems
-                                ExtensionManagementUtility::addPageTSConfig(
-                                    'mod.wizards.newContentElement.wizardItems.' .
-                                    $providerNameCamelCase . '.elements.' . lcfirst($key) . ' {
-                                        ' . $icon . '
-                                        title = ' . (string)$elementConfig['title'] . '
-                                        description = ' . (string)$elementConfig['description'] . '
-                                        tt_content_defValues.CType = ' . lcfirst($key) . '
-                                    }'
-                                );
-                            }
+                    foreach ($providerConfig['controllerActions'] as $controller => $actions) {
+                        $actionArray = explode(',', $actions);
+                        foreach ($actionArray as $index => $action) {
+                            $typoScript .= "tt_content." .
+                                lcfirst($key) . ".switchableControllerActions." .
+                                $controller . "." . ($index + 1) . " = " .
+                                $action . " \n";
                         }
                     }
+                }
+            }
+        }
+
+        //Add rendering typoScript
+        ExtensionManagementUtility::addTypoScript(
+            $providerNameCamelCase,
+            'setup',
+            $typoScript,
+            43
+        );
+    }
+
+    /**
+     * Add the content elements to the new elements wizard
+     *
+     * @param array $contentElements
+     * @param $providerNameCamelCase
+     * @param $wizardTabTitle
+     * @return void
+     */
+    public function addElementsToWizard(array $contentElements, $providerNameCamelCase, $wizardTabTitle)
+    {
+        // Add new wizards tab
+        ExtensionManagementUtility::addPageTSConfig(
+            'mod.wizards.newContentElement.wizardItems.' . $providerNameCamelCase . ' {
+                header = ' . $wizardTabTitle . '
+                show = *
+            }'
+        );
+
+        // Add all content elements to wizards
+        if (is_array($contentElements) &&
+            empty($contentElements) === false
+        ) {
+            foreach ($contentElements as $key => $elementConfig) {
+                if (isset($elementConfig['title']) &&
+                    isset($elementConfig['fields'])
+                ) {
+                    // Fallback icon
+                    $iconIdentifier = 'content-textpic';
+
+                    // Registration the content element icon, if set
+                    if ($elementConfig['icon']) {
+                        /** @var IconRegistry $iconRegistry */
+                        $iconRegistry = GeneralUtility::makeInstance(
+                            IconRegistry::class
+                        );
+                        $iconIdentifier = 'dwc-' . lcfirst($key);
+                        $iconRegistry->registerIcon(
+                            $iconIdentifier,
+                            BitmapIconProvider::class,
+                            array(
+                                'source' => (string)$elementConfig['icon'],
+                            )
+                        );
+                    }
+
+                    // Add the icon to the content element config
+                    $icon = 'iconIdentifier = ' . $iconIdentifier;
+
+                    // Set content element wizardItems
+                    ExtensionManagementUtility::addPageTSConfig(
+                        'mod.wizards.newContentElement.wizardItems.' .
+                        $providerNameCamelCase . '.elements.' . lcfirst($key) . ' {
+                                ' . $icon . '
+                                title = ' . (string)$elementConfig['title'] . '
+                                description = ' . (string)$elementConfig['description'] . '
+                                tt_content_defValues.CType = ' . lcfirst($key) . '
+                            }'
+                    );
                 }
             }
         }

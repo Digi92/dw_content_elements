@@ -27,111 +27,127 @@ namespace Denkwerk\DwContentElements\Hooks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Denkwerk\DwContentElements\Service\IniProviderService;
 use Denkwerk\DwContentElements\Service\IniService;
+use Denkwerk\DwContentElements\Service\IrreService;
+use Denkwerk\DwContentElements\Service\Url;
+use TYPO3\CMS\Backend\Form\FormDataCompiler;
+use TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord;
+use TYPO3\CMS\Backend\Form\NodeFactory;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Backend\View\PageLayoutView;
+use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
- *
- * @package dw_content_elements
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
+ * Class PageLayoutViewDrawItemHook
+ * @package Denkwerk\DwContentElements\Hooks
  */
-class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface
+class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
 {
 
     /**
-     * Preprocesses the preview rendering of a content element.
+     * @var IniService $iniService
+     */
+    protected $iniService = null;
+
+    /**
+     * @var IniProviderService $iniProviderService
+     */
+    protected $iniProviderService = null;
+
+    /**
+     * InjectorService constructor.
+     */
+    function __construct()
+    {
+        $this->iniService = GeneralUtility::makeInstance(IniService::class);
+        $this->iniProviderService = GeneralUtility::makeInstance(IniProviderService::class);
+    }
+
+    /**
+     * Preprocessed the preview rendering of a content element.
      *
-     * @param    \TYPO3\CMS\Backend\View\PageLayoutView $parentObject :  Calling parent object
+     * @param    PageLayoutView $parentObject :  Calling parent object
      * @param    boolean $drawItem :      Whether to draw the item using the default functionalities
      * @param    string $headerContent : Header content
      * @param    string $itemContent :   Item content
      * @param    array $row :           Record row of tt_content
      * @return    void
+     * @throws \TYPO3\CMS\Backend\Form\Exception
      */
     public function preProcess(
-        \TYPO3\CMS\Backend\View\PageLayoutView &$parentObject,
+        PageLayoutView &$parentObject,
         &$drawItem,
         &$headerContent,
         &$itemContent,
         array &$row
     ) {
 
-//        //Get all config files
-//        $path = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Denkwerk\DwContentElements\Utility\Pathes');
-//        $providers = array();
-//
-//        // get configurations from localconf
-//        $configurations = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['dw_content_elements'];
-//
-//        if (isset($configurations['provider']) && count($configurations['provider'])) {
-//            foreach ($configurations['provider'] as $extKey => $config) {
-//                if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded($extKey) && is_array($config)) {
-//                    $providers[$extKey] = $config;
-//                }
-//            }
-//        } elseif (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elements_source')) {
-//            $providers['dw_content_elements_source'] = array(
-//                'pluginName' => 'ContentRenderer',
-//                'controllerActions' => array('Elements' => 'render'),
-//                'namespace' => 'Denkwerk.DwContentElementsSource'
-//            );
-//        }
-//
-//        foreach ($providers as $provider => $providerConf) {
-//            // build elements path
-//            $elementsPath = (isset($providerConfig['elementsPath']) && !empty($providerConf['elementsPath'])) ?
-//                $providerConfig['elementsPath'] :
-//                '/Configuration/Elements';
-//
-//            $contentElements = $path->getAllDirFiles(
-//                \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($provider) . $elementsPath
-//            );
-//
-//            if (isset($contentElements[ucfirst($row['CType'])])) {
-//                $drawItem = false;
-//                $itemContent = '<div style="font-size: 11px;">';
-//
-//                //Load element config
-//                /** @var IniService $iniService */
-//                $iniService = GeneralUtility::makeInstance(IniService::class);
-////                $elementConfig = $iniService->loadAllContentElementsConfig();
-////                    ->setConfigFile($contentElements[ucfirst($row['CType'])])
-////                    ->loadConfig();
-//
-//                //Get all preview showitem fields
-//                if (isset($elementConfig['previewFields'])) {
-//                    $fields = self::getMainFields($elementConfig['previewFields'], 'tt_content', $row);
-//                } else {
-//                    //Get all showitem fields
-//                    $fields = self::getMainFields($elementConfig['fields'], 'tt_content', $row);
-//                }
-//
-//                //Set content element title
-//                $headerContent = '<b>' . $elementConfig['title'] . '</b><br />';
-//
-//                //Set preview for the showitem fields
-//                $count = 0;
-//                foreach ($fields as $field) {
-//                    $itemContent .= self::renderFieldPreview(
-//                        $field['name'],
-//                        $row,
-//                        (isset($field['label']) &&
-//                        empty($field['label']) === false ?
-//                            $field['label'] :
-//                            $parentObject->itemLabels[$field['name']]
-//                        )
-//                    );
-//
-//                    $count++;
-//                    if ($count >= 10) {
-//                        $itemContent .= '<p><b>...</b></p>';
-//                        break;
-//                    }
-//                }
-//                $itemContent .= '</div>';
-//            }
-//        }
+        /// Load all provider configurations as array
+        $providers = $this->iniProviderService->loadProvider();
+
+        // Load all content elements config files
+        $elementsConfigFilesArray = [];
+        if (count($providers) > 0) {
+            foreach ($providers as $provider => $providerConfig) {
+                $providerElementsConfigFiles = $this->iniService->loadAllContentElementsConfigFiles(
+                    $provider,
+                    $providerConfig
+                );
+                $elementsConfigFilesArray = array_merge($elementsConfigFilesArray, $providerElementsConfigFiles);
+            }
+        }
+
+        // If it is an dwc content element
+        if (isset($row['CType']) &&
+            !is_array($row['CType']) &&
+            is_array($elementsConfigFilesArray) &&
+            isset($elementsConfigFilesArray[ucfirst($row['CType'])])
+        ) {
+
+            //Load content element config
+            $elementConfig = $this->iniService->loadConfig(
+                $elementsConfigFilesArray[ucfirst($row['CType'])]
+            );
+
+            $drawItem = false;
+            $itemContent = '<div style="font-size: 11px;">';
+
+            //Get all preview showitem fields
+            if (isset($elementConfig['previewFields'])) {
+                $fields = self::getMainFields($elementConfig['previewFields'], 'tt_content', $row);
+            } else {
+                //Get all showitem fields
+                $fields = self::getMainFields($elementConfig['fields'], 'tt_content', $row);
+            }
+
+            //Set content element title
+            $headerContent = '<b>' . $elementConfig['title'] . '</b><br />';
+
+            //Set preview for the showitem fields
+            $count = 0;
+            foreach ($fields as $field) {
+                $itemContent .= self::renderFieldPreview(
+                    $field['name'],
+                    $row,
+                    (isset($field['label']) &&
+                    empty($field['label']) === false ?
+                        $field['label'] :
+                        $parentObject->itemLabels[$field['name']]
+                    )
+                );
+
+                $count++;
+                if ($count >= 10) {
+                    $itemContent .= '<p><b>...</b></p>';
+                    break;
+                }
+            }
+            $itemContent .= '</div>';
+        }
     }
 
     /**
@@ -142,6 +158,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
      * @param string $itemLabels
      * @param string $fieldTable
      * @return string
+     * @throws \TYPO3\CMS\Backend\Form\Exception
      */
     public function renderFieldPreview($fieldName, $row, $itemLabels = '', $fieldTable = 'tt_content')
     {
@@ -150,17 +167,25 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 
         if (isset($fieldName) && isset($fieldValue)) {
             $filedContent .= '<div>';
-            $fieldConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getTcaFieldConfiguration($fieldTable, $fieldName);
+            $fieldConfig = BackendUtility::getTcaFieldConfiguration(
+                $fieldTable,
+                $fieldName
+            );
 
             switch ($fieldConfig['type']) {
                 case "input":
                     //If field has a link wizard
-                    if (isset($fieldConfig['wizards']['link']) && empty($fieldValue) === false) {
-                        /*** @var \Denkwerk\DwContentElements\Service\Url $urlService */
-                        $urlService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                            'Denkwerk\\DwContentElements\\Service\\Url'
+                    if (isset($fieldConfig['wizards']['link']) &&
+                        empty($fieldValue) === false
+                    ) {
+                        /*** @var Url $urlService */
+                        $urlService = GeneralUtility::makeInstance(
+                            Url::class
                         );
-                        $fieldValue = $urlService->getUrl($row['pid'], $fieldValue);
+                        $fieldValue = $urlService->getUrl(
+                            $row['pid'],
+                            $fieldValue
+                        );
                     }
 
                     // If field has an eval type, format the value by respect eval type
@@ -185,26 +210,26 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
 
                     $filedContent .= '<p style="padding-right: 5px;margin:0;">
                             <b>' . $itemLabels . '</b><br />' .
-                            strip_tags((string)$fieldValue) .
+                        strip_tags((string)$fieldValue) .
                         '</p>';
                     break;
                 case "text":
                     $filedContent .= '<p style="padding-right: 5px;margin:0;">
                             <b>' . $itemLabels . '</b><br />' .
-                            substr(strip_tags((string)$fieldValue), 0, 100) .
-                            (strlen((string)$fieldValue) > 100 ? '...' : '') .
+                        substr(strip_tags((string)$fieldValue), 0, 100) .
+                        (strlen((string)$fieldValue) > 100 ? '...' : '') .
                         '</p>';
                     break;
                 case "check":
                     $filedContent .= '<p style="padding-right: 5px;margin:0;">
                             <b>' . $itemLabels . '</b><br />' .
-                            ((bool)$fieldValue ? '&#10004;' : '&#10008;') .
+                        ((bool)$fieldValue ? '&#10004;' : '&#10008;') .
                         '</p>';
                     break;
                 case "radio":
                     $filedContent .= '<p style="padding-right: 5px;margin:0;">
                             <b>' . $itemLabels . '</b><br />' .
-                            (string)$fieldValue .
+                        (string)$fieldValue .
                         '</p>';
                     break;
                 case "select":
@@ -213,62 +238,46 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                     $items = array();
 
                     //Get all items
-                    if (version_compare(TYPO3_branch, '7.6', '<')) {
-                        $formEngine = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                            'TYPO3\\CMS\\Backend\\Form\\FormEngine'
-                        );
-                        $items = $formEngine->getSelectItems(
-                            'tt_content',
-                            $fieldName,
-                            $row,
-                            array(
-                                'fieldConf' => $GLOBALS['TCA'][$fieldTable]['columns'][$fieldName],
-                                'fieldTSConfig' => null
-                            )
-                        );
-                        $fieldType = $fieldConfig['renderMode'];
-                    } else {
+                    /** @var NodeFactory $nodeFactory */
+                    $nodeFactory = GeneralUtility::makeInstance(
+                        NodeFactory::class
+                    );
 
-                        /** @var \TYPO3\CMS\Backend\Form\NodeFactory $nodeFactory */
-                        $nodeFactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                            'TYPO3\\CMS\\Backend\\Form\\NodeFactory'
-                        );
+                    $formDataCompilerInput = array(
+                        'tableName' => $fieldTable,
+                        'vanillaUid' => (int)$row['uid'],
+                        'command' => 'edit',
+                        'returnUrl' => '',
+                    );
 
-                        $formDataCompilerInput = array(
-                            'tableName' => $fieldTable,
-                            'vanillaUid' => (int)$row['uid'],
-                            'command' => 'edit',
-                            'returnUrl' => ''
-                        );
+                    /** @var TcaDatabaseRecord $formDataGroup */
+                    $formDataGroup = GeneralUtility::makeInstance(
+                        TcaDatabaseRecord::class
+                    );
 
-                        /** @var \TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord $formDataGroup */
-                        $formDataGroup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                            'TYPO3\\CMS\\Backend\\Form\\FormDataGroup\\TcaDatabaseRecord'
-                        );
+                    /** @var FormDataCompiler $formDataCompiler */
+                    $formDataCompiler = GeneralUtility::makeInstance(
+                        FormDataCompiler::class,
+                        $formDataGroup
+                    );
+                    $formData = $formDataCompiler->compile($formDataCompilerInput);
 
-                        /** @var \TYPO3\CMS\Backend\Form\FormDataCompiler $formDataCompiler */
-                        $formDataCompiler = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                            'TYPO3\\CMS\\Backend\\Form\\FormDataCompiler',
-                            $formDataGroup
-                        );
-                        $formData = $formDataCompiler->compile($formDataCompilerInput);
+                    $formData['renderType'] = 'outerWrapContainer';
 
-                        $formData['renderType'] = 'outerWrapContainer';
+                    $processedNodeStructure = $nodeFactory->create($formData);
+                    $processedNodeStructureAsArray = (array)$processedNodeStructure;
 
-                        $processedNodeStructure = $nodeFactory->create($formData);
-                        $processedNodeStructureAsArray = (array)$processedNodeStructure;
+                    $processedNodeStructureAsArray = array_values($processedNodeStructureAsArray);
 
-                        $processedNodeStructureAsArray = array_values($processedNodeStructureAsArray);
-
-                        //Get all items
-                        if (!empty($processedNodeStructureAsArray[1]['processedTca']
-                        ['columns'][$fieldName]['config']['items'])
-                        ) {
-                            $items = $processedNodeStructureAsArray[1]['processedTca']
-                            ['columns'][$fieldName]['config']['items'];
-                        }
-                        $fieldType = $fieldConfig['renderType'];
+                    //Get all items
+                    if (!empty($processedNodeStructureAsArray[1]['processedTca']
+                    ['columns'][$fieldName]['config']['items'])
+                    ) {
+                        $items = $processedNodeStructureAsArray[1]['processedTca']
+                        ['columns'][$fieldName]['config']['items'];
                     }
+                    $fieldType = $fieldConfig['renderType'];
+
 
                     switch ($fieldType) {
                         case "checkbox":
@@ -314,7 +323,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                         $fieldConfig['foreign_table'] === 'sys_file_reference'
                     ) {
                         //TODO: Need to add function to set the file title
-                        $filePreview = \TYPO3\CMS\Backend\Utility\BackendUtility::thumbCode(
+                        $filePreview = BackendUtility::thumbCode(
                             $row,
                             $fieldTable,
                             $fieldName,
@@ -330,21 +339,22 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                         $filedContent .= ($filePreview != '' ? $filePreview : 'No File');
                     } else {
                         if (isset($fieldConfig['foreign_table'])) {
-                            $contentObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                                'TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer'
+                            /** @var ContentObjectRenderer $contentObj */
+                            $contentObj = GeneralUtility::makeInstance(
+                                ContentObjectRenderer::class
                             );
                             $contentObj->data = $row;
                             $count = 0;
                             $filedContent .= '<p style="padding-right: 5px;margin:0;">';
 
-                            foreach (\Denkwerk\DwContentElements\Service\IrreService::getRelations(
+                            foreach (IrreService::getRelations(
                                 $contentObj,
                                 $fieldConfig['foreign_table']
                             ) as $item) {
                                 $irreItemLabel = $item[$GLOBALS['TCA'][$fieldConfig['foreign_table']]['ctrl']['label']];
                                 $filedContent .= ($irreItemLabel != '' ? substr((string)$irreItemLabel, 0, 25) .
                                     (strlen((string)$irreItemLabel) > 25 ? '...' : '') :
-                                    \TYPO3\CMS\Backend\Utility\BackendUtility::getNoRecordTitle(true)
+                                    BackendUtility::getNoRecordTitle(true)
                                 );
                                 $filedContent .= '</br>';
 
@@ -366,6 +376,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
             }
             $filedContent .= '</div>';
         }
+
         return $filedContent;
     }
 
@@ -382,7 +393,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
     {
         $result = array();
 
-        $fieldsArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(
+        $fieldsArray = GeneralUtility::trimExplode(
             ',',
             $itemList,
             true
@@ -400,7 +411,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                     if ($field['fieldLabel'] !== null &&
                         strpos($field['fieldLabel'], "LLL:EXT:") !== false
                     ) {
-                        $field['fieldLabel'] = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate(
+                        $field['fieldLabel'] = LocalizationUtility::translate(
                             $field['fieldLabel'],
                             ''
                         );
@@ -417,7 +428,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                         ) {
                             $palettesItemList = $GLOBALS['TCA'][$table]['palettes'][$field['paletteName']]['showitem'];
                             if ($palettesItemList) {
-                            // Call the palette showitem with the function "getMainFields" and add the result to $result
+                                // Call the palette showitem with the function "getMainFields" and add the result to $result
                                 foreach (self::getMainFields($palettesItemList, 'tt_content', $row) as $field) {
                                     array_push($result, $field);
                                 }
@@ -427,6 +438,7 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
                 }
             }
         }
+
         return $result;
     }
 
@@ -444,10 +456,11 @@ class PageLayoutViewDrawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutVi
      */
     protected function explodeSingleFieldShowItemConfiguration($field)
     {
-        $fieldArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(';', $field);
+        $fieldArray = GeneralUtility::trimExplode(';', $field);
         if (empty($fieldArray[0])) {
             throw new \RuntimeException('Field must not be empty', 1426448465);
         }
+
         return array(
             'fieldName' => $fieldArray[0],
             'fieldLabel' => $fieldArray[1] ?: null,

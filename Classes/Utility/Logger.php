@@ -32,8 +32,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Class with functions for write into the system log
  *
- * @package dw_content_elements
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * Class Logger
+ * @package Denkwerk\DwContentElements\Utility
  */
 class Logger
 {

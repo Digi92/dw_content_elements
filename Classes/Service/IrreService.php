@@ -1,4 +1,5 @@
 <?php
+
 namespace Denkwerk\DwContentElements\Service;
 
 /***************************************************************
@@ -25,15 +26,15 @@ namespace Denkwerk\DwContentElements\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Denkwerk\DwContentElements\Utility\Logger;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+
 /**
- * IrreService
- *
- * @package dw_content_elements
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * Class IrreService
+ * @package Denkwerk\DwContentElements\Service
  */
 class IrreService
 {
-
     /**
      *  Set data for Inline Relational Record Editing entry
      *  If set the repositoryName the function will call the magic function "findByForeignUid"
@@ -61,7 +62,7 @@ class IrreService
                     $tableName,
                     'foreign_uid = ' . $contentObj->data['uid'] .
                     (TYPO3_MODE == 'BE' ?
-                        \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields($tableName)
+                        BackendUtility::BEenableFields($tableName)
                         . ' AND ' . $tableName . '.deleted=0' :
                         $contentObj->enableFields($tableName)
                     ),
@@ -96,7 +97,7 @@ class IrreService
             }
         } else {
             // Write into the sys_log about the missing field
-            \Denkwerk\DwContentElements\Utility\Logger::simpleErrorLog(
+            Logger::simpleErrorLog(
                 'DWC: IRRE Service: Column "foreign_uid" not found on table "' . $tableName . '"',
                 $tableName,
                 $contentObj->data['uid'],
@@ -127,7 +128,7 @@ class IrreService
                     'tt_content',
                     'foreign_uid = ' . $data['uid'] .
                     (TYPO3_MODE == 'BE' ?
-                        \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields('tt_content')
+                        BackendUtility::BEenableFields('tt_content')
                         . ' AND tt_content.deleted=0' :
                         $contentObj->enableFields('tt_content')
                     ) . 'AND parent_table = "' . $parentTable . '"',

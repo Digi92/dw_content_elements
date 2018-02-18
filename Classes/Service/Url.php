@@ -2,8 +2,14 @@
 
 namespace Denkwerk\DwContentElements\Service;
 
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\TimeTracker\TimeTracker;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use \TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use \TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3\CMS\Frontend\Utility\EidUtility;
 
 /***************************************************************
  *  Copyright notice
@@ -31,14 +37,11 @@ use \TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
  ************************************************************** */
 
 /**
- * Url
- *
- * @package dw_content_elements
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * Class Url
+ * @package Denkwerk\DwContentElements\Service
  */
 class Url
 {
-
     /**
      * Create link for frontend pages
      *
@@ -62,7 +65,7 @@ class Url
             )
         ) {
             // If the TSFE can't load, we can NOT create a typolink
-            $currentPage = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord(
+            $currentPage = BackendUtility::getRecord(
                 'pages',
                 $currentPageUid
             );
@@ -72,9 +75,9 @@ class Url
                 empty($linkParameter) === false &&
                 $this->initTSFE($currentPageUid)
             ) {
-                /** @var $cObj \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
-                $cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                    'TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer'
+                /** @var ContentObjectRenderer $cObj */
+                $cObj = GeneralUtility::makeInstance(
+                    ContentObjectRenderer::class
                 );
                 $result = $cObj->typolink_URL(array('parameter' => $linkParameter));
             }
@@ -93,7 +96,7 @@ class Url
     private function initTSFE($id = 1, $typeNum = 0)
     {
         $hasTsTemplate = false;
-        $rootline = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($id);
+        $rootline = BackendUtility::BEgetRootLine($id);
 
         // Check the rootline pages if there is an sysTemplate with configuration. We need this for initialize the TSFE.
         if (empty($rootline) === false &&
@@ -115,14 +118,14 @@ class Url
         }
 
         if ($hasTsTemplate) {
-            \TYPO3\CMS\Frontend\Utility\EidUtility::initTCA();
+            EidUtility::initTCA();
             if (!is_object($GLOBALS['TT'])) {
-                $GLOBALS['TT'] = new \TYPO3\CMS\Core\TimeTracker\NullTimeTracker;
+                $GLOBALS['TT'] = new TimeTracker;
                 $GLOBALS['TT']->start();
             }
 
-            $GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                'TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController',
+            $GLOBALS['TSFE'] = GeneralUtility::makeInstance(
+                TypoScriptFrontendController::class,
                 $GLOBALS['TYPO3_CONF_VARS'],
                 $id,
                 $typeNum
@@ -138,8 +141,8 @@ class Url
             $GLOBALS['TSFE']->initTemplate();
             $GLOBALS['TSFE']->getConfigArray();
 
-            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('realurl')) {
-                $host = \TYPO3\CMS\Backend\Utility\BackendUtility::firstDomainRecord($rootline);
+            if (ExtensionManagementUtility::isLoaded('realurl')) {
+                $host = BackendUtility::firstDomainRecord($rootline);
                 $_SERVER['HTTP_HOST'] = $host;
             }
         }

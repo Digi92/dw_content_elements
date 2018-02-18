@@ -33,8 +33,7 @@ use \TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
  * ToDo: Wie mit Pfaden unter Windows umgehen, c:/, d:/?
  *
  * Class Paths
- * @package dw_content_elements
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @package Denkwerk\DwContentElements\Utility
  */
 class Paths
 {
@@ -55,7 +54,7 @@ class Paths
             $slash = '';
         }
 
-        return $slash.$path;
+        return $slash . $path;
     }
 
     /**
@@ -66,8 +65,6 @@ class Paths
      */
     public static function convertFolderArrayToString(array $list)
     {
-        $result = '';
-
         $list[0] = self::replaceBackSlashToSlash($list[0]);
         $list[1] = self::replaceBackSlashToSlash($list[1]);
         if (strpos($list[1], $list[0]) !== false) {
@@ -137,11 +134,15 @@ class Paths
         $files = scandir($dir);
 
         foreach ($files as $key => $value) {
-            $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
+            $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
 
             if (is_file($path)) {
                 //Set the filename without extension as key
-                $results[str_replace('.'.pathinfo($path, PATHINFO_EXTENSION), '', $value)] = $path;
+                $results[str_replace(
+                    '.' . pathinfo($path, PATHINFO_EXTENSION),
+                    '',
+                    $value
+                )] = $path;
             } elseif (is_dir($path) &&
                 !in_array($value, array(".", ".."))
             ) {

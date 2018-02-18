@@ -30,10 +30,8 @@ use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser as CoreTypoScriptParser;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * TypoScriptParser
- *
- * @package dw_content_elements
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * Class TypoScriptParser
+ * @package Denkwerk\DwContentElements\Utility
  */
 class TypoScriptParser
 {

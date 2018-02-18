@@ -1,4 +1,5 @@
 <?php
+
 namespace Denkwerk\DwContentElements\Controller;
 
 /***************************************************************
@@ -25,14 +26,15 @@ namespace Denkwerk\DwContentElements\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Denkwerk\DwContentElements\Service\FileService;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+
 /**
- * BackendController
- *
- * @package dw_content_elements
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
+ * Class BackendController
+ * @package Denkwerk\DwContentElements\Controller
  */
-class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+class BackendController extends ActionController
 {
 
     /**
@@ -40,13 +42,13 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
      * or send the user to the right step of create the source extension
      *
      * @return void
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      */
     public function indexAction()
     {
-
-        //Source Extension Installiert
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('dw_content_elements_source') === false) {
-            //Source Extension Ordner existiert
+        // Check if source extension is enabled
+        if (ExtensionManagementUtility::isLoaded('dw_content_elements_source') === false) {
+            // Check if source extension exists
             if (!is_dir(PATH_typo3conf . 'ext/dw_content_elements_source')) {
                 $this->forward('createSourceExt');
             } else {
@@ -59,18 +61,16 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
      * Action for the create of the source extension
      *
      * @return void
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      */
     public function createSourceExtAction()
     {
-
         if ($this->request->hasArgument('createSourceExt')) {
-            $success = false;
-
             /**
-             * @var \Denkwerk\DwContentElements\Service\FileService $fileService
+             * @var FileService $fileService
              */
             $fileService = $this->objectManager->get(
-                'Denkwerk\\DwContentElements\\Service\\FileService'
+                FileService::class
             );
             $fileService->setSourceExtensionDirectory(PATH_typo3conf . 'ext/dw_content_elements_source/');
             $success = $fileService->createSourceExt();
@@ -81,7 +81,7 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
                     'Backend',
                     null,
                     array(
-                        'hasCreatedSourceExt' => true
+                        'hasCreatedSourceExt' => true,
                     )
                 );
             } else {
@@ -94,6 +94,7 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
      * Action for the info to install the source extension at the extension manager
      *
      * @return void
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException
      */
     public function loadSourceExtAction()
     {

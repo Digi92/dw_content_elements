@@ -3,10 +3,11 @@ if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
 
+// Add TypoScript static files
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
     $_EXTKEY,
     'Configuration/TypoScript',
-    'Content element configuration'
+    'Content Element configuration'
 );
 
 //Add backend module

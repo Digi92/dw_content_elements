@@ -31,6 +31,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @author         Jo Hasenau <info@cybercraft.de>
  * @package        TYPO3
  * @subpackage     tx_gridelements
+ *
+ * Class ColPosList
+ * @package Denkwerk\DwContentElements\Backend\ItemsProcFuncs
  */
 class ColPosList extends AbstractItemsProcFunc
 {

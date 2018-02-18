@@ -1,4 +1,5 @@
 <?php
+
 namespace Denkwerk\DwContentElements\Service;
 
 /***************************************************************
@@ -25,17 +26,15 @@ namespace Denkwerk\DwContentElements\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * FileService
- *
- * @package dw_content_elements
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * Class FileService
+ * @package Denkwerk\DwContentElements\Service
  */
 class FileService
 {
-
     /**
      * Path to the source extension
      *
@@ -45,8 +44,6 @@ class FileService
 
     /**
      * Create the source extension from the folder 'Resources/Private/SourceExt/'
-     *
-     * ToDo: Optimise error handling
      *
      * @return bool
      */
@@ -59,7 +56,7 @@ class FileService
         }
 
         GeneralUtility::copyDirectory(
-            \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('dw_content_elements') .
+            ExtensionManagementUtility::extPath('dw_content_elements') .
             'Resources/Private/SourceExt/',
             self::getSourceExtensionDirectory()
         );

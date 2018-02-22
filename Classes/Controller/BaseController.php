@@ -77,6 +77,7 @@ class BaseController extends ActionController
     {
         $this->classReflection = new \ReflectionClass($this);
         $this->contentObj = $this->configurationManager->getContentObject();
+        $this->data = $this->contentObj->data;
         $view->assign('data', $this->contentObj->data);
     }
 

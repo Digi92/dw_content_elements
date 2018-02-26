@@ -260,6 +260,15 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                         FormDataCompiler::class,
                         $formDataGroup
                     );
+                    // ToDo: Remove hotfix if the core bug is fixed or change the code! Change initTSFE back to private!
+                    // Bug ticket: https://forge.typo3.org/issues/79354
+                    // Hotfix BEGIN
+                    /*** @var UrlService $urlService */
+                    $urlService = GeneralUtility::makeInstance(
+                        UrlService::class
+                    );
+                    $urlService->initTSFE($row['pid']);
+                    // Hotfix END
                     $formData = $formDataCompiler->compile($formDataCompilerInput);
 
                     $formData['renderType'] = 'outerWrapContainer';

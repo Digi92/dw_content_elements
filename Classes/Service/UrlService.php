@@ -81,7 +81,7 @@ class UrlService
      * @param int $typeNum
      * @return bool
      */
-    private function initTSFE($id = 1, $typeNum = 0)
+    public function initTSFE($id = 1, $typeNum = 0)
     {
         $hasTsTemplate = false;
         $rootLine = BackendUtility::BEgetRootLine($id);

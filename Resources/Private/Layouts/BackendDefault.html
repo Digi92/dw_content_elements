@@ -1,29 +1,32 @@
 <f:be.container>
-
     <div class="typo3-fullDoc">
         <div id="typo3-docheader">
-            <div id="typo3-docheader-row1">
-                <div class="buttonsleft">
+            <div class="typo3-docheader-functions">
+                <div class="left">
+                    <f:be.buttons.csh />
+
                 </div>
-                <div class="buttonsright">
-                    <f:be.buttons.shortcut />
-                </div>
-            </div>
-            <div id="typo3-docheader-row2">
-                <div class="docheader-row2-left">
-                </div>
-                <div class="docheader-row2-right">
+
+                <div class="right">
                     <f:be.pagePath />
+                    <f:be.pageInfo />
                 </div>
             </div>
+
+            <f:comment>
+                <div class="typo3-docheader-buttons">
+                    <div class="left">
+                    </div>
+                    <div class="right">
+                        <f:be.buttons.shortcut />
+                    </div>
+                </div>
+            </f:comment>
         </div>
         <div id="typo3-docbody">
-            <div id="typo3-inner-docbody">
-
+            <div id="typo3-inner-docbody" class="realurl-backend">
                 <f:render section="Content" />
-
             </div>
         </div>
     </div>
-
 </f:be.container>

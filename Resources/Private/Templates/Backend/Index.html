@@ -8,22 +8,22 @@
 
     <h2><f:translate key="backend.index.subheadline" /></h2>
 
-    <p><f:translate key="backend.index.documentation.introduction" /></p>
+    <p><f:format.raw><f:translate key="backend.index.documentation.introduction" /></f:format.raw></p>
 
 
     <h3><f:translate key="backend.index.documentation.config.headline" /></h3>
-    <f:translate key="backend.index.documentation.config.list" />
+    <f:format.raw><f:translate key="backend.index.documentation.config.list" /></f:format.raw>
 
     <h3><f:translate key="backend.index.documentation.template.headline" /></h3>
-    <f:translate key="backend.index.documentation.template.list"
+    <f:format.raw><f:translate key="backend.index.documentation.template.list"
                  arguments="{0: '{f:image(src: \'EXT:dw_content_elements/Resources/Public/Backend/Images/Documentation/example_element_template.png\', alt:\'Example element template\')}'}"
-    />
+    /></f:format.raw>
 
     <h3><f:translate key="backend.index.documentation.irre.headline" /></h3>
-    <f:translate key="backend.index.documentation.irre.list" />
+    <f:format.raw><f:translate key="backend.index.documentation.irre.list" /></f:format.raw>
 
     <h3><f:translate key="backend.index.documentation.ts.headline" /></h3>
-    <f:translate key="backend.index.documentation.ts.list" />
+    <f:format.raw><f:translate key="backend.index.documentation.ts.list" /></f:format.raw>
 
     <f:comment>
         <h2>ToDos</h2>

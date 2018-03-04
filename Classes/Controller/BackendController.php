@@ -27,7 +27,9 @@ namespace Denkwerk\DwContentElements\Controller;
  ***************************************************************/
 
 use Denkwerk\DwContentElements\Service\FileService;
+use Denkwerk\DwContentElements\Service\IniProviderService;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
@@ -46,8 +48,16 @@ class BackendController extends ActionController
      */
     public function indexAction()
     {
+        /** @var IniProviderService $iniProviderService */
+        $iniProviderService = GeneralUtility::makeInstance(IniProviderService::class);
+
+        // Load all provider configurations as array
+        $providers = $iniProviderService->loadProvider();
+
         // Check if source extension is enabled
-        if (ExtensionManagementUtility::isLoaded('dw_content_elements_source') === false) {
+        if (is_array($providers) &&
+            count($providers) === 0
+        ) {
             // Check if source extension exists
             if (!is_dir(PATH_typo3conf . 'ext/dw_content_elements_source')) {
                 $this->forward('createSourceExt');

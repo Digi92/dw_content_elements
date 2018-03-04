@@ -10,7 +10,7 @@
     <h1><f:translate key="backend.createSourceExt.headline" /></h1>
 
     <h3><f:translate key="backend.createSourceExt.question.headline" /></h3>
-    <p><f:translate key="backend.createSourceExt.question.text" /></p>
+    <p><f:format.raw><f:translate key="backend.createSourceExt.question.text" /></f:format.raw></p>
 
     <f:form action="createSourceExt" controller="Backend" method="post" name="createSourceExt">
         <f:form.submit value="{f:translate(key:'backend.createSourceExt.create')}" name="createSourceExt" />

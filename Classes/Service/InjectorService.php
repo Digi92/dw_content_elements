@@ -103,7 +103,7 @@ class InjectorService
                             if ((bool)$elementConfig['overWriteShowitem'] === true) {
                                 $showItem = trim((string)$elementConfig['fields'], ',');
                             } else {
-                                $showItem = 'sys_language_uid, l10n_parent, l10n_diffsource, CType;;4;button;1-1-1,
+                                $showItem = 'sys_language_uid, l10n_parent, l10n_diffsource, l18n_parent, l18n_diffsource, CType;;4;button;1-1-1,
                                     colPos, --palette--;Headline,'
                                     . trim((string)$elementConfig['fields'], ',') . ',
                                     --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,

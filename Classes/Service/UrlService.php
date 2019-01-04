@@ -86,7 +86,7 @@ class UrlService
         $hasTsTemplate = false;
         $rootLine = BackendUtility::BEgetRootLine($id);
 
-        // Check the root line pages if there is an sysTemplate with configuration. We need this for initialize the TSFE.
+        // Check root line pages if there is an sysTemplate with configuration. We need this for initialize the TSFE.
         if (empty($rootLine) === false &&
             is_array($rootLine)
         ) {

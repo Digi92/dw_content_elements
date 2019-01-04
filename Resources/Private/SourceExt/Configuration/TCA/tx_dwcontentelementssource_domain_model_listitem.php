@@ -6,11 +6,13 @@ if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
 
+$ll = 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xlf:';
+
 //Set/Override tca table columns
 $temporaryColumn = array(
     'tx_dwcontentelementssource_domain_model_listitem' => array(
         'exclude' => 0,
-        'label' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xlf:tx_dwcontentelementssource_domain_model_listitem',
+        'label' => $ll . 'tx_dwcontentelementssource_domain_model_listitem',
         'config' => array(
             'type' => 'inline',
             'foreign_table' => 'tx_dwcontentelementssource_domain_model_listitem',
@@ -36,7 +38,7 @@ ExtensionManagementUtility::addTCAcolumns(
 //Set/Override tca table columns
 return [
     'ctrl' => array(
-        'title' => 'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xlf:tx_dwcontentelementssource_domain_model_listitem',
+        'title' => $ll . 'tx_dwcontentelementssource_domain_model_listitem',
         'label' => 'headline',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -152,8 +154,7 @@ return [
         ),
         'headline' => array(
             'exclude' => 1,
-            'label' =>
-                'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwcontentelementssource_domain_model_listitem.headline',
+            'label' => $ll . 'tx_dwcontentelementssource_domain_model_listitem.headline',
             'config' => array(
                 'type' => 'input',
                 'size' => 30,
@@ -162,8 +163,7 @@ return [
         ),
         'text' => array(
             'exclude' => 1,
-            'label' =>
-                'LLL:EXT:dw_content_elements_source/Resources/Private/Language/locallang_db.xml:tx_dwcontentelementssource_domain_model_listitem.text',
+            'label' => $ll . 'tx_dwcontentelementssource_domain_model_listitem.text',
             'config' => array(
                 'type' => 'text',
                 'cols' => '40',

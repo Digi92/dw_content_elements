@@ -61,7 +61,7 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
     /**
      * InjectorService constructor.
      */
-    function __construct()
+    public function __construct()
     {
         $this->iniService = GeneralUtility::makeInstance(IniService::class);
         $this->iniProviderService = GeneralUtility::makeInstance(IniProviderService::class);
@@ -107,7 +107,6 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
             is_array($elementsConfigFilesArray) &&
             isset($elementsConfigFilesArray[ucfirst($row['CType'])])
         ) {
-
             //Load content element config
             $elementConfig = $this->iniService->loadConfig(
                 $elementsConfigFilesArray[ucfirst($row['CType'])]
@@ -437,7 +436,7 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                         ) {
                             $palettesItemList = $GLOBALS['TCA'][$table]['palettes'][$field['paletteName']]['showitem'];
                             if ($palettesItemList) {
-                                // Call the palette showitem with the function "getMainFields" and add the result to $result
+                                // Call the palette showitem with function "getMainFields" and add the result to $result
                                 foreach (self::getMainFields($palettesItemList, 'tt_content', $row) as $field) {
                                     array_push($result, $field);
                                 }

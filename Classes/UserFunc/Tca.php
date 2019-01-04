@@ -50,7 +50,7 @@ class Tca
     /**
      * InjectorService constructor.
      */
-    function __construct()
+    public function __construct()
     {
         $this->iniService = GeneralUtility::makeInstance(IniService::class);
         $this->iniProviderService = GeneralUtility::makeInstance(IniProviderService::class);

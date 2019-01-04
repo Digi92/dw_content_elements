@@ -44,7 +44,7 @@ class CaseContentObject extends AbstractContentObject
      *
      * @param ContentObjectRenderer $cObj
      */
-    function __construct(ContentObjectRenderer $cObj)
+    public function __construct(ContentObjectRenderer $cObj)
     {
         parent::__construct($cObj);
         $this->iniService = GeneralUtility::makeInstance(IniService::class);
@@ -64,8 +64,9 @@ class CaseContentObject extends AbstractContentObject
             return '';
         }
 
-        $setCurrent = isset($conf['setCurrent.']) ? $this->cObj->stdWrap($conf['setCurrent'],
-            $conf['setCurrent.']) : $conf['setCurrent'];
+        $setCurrent = isset($conf['setCurrent.']) ?
+            $this->cObj->stdWrap($conf['setCurrent'], $conf['setCurrent.']) :
+            $conf['setCurrent'];
         if ($setCurrent) {
             $this->cObj->data[$this->cObj->currentValKey] = $setCurrent;
         }

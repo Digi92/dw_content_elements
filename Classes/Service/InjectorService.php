@@ -53,7 +53,7 @@ class InjectorService
     /**
      * InjectorService constructor.
      */
-    function __construct()
+    public function __construct()
     {
         $this->iniService = GeneralUtility::makeInstance(IniService::class);
         $this->iniProviderService = GeneralUtility::makeInstance(IniProviderService::class);
@@ -103,12 +103,14 @@ class InjectorService
                             if ((bool)$elementConfig['overWriteShowitem'] === true) {
                                 $showItem = trim((string)$elementConfig['fields'], ',');
                             } else {
-                                $showItem = 'sys_language_uid, l10n_parent, l10n_diffsource, CType;;4;button;1-1-1,
-                                    colPos, --palette--;Headline,'
+                                $showItem = 'sys_language_uid, l10n_parent, l10n_diffsource, l18n_parent,'
+                                    . 'l18n_diffsource, CType;;4;button;1-1-1, colPos, --palette--;Headline,'
                                     . trim((string)$elementConfig['fields'], ',') . ',
                                     --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
-                                    --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:pages.palettes.visibility;hiddenonly,
-                                    --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:pages.palettes.access;access';
+                                    --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:'
+                                    . 'pages.palettes.visibility;hiddenonly,
+                                    --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:' .
+                                    'pages.palettes.access;access';
                             }
                             $GLOBALS['TCA']['tt_content']['types'][lcfirst($key)]['showitem'] = $showItem;
                             $GLOBALS['TCA']['tt_content']['types'][lcfirst($key)]['tx_dw_content_elements_title'] =
@@ -116,8 +118,10 @@ class InjectorService
 
                             // Add tab extends and if the palette "dwcAdditionalFields" exists add the fields of it
                             $GLOBALS['TCA']['tt_content']['types'][lcfirst($key)]['showitem'] .= ',
-                                --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xml:pages.tabs.extended,
-                                --palette--;LLL:EXT:dw_content_elements/Resources/Private/Language/locallang_db.xlf:palettes.dwcAdditionalFields;dwcAdditionalFields';
+                                --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xml:'
+                                . 'pages.tabs.extended,
+                                --palette--;LLL:EXT:dw_content_elements/Resources/Private/Language/locallang_db.xlf:'
+                                . 'palettes.dwcAdditionalFields;dwcAdditionalFields';
 
                             // Fix for the extension GridElements. GridElements needs in all elements the
                             // fields "tx_gridelements_container,tx_gridelements_columns"
@@ -145,7 +149,6 @@ class InjectorService
 
         if (count($providers) > 0) {
             foreach ($providers as $provider => $providerConfig) {
-
                 // Generate camelcase version of the provider
                 $providerNameCamelCase = $this->getCamelCaseProviderName($provider);
 
@@ -190,7 +193,7 @@ class InjectorService
 
         // Add extension plugin
         ExtensionUtility::configurePlugin(
-        // unique plugin name
+            // unique plugin name
             $providerConfig['namespace'],
             $providerConfig['pluginName'],
             // accessible controller-action-combinations

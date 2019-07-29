@@ -267,7 +267,7 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                         UrlService::class
                     );
                     $urlService->initTSFE($row['pid']);
-                    // Hotfix END
+                    // TODO: Fix that user with only read rights can't run this command
                     try {
                         $formData = $formDataCompiler->compile($formDataCompilerInput);
                     } catch (AccessDeniedTableModifyException $e) {

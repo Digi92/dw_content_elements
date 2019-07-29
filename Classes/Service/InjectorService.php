@@ -104,7 +104,7 @@ class InjectorService
                                 $showItem = trim((string)$elementConfig['fields'], ',');
                             } else {
                                 $showItem = 'sys_language_uid, l10n_parent, l10n_diffsource, l18n_parent,'
-                                    . 'l18n_diffsource, CType;;4;button;1-1-1, colPos, --palette--;Headline,'
+                                    . 'l18n_diffsource, CType, colPos, --palette--;Headline,'
                                     . trim((string)$elementConfig['fields'], ',') . ',
                                     --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
                                     --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:'

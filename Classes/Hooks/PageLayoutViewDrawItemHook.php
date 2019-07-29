@@ -31,6 +31,7 @@ use Denkwerk\DwContentElements\Service\IniProviderService;
 use Denkwerk\DwContentElements\Service\IniService;
 use Denkwerk\DwContentElements\Service\IrreService;
 use Denkwerk\DwContentElements\Service\UrlService;
+use TYPO3\CMS\Backend\Form\Exception\AccessDeniedTableModifyException;
 use TYPO3\CMS\Backend\Form\FormDataCompiler;
 use TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord;
 use TYPO3\CMS\Backend\Form\NodeFactory;
@@ -233,7 +234,6 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                     break;
                 case "select":
                     //TODO: Wrong preview if the select use mm!!!
-                    $filedContent .= '<p style="padding-right: 5px;margin:0;"><b>' . $itemLabels . '</b><br />';
                     $items = array();
 
                     //Get all items
@@ -268,7 +268,12 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                     );
                     $urlService->initTSFE($row['pid']);
                     // Hotfix END
-                    $formData = $formDataCompiler->compile($formDataCompilerInput);
+                    try {
+                        $formData = $formDataCompiler->compile($formDataCompilerInput);
+                    } catch (AccessDeniedTableModifyException $e) {
+                        //break switch - we do not have read permissions
+                        break;
+                    }
 
                     $formData['renderType'] = 'outerWrapContainer';
 
@@ -286,6 +291,7 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                     }
                     $fieldType = $fieldConfig['renderType'];
 
+                    $filedContent .= '<p style="padding-right: 5px;margin:0;"><b>' . $itemLabels . '</b><br />';
 
                     switch ($fieldType) {
                         case "checkbox":

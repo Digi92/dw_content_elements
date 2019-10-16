@@ -7,7 +7,7 @@ if (!defined('TYPO3_MODE')) {
 }
 
 // Preview in the list view
-if (!isset($GLOBALS['TCA']['tt_content']['ctrl']['label_userFunc'])) {
+if (isset($GLOBALS['TCA']['tt_content']) && !isset($GLOBALS['TCA']['tt_content']['ctrl']['label_userFunc'])) {
     $GLOBALS['TCA']['tt_content']['ctrl']['label_userFunc'] =
         'Denkwerk\DwContentElements\UserFunc\Tca->setTtContentTitle';
 }

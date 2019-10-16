@@ -22,7 +22,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php'][
     'Denkwerk\\DwContentElements\\Hooks\\PageLayoutViewDrawItemHook';
 
 // Override preview in the list view
-if (!isset($GLOBALS['TCA']['tt_content']['ctrl']['label_userFunc'])) {
+if (isset($GLOBALS['TCA']['tt_content']) && !isset($GLOBALS['TCA']['tt_content']['ctrl']['label_userFunc'])) {
     $GLOBALS['TCA']['tt_content']['ctrl']['label_userFunc'] =
         'Denkwerk\\DwContentElements\\UserFunc\\Tca->setTtContentTitle';
 }

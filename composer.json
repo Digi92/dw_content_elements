@@ -1,7 +1,7 @@
 {
     "name": "dw-typo3/dw-content-elements",
     "type": "typo3-cms-extension",
-    "version": "1.7.5",
+    "version": "1.7.6",
     "description": "Custom content elements builder",
     "homepage": "https://github.com/Digi92/dw_content_elements",
     "require": {

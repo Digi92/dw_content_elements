@@ -13,6 +13,7 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['dw_content_elements']['providers']['my_c
     'pluginName' => 'MyContentElements',
     'pluginCategory' => 'My own content elements',
     'controllerActions' => ['Elements' => 'render'],
+    'nonCacheableControllerActions' => ['Elements' => 'nonCacheableRender'],
     'namespace' => 'Denkwerk.MyContentElements',
     'elementsPath' => '/Configuration/Elements',
     'addElementsToWizard' => TRUE,
@@ -28,6 +29,7 @@ There are some mandatory options:
 - `pluginName`: The name of the plugin
 - `pluginCategory`: The plugins category (optgroup)
 - `controllerActions`: The controller actions
+- `nonCacheableControllerActions`: The noncachable controller actions, will use if the content element has "noCache=1"
 - `namespace`: The plugins namespace, vendor and plugin namespace separated by dots
 - `addElementsToWizard`: If true, add a tab with the elements of this provider into the new elements wizard
 - `elementWizardTabTitle`: The label of the new elements wizard tab

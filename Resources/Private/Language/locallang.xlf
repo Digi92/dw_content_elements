@@ -30,6 +30,9 @@
 									icon = ../../typo3conf/ext/dw_content_elements_source/Resources/Public/Thumbnails/E1000MyContentElement_icon.png<br />
 									fields = header, subheader<br />
 									overWriteShowitem = 0<br />
+									previewFields = header, subheader<br />
+                                    previewListFields = header, subheader<br />
+									noCache = 0<br />
 								</code>
 							</li>
 						</ul>

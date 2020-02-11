@@ -64,6 +64,7 @@ class IniProviderService
                 array(
                     'pluginName' => 'ContentRenderer',
                     'controllerActions' => array('Elements' => 'render'),
+                    'nonCacheableControllerActions' => array('Elements' => 'nonCacheableRender'),
                     'namespace' => 'Denkwerk.DwContentElementsSource',
                     'elementsPath' => '/Configuration/Elements'
                 )

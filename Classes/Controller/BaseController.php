@@ -104,4 +104,15 @@ class BaseController extends ActionController
             $this->forward($this->contentObj->data['CType']);
         }
     }
+
+    /**
+     * This action will render the content element without cache
+     *
+     * @return void
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
+     */
+    public function nonCacheableRenderAction()
+    {
+        $this->renderAction();
+    }
 }

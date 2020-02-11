@@ -216,7 +216,18 @@ class InjectorService
                         " < tt_content.list.20." .
                         strtolower($providerNameCamelCase) . "_" . strtolower($providerConfig['pluginName']) . " \n";
 
-                    foreach ($providerConfig['controllerActions'] as $controller => $actions) {
+                    $controllerActions = $providerConfig['controllerActions'];
+
+                    // Replace controller and actions with nonCacheable version
+                    // if content element config "noCache" is true
+                    if (isset($elementConfig['noCache']) &&
+                        (boolean)$elementConfig['noCache'] === true &&
+                        isset($providerConfig['nonCacheableControllerActions'])
+                    ) {
+                        $controllerActions = $providerConfig['nonCacheableControllerActions'];
+                    }
+
+                    foreach ($controllerActions as $controller => $actions) {
                         $actionArray = explode(',', $actions);
                         foreach ($actionArray as $index => $action) {
                             $typoScript .= "tt_content." .

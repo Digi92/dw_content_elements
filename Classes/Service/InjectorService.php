@@ -199,7 +199,10 @@ class InjectorService
             // accessible controller-action-combinations
             $providerConfig['controllerActions'],
             // non-cachable controller-action-combinations (they must already be enabled)
-            array()
+            (isset($providerConfig['nonCacheableControllerActions']) ?
+                $providerConfig['nonCacheableControllerActions'] :
+                array()
+            )
         );
 
         // Add all content elements to wizards

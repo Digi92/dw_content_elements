@@ -3,6 +3,8 @@
 namespace Denkwerk\DwContentElements\Service;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use \TYPO3\CMS\Core\Utility\VersionNumberUtility;
@@ -91,13 +93,26 @@ class UrlService
             is_array($rootLine)
         ) {
             foreach ($rootLine as $page) {
-                $row = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-                    'uid',
-                    'sys_template',
-                    'pid=' . (int)$page['uid'] . ' AND deleted=0 AND hidden=0',
-                    'sorting',
-                    1
-                );
+//                $row = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+//                    'uid',
+//                    'sys_template',
+//                    'pid=' . (int)$page['uid'] . ' AND deleted=0 AND hidden=0',
+//                    'sorting',
+//                    1
+//                );
+
+                /** @var QueryBuilder $queryBuilder */
+                $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+                    ->getQueryBuilderForTable('sys_template');
+                $row = $queryBuilder
+                    ->select('uid')
+                    ->from('sys_template')
+                    ->where('pid=' . (int)$page['uid'] . ' AND deleted=0 AND hidden=0')
+                    ->groupBy('sorting')
+                    ->setMaxResults(1)
+                    ->execute()
+                    ->fetch();
+
                 if (isset($row[0])) {
                     $hasTsTemplate = true;
                     break;

@@ -8,7 +8,7 @@
  * writing. "version" and "dependencies" must not be touched!
  ***************************************************************/
 
-$EM_CONF[$_EXTKEY] = array(
+$EM_CONF['dw_content_elements_source'] = array(
     'title' => 'Content Elements Source',
     'description' => 'This extension included your created content elements.',
     'category' => 'misc',

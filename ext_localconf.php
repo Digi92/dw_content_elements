@@ -18,7 +18,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Frontend\\ContentObje
 );
 
 // Override preview in the page view
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem'][$_EXTKEY] =
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['dw_content_elements'] =
     'Denkwerk\\DwContentElements\\Hooks\\PageLayoutViewDrawItemHook';
 
 // Override preview in the list view

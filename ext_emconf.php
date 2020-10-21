@@ -8,7 +8,7 @@
  * writing. "version" and "dependencies" must not be touched!
  ***************************************************************/
 
-$EM_CONF[$_EXTKEY] = array(
+$EM_CONF['dw_content_elements'] = array(
     'title' => 'Content Elements',
     'description' => 'Custom content elements',
     'category' => 'misc',

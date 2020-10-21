@@ -28,6 +28,7 @@ namespace Denkwerk\DwContentElements\Service;
 
 use Denkwerk\DwContentElements\Utility\Paths;
 use Denkwerk\DwContentElements\Utility\TypoScriptParser;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -55,7 +56,7 @@ class IniService
     /**
      * Returns the configuration from the file set by configuration file
      *
-     * @param string $configFile Relative Path to TYPO3-DocumentRoot (PATH_site)
+     * @param string $configFile Relative Path to TYPO3-DocumentRoot (\TYPO3\CMS\Core\Core\Environment::getPublicPath())
      * @return array|bool
      */
     public function loadConfig($configFile)
@@ -63,7 +64,7 @@ class IniService
         $result = false;
         $configFileAbsPath = Paths::concat(
             array(
-                realpath(PATH_site),
+                realpath(Environment::getPublicPath()),
                 realpath($configFile),
             )
         );

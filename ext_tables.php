@@ -3,13 +3,6 @@ if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
 
-// Add TypoScript static files
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
-    'dw_content_elements',
-    'Configuration/TypoScript',
-    'Content Element configuration'
-);
-
 //Add backend module
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
     'Denkwerk.dw_content_elements',   // vendor + extkey, seperated by a dot

@@ -174,18 +174,16 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
 
             switch ($fieldConfig['type']) {
                 case "input":
-                    //If field has a link wizard
-                    if (isset($fieldConfig['wizards']['link']) &&
+                    //If field has the renderType "inputLink" generate link
+                    if (isset($fieldConfig['renderType']) &&
+                        $fieldConfig['renderType'] === 'inputLink' &&
                         empty($fieldValue) === false
                     ) {
                         /*** @var UrlService $urlService */
                         $urlService = GeneralUtility::makeInstance(
                             UrlService::class
                         );
-                        $fieldValue = $urlService->getUrl(
-                            $row['pid'],
-                            $fieldValue
-                        );
+                        $fieldValue = $urlService->getUrl($fieldValue);
                     }
 
                     // If field has an eval type, format the value by respect eval type
@@ -259,14 +257,7 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                         FormDataCompiler::class,
                         $formDataGroup
                     );
-                    // ToDo: Remove hotfix if the core bug is fixed or change the code! Change initTSFE back to private!
-                    // Bug ticket: https://forge.typo3.org/issues/79354
-                    // Hotfix BEGIN
-                    /*** @var UrlService $urlService */
-                    $urlService = GeneralUtility::makeInstance(
-                        UrlService::class
-                    );
-                    $urlService->initTSFE($row['pid']);
+
                     // TODO: Fix that user with only read rights can't run this command
                     try {
                         $formData = $formDataCompiler->compile($formDataCompilerInput);

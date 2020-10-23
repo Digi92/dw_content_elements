@@ -27,8 +27,12 @@ namespace Denkwerk\DwContentElements\Service;
  ***************************************************************/
 
 use Denkwerk\DwContentElements\Utility\Logger;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\StartTimeRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -64,33 +68,20 @@ class IrreService
             if ($contentObj->data[$tableName] > 0 &&
                 empty($repositoryName)
             ) {
-//                $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-//                    '*',
-//                    $tableName,
-//                    'foreign_uid = ' . $contentObj->data['uid'] .
-//                    (TYPO3_MODE == 'BE' ?
-//                        BackendUtility::BEenableFields($tableName)
-//                        . ' AND ' . $tableName . '.deleted=0' :
-//                        $contentObj->enableFields($tableName)
-//                    ),
-//                    '',
-//                    'sorting'
-//                );
-
-                $where = 'foreign_uid = ' . $contentObj->data['uid'] .
-                    (TYPO3_MODE == 'BE' ?
-                        BackendUtility::BEenableFields($tableName)
-                        . ' AND ' . $tableName . '.deleted=0' :
-                        $contentObj->enableFields($tableName)
-                    );
-
+                /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
                 $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
                     ->getQueryBuilderForTable($tableName);
+
+                $queryBuilder->getRestrictions()
+                    ->add(GeneralUtility::makeInstance(DeletedRestriction::class))
+                    ->add(GeneralUtility::makeInstance(HiddenRestriction::class))
+                    ->add(GeneralUtility::makeInstance(StartTimeRestriction::class))
+                    ->add(GeneralUtility::makeInstance(EndTimeRestriction::class));
 
                 $rows = $queryBuilder
                     ->select('*')
                     ->from($tableName)
-                    ->where($where)
+                    ->where('foreign_uid = ' . $contentObj->data['uid'])
                     ->orderBy('sorting')
                     ->execute();
 
@@ -146,33 +137,20 @@ class IrreService
         if (is_array($data)
         ) {
             if ($data['content_elements'] != null && empty($data['content_elements']) === false) {
-//                $elementRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-//                    'uid',
-//                    'tt_content',
-//                    'foreign_uid = ' . $data['uid'] .
-//                    (TYPO3_MODE == 'BE' ?
-//                        BackendUtility::BEenableFields('tt_content')
-//                        . ' AND tt_content.deleted=0' :
-//                        $contentObj->enableFields('tt_content')
-//                    ) . 'AND parent_table = "' . $parentTable . '"',
-//                    '',
-//                    'sorting'
-//                );
-
-                $where = 'foreign_uid = ' . $data['uid'] .
-                    (TYPO3_MODE == 'BE' ?
-                        BackendUtility::BEenableFields('tt_content')
-                        . ' AND tt_content.deleted=0' :
-                        $contentObj->enableFields('tt_content')
-                    ) . 'AND parent_table = "' . $parentTable . '"';
-
+                /** @var QueryBuilder $queryBuilder */
                 $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
                     ->getQueryBuilderForTable('tt_content');
+
+                $queryBuilder->getRestrictions()
+                    ->add(GeneralUtility::makeInstance(DeletedRestriction::class))
+                    ->add(GeneralUtility::makeInstance(HiddenRestriction::class))
+                    ->add(GeneralUtility::makeInstance(StartTimeRestriction::class))
+                    ->add(GeneralUtility::makeInstance(EndTimeRestriction::class));
 
                 $elementRows = $queryBuilder
                     ->select('uid')
                     ->from('tt_content')
-                    ->where($where)
+                    ->where('foreign_uid = ' . $data['uid'])
                     ->orderBy('sorting')
                     ->execute();
 

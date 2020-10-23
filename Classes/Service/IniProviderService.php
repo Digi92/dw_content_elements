@@ -26,7 +26,9 @@ namespace Denkwerk\DwContentElements\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * **************************************************************/
 
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class IniProviderService
@@ -83,7 +85,9 @@ class IniProviderService
     protected function mergeConfigurations(array $config)
     {
         // Extension manager configuration: used as default configuration
-        $extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['dw_content_elements']);
+        $extensionConfiguration = GeneralUtility::makeInstance(
+            ExtensionConfiguration::class
+        )->get('dw_content_elements');
 
         if (is_array($config) &&
             is_array($extensionConfiguration)

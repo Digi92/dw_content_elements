@@ -77,6 +77,7 @@ class BaseController extends ActionController
     protected function initializeView(ViewInterface $view)
     {
         $this->classReflection = new \ReflectionClass($this);
+        // @extensionScannerIgnoreLine
         $this->contentObj = $this->configurationManager->getContentObject();
         $this->data = $this->contentObj->data;
         $view->assign('data', $this->contentObj->data);

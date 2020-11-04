@@ -337,7 +337,7 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                             null,
                             0,
                             '',
-                            '150cxNULL',
+                            '150c',
                             true
                         );
                         $filedContent .= '<br />';

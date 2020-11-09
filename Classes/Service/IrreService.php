@@ -68,6 +68,11 @@ class IrreService
             if ($contentObj->data[$tableName] > 0 &&
                 empty($repositoryName)
             ) {
+                $foreignUid = $contentObj->data['uid'];
+                if (isset($contentObj->data['_LOCALIZED_UID'])) {
+                    $foreignUid = $contentObj->data['_LOCALIZED_UID'];
+                }
+
                 /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
                 $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
                     ->getQueryBuilderForTable($tableName);
@@ -81,7 +86,7 @@ class IrreService
                 $rows = $queryBuilder
                     ->select('*')
                     ->from($tableName)
-                    ->where('foreign_uid = ' . $contentObj->data['uid'])
+                    ->where('foreign_uid = ' . $foreignUid)
                     ->orderBy('sorting')
                     ->execute();
 
@@ -95,6 +100,11 @@ class IrreService
             if ($contentObj->data[$tableName] > 0 &&
                 empty($repositoryName) === false
             ) {
+                $foreignUid = $contentObj->data['uid'];
+                if (isset($contentObj->data['_LOCALIZED_UID'])) {
+                    $foreignUid = $contentObj->data['_LOCALIZED_UID'];
+                }
+
                 /*** @var $extbaseObjectManager \TYPO3\CMS\Extbase\Object\ObjectManager */
                 $extbaseObjectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
                     'TYPO3\\CMS\\Extbase\\Object\\ObjectManager'
@@ -103,7 +113,7 @@ class IrreService
                 $repository = $extbaseObjectManager->get($repositoryName);
 
                 // Get the table data by the given repository
-                $rows = $repository->findByForeignUid($contentObj->data['uid']);
+                $rows = $repository->findByForeignUid($foreignUid);
 
                 if (empty($rows) === false) {
                     $result = $rows;

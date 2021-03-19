@@ -1,7 +1,7 @@
 {
     "name": "dw-typo3/dw-content-elements",
     "type": "typo3-cms-extension",
-    "version": "1.8.1",
+    "version": "2.0.0",
     "description": "Custom content elements builder",
     "homepage": "https://github.com/Digi92/dw_content_elements",
     "require": {
@@ -18,6 +18,16 @@
             "email": "sascha.zander@denkwerk.com",
             "homepage": "https://github.com/Digi92",
             "role": "Developer"
+        },
+        {
+            "name": "Tobias Nussbaum",
+            "email": "tobias.nussbaum@denkwerk.com",
+            "role": "Developer"
         }
-    ]
+    ],
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "dw_content_elements"
+        }
+    }
 }

@@ -1,7 +1,5 @@
 <?php
 
-use Denkwerk\DwContentElements\Service\InjectorService;
-
 if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
@@ -28,5 +26,5 @@ if (isset($GLOBALS['TCA']['tt_content']) && !isset($GLOBALS['TCA']['tt_content']
 }
 
 // Register content element plugins
-$injectorService = new InjectorService();
+$injectorService = new \Denkwerk\DwContentElements\Service\InjectorService();
 $injectorService->injectPluginConfiguration();

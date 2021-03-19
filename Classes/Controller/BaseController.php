@@ -30,6 +30,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Extbase\Annotation as Extbase;
 
 /**
  * Class BaseController
@@ -62,7 +63,7 @@ class BaseController extends ActionController
      * IrreService
      *
      * @var \Denkwerk\DwContentElements\Service\IrreService
-     * @inject
+     * @Extbase\Inject
      */
     protected $irreService;
 
@@ -76,6 +77,7 @@ class BaseController extends ActionController
     protected function initializeView(ViewInterface $view)
     {
         $this->classReflection = new \ReflectionClass($this);
+        // @extensionScannerIgnoreLine
         $this->contentObj = $this->configurationManager->getContentObject();
         $this->data = $this->contentObj->data;
         $view->assign('data', $this->contentObj->data);

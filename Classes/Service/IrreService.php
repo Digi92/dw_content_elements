@@ -27,7 +27,13 @@ namespace Denkwerk\DwContentElements\Service;
  ***************************************************************/
 
 use Denkwerk\DwContentElements\Utility\Logger;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\StartTimeRestriction;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class IrreService
@@ -49,7 +55,12 @@ class IrreService
         $result = array();
 
         // Check if field "foreign_uid" exists on table
-        $fieldsInDatabase = $GLOBALS['TYPO3_DB']->admin_get_fields($tableName);
+        //$fieldsInDatabase = $GLOBALS['TYPO3_DB']->admin_get_fields($tableName);
+        $fieldsInDatabase = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable($tableName)
+            ->getSchemaManager()
+            ->listTableColumns($tableName);
+
         if (empty($fieldsInDatabase) === false &&
             array_key_exists("foreign_uid", $fieldsInDatabase)
         ) {
@@ -57,18 +68,27 @@ class IrreService
             if ($contentObj->data[$tableName] > 0 &&
                 empty($repositoryName)
             ) {
-                $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-                    '*',
-                    $tableName,
-                    'foreign_uid = ' . $contentObj->data['uid'] .
-                    (TYPO3_MODE == 'BE' ?
-                        BackendUtility::BEenableFields($tableName)
-                        . ' AND ' . $tableName . '.deleted=0' :
-                        $contentObj->enableFields($tableName)
-                    ),
-                    '',
-                    'sorting'
-                );
+                $foreignUid = $contentObj->data['uid'];
+                if (isset($contentObj->data['_LOCALIZED_UID'])) {
+                    $foreignUid = $contentObj->data['_LOCALIZED_UID'];
+                }
+
+                /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
+                $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+                    ->getQueryBuilderForTable($tableName);
+
+                $queryBuilder->getRestrictions()
+                    ->add(GeneralUtility::makeInstance(DeletedRestriction::class))
+                    ->add(GeneralUtility::makeInstance(HiddenRestriction::class))
+                    ->add(GeneralUtility::makeInstance(StartTimeRestriction::class))
+                    ->add(GeneralUtility::makeInstance(EndTimeRestriction::class));
+
+                $rows = $queryBuilder
+                    ->select('*')
+                    ->from($tableName)
+                    ->where('foreign_uid = ' . $foreignUid)
+                    ->orderBy('sorting')
+                    ->execute();
 
                 foreach ($rows as $row) {
                     // Get "tt_content" content elements of the relations if it exist a row "content_elements"
@@ -76,11 +96,15 @@ class IrreService
                 }
             }
 
-
             // Get the IRRE data by the repository magic function "findByForeignUid"
             if ($contentObj->data[$tableName] > 0 &&
                 empty($repositoryName) === false
             ) {
+                $foreignUid = $contentObj->data['uid'];
+                if (isset($contentObj->data['_LOCALIZED_UID'])) {
+                    $foreignUid = $contentObj->data['_LOCALIZED_UID'];
+                }
+
                 /*** @var $extbaseObjectManager \TYPO3\CMS\Extbase\Object\ObjectManager */
                 $extbaseObjectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
                     'TYPO3\\CMS\\Extbase\\Object\\ObjectManager'
@@ -89,7 +113,7 @@ class IrreService
                 $repository = $extbaseObjectManager->get($repositoryName);
 
                 // Get the table data by the given repository
-                $rows = $repository->findByForeignUid($contentObj->data['uid']);
+                $rows = $repository->findByForeignUid($foreignUid);
 
                 if (empty($rows) === false) {
                     $result = $rows;
@@ -123,18 +147,23 @@ class IrreService
         if (is_array($data)
         ) {
             if ($data['content_elements'] != null && empty($data['content_elements']) === false) {
-                $elementRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-                    'uid',
-                    'tt_content',
-                    'foreign_uid = ' . $data['uid'] .
-                    (TYPO3_MODE == 'BE' ?
-                        BackendUtility::BEenableFields('tt_content')
-                        . ' AND tt_content.deleted=0' :
-                        $contentObj->enableFields('tt_content')
-                    ) . 'AND parent_table = "' . $parentTable . '"',
-                    '',
-                    'sorting'
-                );
+                /** @var QueryBuilder $queryBuilder */
+                $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+                    ->getQueryBuilderForTable('tt_content');
+
+                $queryBuilder->getRestrictions()
+                    ->add(GeneralUtility::makeInstance(DeletedRestriction::class))
+                    ->add(GeneralUtility::makeInstance(HiddenRestriction::class))
+                    ->add(GeneralUtility::makeInstance(StartTimeRestriction::class))
+                    ->add(GeneralUtility::makeInstance(EndTimeRestriction::class));
+
+                $elementRows = $queryBuilder
+                    ->select('uid')
+                    ->from('tt_content')
+                    ->where('foreign_uid = ' . $data['uid'])
+                    ->orderBy('sorting')
+                    ->execute();
+
                 $contentElements = array();
                 foreach ($elementRows as $elementRow) {
                     array_push($contentElements, $elementRow['uid']);

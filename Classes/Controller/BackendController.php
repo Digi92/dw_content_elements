@@ -31,6 +31,7 @@ use Denkwerk\DwContentElements\Service\IniProviderService;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Core\Core\Environment;
 
 /**
  * Class BackendController
@@ -59,7 +60,7 @@ class BackendController extends ActionController
             count($providers) === 0
         ) {
             // Check if source extension exists
-            if (!is_dir(PATH_typo3conf . 'ext/dw_content_elements_source')) {
+            if (!is_dir(Environment::getPublicPath() . '/typo3conf/ext/dw_content_elements_source')) {
                 $this->forward('createSourceExt');
             } else {
                 $this->forward('loadSourceExt');
@@ -82,7 +83,9 @@ class BackendController extends ActionController
             $fileService = $this->objectManager->get(
                 FileService::class
             );
-            $fileService->setSourceExtensionDirectory(PATH_typo3conf . 'ext/dw_content_elements_source/');
+            $fileService->setSourceExtensionDirectory(
+                Environment::getPublicPath() . '/typo3conf/ext/dw_content_elements_source/'
+            );
             $success = $fileService->createSourceExt();
 
             if ($success) {

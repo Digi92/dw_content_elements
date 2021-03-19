@@ -7,7 +7,7 @@ if (!defined('TYPO3_MODE')) {
 }
 
 ExtensionManagementUtility::addStaticFile(
-    $_EXTKEY,
+    'dw_content_elements_source',
     'Configuration/TypoScript',
     'Content element configuration'
 );

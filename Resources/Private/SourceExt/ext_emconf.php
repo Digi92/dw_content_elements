@@ -8,7 +8,7 @@
  * writing. "version" and "dependencies" must not be touched!
  ***************************************************************/
 
-$EM_CONF[$_EXTKEY] = array(
+$EM_CONF['dw_content_elements_source'] = array(
     'title' => 'Content Elements Source',
     'description' => 'This extension included your created content elements.',
     'category' => 'misc',
@@ -32,7 +32,7 @@ $EM_CONF[$_EXTKEY] = array(
     'priority' => 'bottom',
     'constraints' => array(
         'depends' => array(
-            'typo3' => '8.7.0-8.99.99',
+            'typo3' => '8.7.0-10.4.99',
             'cms' => '',
             'extbase' => '',
             'dw_content_elements' => '',

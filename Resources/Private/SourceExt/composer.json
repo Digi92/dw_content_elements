@@ -4,7 +4,7 @@
     "version": "1.0.15",
     "description": "Custom content elements source extension",
     "require": {
-        "typo3/cms-core": ">=8.7,<8.9",
+        "typo3/cms-core": ">=8.7,<10.4.99",
         "dw-typo3/dw-content-elements": "*"
     },
     "autoload": {

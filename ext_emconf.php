@@ -8,12 +8,12 @@
  * writing. "version" and "dependencies" must not be touched!
  ***************************************************************/
 
-$EM_CONF[$_EXTKEY] = array(
+$EM_CONF['dw_content_elements'] = array(
     'title' => 'Content Elements',
     'description' => 'Custom content elements',
     'category' => 'misc',
     'shy' => 0,
-    'version' => '1.8.1',
+    'version' => '2.0.0',
     'dependencies' => 'cms,extbase',
     'conflicts' => '',
     'loadOrder' => '',
@@ -32,8 +32,7 @@ $EM_CONF[$_EXTKEY] = array(
     'priority' => 'top',
     'constraints' => array(
         'depends' => array(
-            'typo3' => '8.7.0-8.99.99',
-            'cms' => '',
+            'typo3' => '10.4.1-10.4.99',
             'extbase' => '',
         ),
         'conflicts' => array(),

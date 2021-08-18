@@ -191,17 +191,32 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                         foreach (explode(",", $fieldConfig['eval']) as $evaluation) {
                             switch (trim($evaluation)) {
                                 case "date":
-                                    $fieldValue = date('Y-m-d', $fieldValue);
+                                    if ($fieldValue > 0) {
+                                        $fieldValue = date('Y-m-d', $fieldValue);
+                                    } else {
+                                        $fieldValue = '';
+                                    }
                                     break;
                                 case "datetime":
-                                    $fieldValue = date('Y-m-d H:i', $fieldValue);
+                                    if ($fieldValue > 0) {
+                                        $fieldValue = date('Y-m-d H:i', $fieldValue);
+                                    } else {
+                                        $fieldValue = '';
+                                    }
                                     break;
                                 case "time":
-                                    $fieldValue = gmdate('H:i', $fieldValue);
+                                    if ($fieldValue > 0) {
+                                        $fieldValue = gmdate('H:i', $fieldValue);
+                                    } else {
+                                        $fieldValue = '';
+                                    }
                                     break;
                                 case "timesec":
-                                    $fieldValue = gmdate('H:i:s', $fieldValue);
-                                    break;
+                                    if ($fieldValue > 0) {
+                                        $fieldValue = gmdate('H:i:s', $fieldValue);
+                                    } else {
+                                        $fieldValue = '';
+                                    }
                             }
                         }
                     }

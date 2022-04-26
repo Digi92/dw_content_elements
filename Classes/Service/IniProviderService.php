@@ -26,6 +26,7 @@ namespace Denkwerk\DwContentElements\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * **************************************************************/
 
+use Denkwerk\DwContentElementsSource\Controller\ElementsController;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -65,8 +66,8 @@ class IniProviderService
             $providers['dw_content_elements_source'] = $this->mergeConfigurations(
                 array(
                     'pluginName' => 'ContentRenderer',
-                    'controllerActions' => array('Elements' => 'render'),
-                    'nonCacheableControllerActions' => array('Elements' => 'nonCacheableRender'),
+                    'controllerActions' => array(ElementsController::class => 'render'),
+                    'nonCacheableControllerActions' => array(ElementsController::class => 'nonCacheableRender'),
                     'namespace' => 'Denkwerk.DwContentElementsSource',
                     'elementsPath' => '/Configuration/Elements'
                 )

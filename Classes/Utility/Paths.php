@@ -28,6 +28,7 @@ namespace Denkwerk\DwContentElements\Utility;
  * **************************************************************/
 
 use \TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
+use TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException;
 
 /**
  * ToDo: Wie mit Pfaden unter Windows umgehen, c:/, d:/?
@@ -151,5 +152,41 @@ class Paths
         }
 
         return $results;
+    }
+
+    /**
+     * Note: This function is a copy from "\TYPO3Fluid\Fluid\View\TemplatePaths->resolveFileInPaths" of version 10.4.30
+     * We change the access modifier and remove the fallback for format variable.
+     *
+     * This function will check in the given paths a file is existing
+     *
+     * @param array $paths
+     * @param string $relativePathAndFilename
+     * @param string $format
+     * @return string
+     * @throws InvalidTemplateResourceException
+     */
+    public static function resolveFileInPaths(array $paths, $relativePathAndFilename, $format)
+    {
+        $tried = [];
+        // Note about loop: iteration with while + array_pop causes paths to be checked in opposite
+        // order, which is intentional. Paths are considered overlays, e.g. adding a path to the
+        // array means you want that path checked first.
+        while (null !== ($path = array_pop($paths))) {
+            $pathAndFilenameWithoutFormat = $path . $relativePathAndFilename;
+            $pathAndFilename = $pathAndFilenameWithoutFormat . '.' . $format;
+            if (is_file($pathAndFilename)) {
+                return $pathAndFilename;
+            }
+            $tried[] = $pathAndFilename;
+            if (is_file($pathAndFilenameWithoutFormat)) {
+                return $pathAndFilenameWithoutFormat;
+            }
+            $tried[] = $pathAndFilenameWithoutFormat;
+        }
+        throw new InvalidTemplateResourceException(
+            'The Fluid template files "' . implode('", "', $tried) . '" could not be loaded.',
+            1225709595
+        );
     }
 }

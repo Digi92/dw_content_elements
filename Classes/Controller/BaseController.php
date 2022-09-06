@@ -26,11 +26,14 @@ namespace Denkwerk\DwContentElements\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Denkwerk\DwContentElements\Utility\Paths;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Extbase\Annotation as Extbase;
+use TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException;
+use TYPO3Fluid\Fluid\View\TemplatePaths;
 
 /**
  * Class BaseController
@@ -91,16 +94,35 @@ class BaseController extends ActionController
      */
     public function renderAction()
     {
-        /**
-         * ToDo: More flexible and cleaner implementation needed.
-         */
-        $this->view->setTemplatePathAndFilename(
-            GeneralUtility::getFileAbsFileName(
+        // Try to load the action template path
+        try {
+            /** @var TemplatePaths $templatePathsContext */
+            $templatePathsContext = $this->view->getTemplatePaths();
+
+            $actionFilePath = Paths::resolveFileInPaths(
+                $templatePathsContext->getTemplateRootPaths(),
+                substr($this->classReflection->getShortName(), 0, -10) . '/' .
+                ucfirst($this->contentObj->data['CType']),
+                $templatePathsContext->getFormat()
+            );
+        } catch (InvalidTemplateResourceException $error) {
+            // Fallback try to load action template path from the templates folder of the extension
+            $actionFilePath = GeneralUtility::getFileAbsFileName(
                 'typo3conf/ext/' . $this->request->getControllerExtensionKey() .
                 '/Resources/Private/Templates/' . substr($this->classReflection->getShortName(), 0, -10) . '/' .
                 ucfirst($this->contentObj->data['CType']) . '.' . $this->request->getFormat()
-            )
-        );
+            );
+
+            if (!is_file($actionFilePath)) {
+                throw new InvalidTemplateResourceException(
+                    $error->getMessage() . ' Also not found in fallback location "$actionFilePath"',
+                    1225709595
+                );
+            }
+        }
+
+        // Set the action template path
+        $this->view->setTemplatePathAndFilename($actionFilePath);
 
         if ($this->classReflection->hasMethod($this->contentObj->data['CType'] . 'Action')) {
             $this->forward($this->contentObj->data['CType']);

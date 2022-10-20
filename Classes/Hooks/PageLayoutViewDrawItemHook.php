@@ -427,6 +427,18 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
             if (!in_array($field['fieldName'], $excludeElements = array())) {
                 // If field exist add this to result
                 if ($GLOBALS['TCA'][$table]['columns'][$field['fieldName']]) {
+                    // Check for an override field label
+                    if (isset($row['CType']) &&
+                        isset(
+                            $GLOBALS['TCA'][$table]['types'][$row['CType']]['columnsOverrides'][$field['fieldName']]
+                            ['label']
+                        )
+                    ) {
+                        $field['fieldLabel'] =
+                            $GLOBALS['TCA'][$table]['types'][$row['CType']]['columnsOverrides'][$field['fieldName']]
+                            ['label'];
+                    }
+
                     //Translate the label
                     if ($field['fieldLabel'] !== null &&
                         strpos($field['fieldLabel'], "LLL:EXT:") !== false

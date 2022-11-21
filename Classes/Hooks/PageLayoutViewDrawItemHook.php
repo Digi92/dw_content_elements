@@ -347,7 +347,7 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                             $row,
                             $fieldTable,
                             $fieldName,
-                            $GLOBALS['BACK_PATH'],
+                            isset($GLOBALS['BACK_PATH']) ?? null,
                             '',
                             null,
                             0,
@@ -483,8 +483,8 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
 
         return array(
             'fieldName' => $fieldArray[0],
-            'fieldLabel' => $fieldArray[1] ?: null,
-            'paletteName' => $fieldArray[2] ?: null,
+            'fieldLabel' => isset($fieldArray[1]) ?? null,
+            'paletteName' => isset($fieldArray[2]) ?? null,
         );
     }
 }

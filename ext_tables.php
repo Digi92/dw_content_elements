@@ -10,7 +10,7 @@ if (!defined('TYPO3_MODE')) {
     'DW Content Elements',    // module name
     '',                       // position in the group
     array(                    // Allowed controller -> action combinations
-        'Backend' => 'index, createSourceExt, loadSourceExt',
+        \Denkwerk\DwContentElements\Controller\BackendController::class => 'index, createSourceExt, loadSourceExt',
     ),
     array(                    // Additional configuration
         'access' => 'user,group',

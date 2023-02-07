@@ -26,6 +26,7 @@ namespace Denkwerk\DwContentElements\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Denkwerk\DwContentElements\Service\IrreService;
 use Denkwerk\DwContentElements\Utility\Paths;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -69,6 +70,14 @@ class BaseController extends ActionController
      * @Extbase\Inject
      */
     protected $irreService;
+
+    /**
+     * @param IrreService $irreService
+     */
+    public function __construct(IrreService $irreService)
+    {
+        $this->irreService = $irreService;
+    }
 
     /**
      * Initializeview

@@ -146,7 +146,9 @@ class IrreService
     {
         if (is_array($data)
         ) {
-            if ($data['content_elements'] != null && empty($data['content_elements']) === false) {
+            if (isset($data['content_elements']) &&
+                $data['content_elements'] != null &&
+                empty($data['content_elements']) === false) {
                 /** @var QueryBuilder $queryBuilder */
                 $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
                     ->getQueryBuilderForTable('tt_content');

@@ -347,7 +347,7 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                             $row,
                             $fieldTable,
                             $fieldName,
-                            $GLOBALS['BACK_PATH'],
+                            isset($GLOBALS['BACK_PATH']) ?? null,
                             '',
                             null,
                             0,
@@ -426,7 +426,8 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
 
             if (!in_array($field['fieldName'], $excludeElements = array())) {
                 // If field exist add this to result
-                if ($GLOBALS['TCA'][$table]['columns'][$field['fieldName']]) {
+                if (isset($GLOBALS['TCA'][$table]['columns'][$field['fieldName']]) &&
+                    $GLOBALS['TCA'][$table]['columns'][$field['fieldName']]) {
                     // Check for an override field label
                     if (isset($row['CType']) &&
                         isset(
@@ -495,8 +496,8 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
 
         return array(
             'fieldName' => $fieldArray[0],
-            'fieldLabel' => $fieldArray[1] ?: null,
-            'paletteName' => $fieldArray[2] ?: null,
+            'fieldLabel' => isset($fieldArray[1]) ?? null,
+            'paletteName' => isset($fieldArray[2]) ?? null,
         );
     }
 }

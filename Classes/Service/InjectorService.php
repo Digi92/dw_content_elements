@@ -100,7 +100,8 @@ class InjectorService
                             );
 
                             // Set element showitem
-                            if ((bool)$elementConfig['overWriteShowitem'] === true) {
+                            if (isset($elementConfig['overWriteShowitem']) &&
+                                (bool)$elementConfig['overWriteShowitem'] === true) {
                                 $showItem = trim((string)$elementConfig['fields'], ',');
                             } else {
                                 $showItem = 'sys_language_uid, l10n_parent, l10n_diffsource, l18n_parent,'

@@ -1,0 +1,33 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Denkwerk\DwContentElements\:
+      resource: '../Classes/*'
+      exclude: '../Classes/Domain/Model/*'
+
+  Denkwerk\DwContentElements\Service\FileService:
+      public: true
+      shared: true
+
+  Denkwerk\DwContentElements\Service\IniProviderService:
+      public: true
+      shared: true
+
+  Denkwerk\DwContentElements\Service\IniService:
+      public: true
+      shared: true
+
+  Denkwerk\DwContentElements\Service\InjectorService:
+      public: true
+      shared: true
+
+  Denkwerk\DwContentElements\Service\IrreService:
+      public: true
+      shared: true
+
+  Denkwerk\DwContentElements\Service\UrlService:
+      public: true
+      shared: true

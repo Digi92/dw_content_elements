@@ -32,7 +32,7 @@ $EM_CONF['dw_content_elements'] = array(
     'priority' => 'top',
     'constraints' => array(
         'depends' => array(
-            'typo3' => '10.4.1-11.5.99',
+            'typo3' => '12.0-12.4',
             'extbase' => '',
         ),
         'conflicts' => array(),

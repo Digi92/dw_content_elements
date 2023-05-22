@@ -5,7 +5,7 @@
     "description": "Custom content elements builder",
     "homepage": "https://github.com/Digi92/dw_content_elements",
     "require": {
-        "typo3/minimal": "^12.4"
+        "typo3/minimal": ">=12.0,<=12.4.99"
     },
     "autoload": {
         "psr-4": {

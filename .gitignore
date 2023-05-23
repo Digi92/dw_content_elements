@@ -3,3 +3,7 @@
 
 #IDE
 .idea
+
+#Build
+vendor
+public

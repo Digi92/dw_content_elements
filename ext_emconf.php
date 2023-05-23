@@ -13,7 +13,7 @@ $EM_CONF['dw_content_elements'] = array(
     'description' => 'Custom content elements',
     'category' => 'misc',
     'shy' => 0,
-    'version' => '3.0.0',
+    'version' => '12.0.0',
     'dependencies' => 'cms,extbase',
     'conflicts' => '',
     'loadOrder' => '',
@@ -32,7 +32,7 @@ $EM_CONF['dw_content_elements'] = array(
     'priority' => 'top',
     'constraints' => array(
         'depends' => array(
-            'typo3' => '12.0-12.4.99',
+            'typo3' => '12.4.1-12.4.99',
             'extbase' => '',
         ),
         'conflicts' => array(),

@@ -25,7 +25,7 @@ namespace Denkwerk\DwContentElements\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use Psr\Http\Message\ResponseInterface;
 use Denkwerk\DwContentElements\Service\IrreService;
 use Denkwerk\DwContentElements\Utility\Paths;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -66,8 +66,7 @@ class BaseController extends ActionController
     /**
      * IrreService
      *
-     * @var \Denkwerk\DwContentElements\Service\IrreService
-     * @Extbase\Inject
+     * @var IrreService
      */
     protected $irreService;
 
@@ -101,7 +100,7 @@ class BaseController extends ActionController
      * @return void
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      */
-    public function renderAction()
+    public function renderAction(): ResponseInterface
     {
         // Try to load the action template path
         try {
@@ -136,6 +135,7 @@ class BaseController extends ActionController
         if ($this->classReflection->hasMethod($this->contentObj->data['CType'] . 'Action')) {
             $this->forward($this->contentObj->data['CType']);
         }
+        return $this->htmlResponse();
     }
 
     /**
@@ -144,8 +144,14 @@ class BaseController extends ActionController
      * @return void
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      */
-    public function nonCacheableRenderAction()
+    public function nonCacheableRenderAction(): ResponseInterface
     {
         $this->renderAction();
+        return $this->htmlResponse();
+    }
+
+    public function injectIrreService(IrreService $irreService): void
+    {
+        $this->irreService = $irreService;
     }
 }

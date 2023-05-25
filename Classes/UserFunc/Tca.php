@@ -110,9 +110,7 @@ class Tca
                 $result = $queryBuilder
                     ->select(...$previewListFields)
                     ->from('tt_content')
-                    ->where('uid=' . $params['row']['uid'])
-                    ->setMaxResults(1)
-                    ->execute();
+                    ->where('uid=' . $params['row']['uid'])->setMaxResults(1)->executeQuery();
                 $row = $result->fetch();
 
                 if (empty($row) === false) {

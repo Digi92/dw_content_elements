@@ -39,7 +39,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class IniService
 {
     /**
-     * @var \Denkwerk\DwContentElements\Utility\TypoScriptParser $tsParser
+     * @var TypoScriptParser $tsParser
      */
     private $tsParser;
 

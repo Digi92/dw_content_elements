@@ -1,11 +1,11 @@
 <?php
-if (!defined('TYPO3_MODE')) {
+if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
 //Add backend module
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-    'Denkwerk.dw_content_elements',   // vendor + extkey, seperated by a dot
+    'DwContentElements',   // vendor + extkey, seperated by a dot
     'tools',                  // Backend Module group to place the module in
     'DW Content Elements',    // module name
     '',                       // position in the group

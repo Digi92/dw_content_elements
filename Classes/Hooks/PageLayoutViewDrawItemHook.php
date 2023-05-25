@@ -26,7 +26,7 @@ namespace Denkwerk\DwContentElements\Hooks;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Backend\Form\Exception;
 use Denkwerk\DwContentElements\Service\IniProviderService;
 use Denkwerk\DwContentElements\Service\IniService;
 use Denkwerk\DwContentElements\Service\IrreService;
@@ -77,7 +77,7 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
      * @param    string $itemContent :   Item content
      * @param    array $row :           Record row of tt_content
      * @return    void
-     * @throws \TYPO3\CMS\Backend\Form\Exception
+     * @throws Exception
      */
     public function preProcess(
         PageLayoutView &$parentObject,
@@ -158,7 +158,7 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
      * @param string $itemLabels
      * @param string $fieldTable
      * @return string
-     * @throws \TYPO3\CMS\Backend\Form\Exception
+     * @throws Exception
      */
     public function renderFieldPreview($fieldName, $row, $itemLabels = '', $fieldTable = 'tt_content')
     {

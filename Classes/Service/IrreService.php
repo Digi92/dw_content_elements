@@ -25,7 +25,7 @@ namespace Denkwerk\DwContentElements\Service;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use Denkwerk\DwContentElements\Utility\Logger;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -45,7 +45,7 @@ class IrreService
      *  Set data for Inline Relational Record Editing entry
      *  If set the repositoryName the function will call the magic function "findByForeignUid"
      *
-     * @param \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $contentObj
+     * @param ContentObjectRenderer $contentObj
      * @param string $tableName Name of the table
      * @param string $repositoryName Name of the repository if any repository exist. (Optional)
      * @return array
@@ -73,7 +73,7 @@ class IrreService
                     $foreignUid = $contentObj->data['_LOCALIZED_UID'];
                 }
 
-                /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
+                /** @var QueryBuilder $queryBuilder */
                 $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
                     ->getQueryBuilderForTable($tableName);
 
@@ -86,9 +86,7 @@ class IrreService
                 $rows = $queryBuilder
                     ->select('*')
                     ->from($tableName)
-                    ->where('foreign_uid = ' . $foreignUid)
-                    ->orderBy('sorting')
-                    ->execute();
+                    ->where('foreign_uid = ' . $foreignUid)->orderBy('sorting')->executeQuery();
 
                 foreach ($rows as $row) {
                     // Get "tt_content" content elements of the relations if it exist a row "content_elements"
@@ -106,7 +104,7 @@ class IrreService
                 }
 
                 /*** @var $extbaseObjectManager \TYPO3\CMS\Extbase\Object\ObjectManager */
-                $extbaseObjectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                $extbaseObjectManager = GeneralUtility::makeInstance(
                     'TYPO3\\CMS\\Extbase\\Object\\ObjectManager'
                 );
                 /*** @var $repository \TYPO3\CMS\Extbase\Persistence\Repository */
@@ -137,7 +135,7 @@ class IrreService
      * @deprecated since 1.2 will be removed in 2.0
      * Please use the "getRelations($repositoryName)" function
      *
-     * @param \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $contentObj
+     * @param ContentObjectRenderer $contentObj
      * @param array $data
      * @param string $parentTable
      * @return array
@@ -162,9 +160,7 @@ class IrreService
                 $elementRows = $queryBuilder
                     ->select('uid')
                     ->from('tt_content')
-                    ->where('foreign_uid = ' . $data['uid'])
-                    ->orderBy('sorting')
-                    ->execute();
+                    ->where('foreign_uid = ' . $data['uid'])->orderBy('sorting')->executeQuery();
 
                 $contentElements = array();
                 foreach ($elementRows as $elementRow) {

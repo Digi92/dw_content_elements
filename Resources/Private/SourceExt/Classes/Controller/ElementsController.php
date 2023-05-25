@@ -24,7 +24,7 @@ namespace Denkwerk\DwContentElementsSource\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use Psr\Http\Message\ResponseInterface;
 use Denkwerk\DwContentElements\Controller\BaseController;
 
 /**
@@ -37,7 +37,7 @@ class ElementsController extends BaseController
     /**
      * e1000ListAction
      */
-    public function e1000ListAction()
+    public function e1000ListAction(): ResponseInterface
     {
         $this->view->assign(
             'irreRelations',
@@ -46,5 +46,6 @@ class ElementsController extends BaseController
                 'tx_dwcontentelementssource_domain_model_listitem'
             )
         );
+        return $this->htmlResponse();
     }
 }

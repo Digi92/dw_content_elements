@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('TYPO3_MODE')) {
+if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
@@ -11,13 +11,13 @@ if (!defined('TYPO3_MODE')) {
  *
  * @ToDo: Remove Hotfix or refactor
  */
-$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Frontend\\ContentObject\\CaseContentObject'] = array(
-    'className' => 'Denkwerk\\DwContentElements\\Xclass\\CaseContentObject',
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Frontend\ContentObject\CaseContentObject::class] = array(
+    'className' => \Denkwerk\DwContentElements\Xclass\CaseContentObject::class,
 );
 
 // Override preview in the page view
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['dw_content_elements'] =
-    'Denkwerk\\DwContentElements\\Hooks\\PageLayoutViewDrawItemHook';
+    \Denkwerk\DwContentElements\Hooks\PageLayoutViewDrawItemHook::class;
 
 // Override preview in the list view
 if (isset($GLOBALS['TCA']['tt_content']) && !isset($GLOBALS['TCA']['tt_content']['ctrl']['label_userFunc'])) {

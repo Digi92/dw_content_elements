@@ -25,7 +25,9 @@ namespace Denkwerk\DwContentElements\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Extbase\Http\ForwardResponse;
+use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use Denkwerk\DwContentElements\Service\FileService;
 use Denkwerk\DwContentElements\Service\IniProviderService;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -44,10 +46,10 @@ class BackendController extends ActionController
      * First load action, will display information about the creation of a content element
      * or send the user to the right step of create the source extension
      *
-     * @return void
+     *
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      */
-    public function indexAction()
+    public function indexAction(): ResponseInterface
     {
         /** @var IniProviderService $iniProviderService */
         $iniProviderService = GeneralUtility::makeInstance(IniProviderService::class);
@@ -61,20 +63,21 @@ class BackendController extends ActionController
         ) {
             // Check if source extension exists
             if (!is_dir(Environment::getPublicPath() . '/typo3conf/ext/dw_content_elements_source')) {
-                $this->forward('createSourceExt');
+                return new ForwardResponse('createSourceExt');
             } else {
-                $this->forward('loadSourceExt');
+                return new ForwardResponse('loadSourceExt');
             }
         }
+        return $this->htmlResponse();
     }
 
     /**
      * Action for the create of the source extension
      *
-     * @return void
+     *
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      */
-    public function createSourceExtAction()
+    public function createSourceExtAction(): ResponseInterface
     {
         if ($this->request->hasArgument('createSourceExt')) {
             /**
@@ -89,27 +92,23 @@ class BackendController extends ActionController
             $success = $fileService->createSourceExt();
 
             if ($success) {
-                $this->forward(
-                    'loadSourceExt',
-                    'Backend',
-                    null,
-                    array(
-                        'hasCreatedSourceExt' => true,
-                    )
-                );
+                return (new ForwardResponse('loadSourceExt'))->withControllerName('Backend')->withArguments(array(
+                    'hasCreatedSourceExt' => true,
+                ));
             } else {
                 $this->view->assign('createFail', true);
             }
         }
+        return $this->htmlResponse();
     }
 
     /**
      * Action for the info to install the source extension at the extension manager
      *
      * @return void
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException
+     * @throws NoSuchArgumentException
      */
-    public function loadSourceExtAction()
+    public function loadSourceExtAction(): ResponseInterface
     {
         $hasCreatedSourceExt = false;
 
@@ -117,5 +116,6 @@ class BackendController extends ActionController
             $hasCreatedSourceExt = $this->request->getArgument('hasCreatedSourceExt');
         }
         $this->view->assign('hasCreatedSourceExt', $hasCreatedSourceExt);
+        return $this->htmlResponse();
     }
 }

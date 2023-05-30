@@ -1,5 +1,5 @@
 {
-    "name": "dw-typo3/dw-content-elements_source",
+    "name": "dw-typo3/dw-content-elements-source",
     "type": "typo3-cms-extension",
     "version": "1.0.16",
     "description": "Custom content elements source extension",

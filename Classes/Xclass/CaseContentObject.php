@@ -42,11 +42,9 @@ class CaseContentObject extends AbstractContentObject
     /**
      * InjectorService constructor.
      *
-     * @param ContentObjectRenderer $cObj
      */
-    public function __construct(ContentObjectRenderer $cObj)
+    public function __construct()
     {
-        parent::__construct($cObj);
         $this->iniService = GeneralUtility::makeInstance(IniService::class);
         $this->iniProviderService = GeneralUtility::makeInstance(IniProviderService::class);
     }

@@ -34,6 +34,7 @@ use TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\StartTimeRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
  * Class IrreService
@@ -103,12 +104,8 @@ class IrreService
                     $foreignUid = $contentObj->data['_LOCALIZED_UID'];
                 }
 
-                /*** @var $extbaseObjectManager \TYPO3\CMS\Extbase\Object\ObjectManager */
-                $extbaseObjectManager = GeneralUtility::makeInstance(
-                    'TYPO3\\CMS\\Extbase\\Object\\ObjectManager'
-                );
-                /*** @var $repository \TYPO3\CMS\Extbase\Persistence\Repository */
-                $repository = $extbaseObjectManager->get($repositoryName);
+                /** @var Repository $repository */
+                $repository = GeneralUtility::makeInstance(Repository::class);
 
                 // Get the table data by the given repository
                 $rows = $repository->findByForeignUid($foreignUid);

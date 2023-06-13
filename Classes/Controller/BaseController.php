@@ -30,7 +30,6 @@ use Denkwerk\DwContentElements\Service\IrreService;
 use Denkwerk\DwContentElements\Utility\Paths;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Extbase\Annotation as Extbase;
 use TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException;
@@ -81,11 +80,10 @@ class BaseController extends ActionController
     /**
      * Initializeview
      *
-     * @param ViewInterface $view The initializeview
      * @return void
      * @throws \ReflectionException
      */
-    protected function initializeView(ViewInterface $view)
+    protected function initializeView($view)
     {
         $this->classReflection = new \ReflectionClass($this);
         // @extensionScannerIgnoreLine

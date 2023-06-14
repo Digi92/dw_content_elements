@@ -55,6 +55,9 @@ return [
             'starttime' => 'starttime',
             'endtime' => 'endtime',
         ),
+        'security' => [
+            'ignorePageTypeRestriction' => true,
+        ],
         'searchFields' => 'headline, text',
         'iconfile' => 'EXT:dw_content_elements_source/Resources/Public/Icons/IRRE.gif'
     ),

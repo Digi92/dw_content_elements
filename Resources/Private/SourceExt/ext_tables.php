@@ -12,12 +12,3 @@ ExtensionManagementUtility::addStaticFile(
     'Content element configuration'
 );
 
-
-//============================================== Einbindung Irrel BEGIN ==============================================//
-
-//--------------------------------- tx_dwcontentelementssource_domain_model_listitem ---------------------------------//
-ExtensionManagementUtility::allowTableOnStandardPages(
-    'tx_dwcontentelementssource_domain_model_listitem'
-);
-
-//=============================================== Einbindung Irrel END ===============================================//

@@ -283,7 +283,9 @@ class InjectorService
                     $iconIdentifier = 'content-textpic';
 
                     // Registration the content element icon, if set
-                    if ($elementConfig['icon']) {
+                    if (isset($elementConfig['icon']) &&
+                        $elementConfig['icon'] !== ''
+                    ) {
                         /** @var IconRegistry $iconRegistry */
                         $iconRegistry = GeneralUtility::makeInstance(
                             IconRegistry::class
@@ -307,7 +309,8 @@ class InjectorService
                         $providerNameCamelCase . '.elements.' . lcfirst($key) . ' {
                                 ' . $icon . '
                                 title = ' . (string)$elementConfig['title'] . '
-                                description = ' . (string)$elementConfig['description'] . '
+                                description = ' . (isset($elementConfig['description']) ?
+                                    (string)$elementConfig['description'] : '') . '
                                 tt_content_defValues.CType = ' . lcfirst($key) . '
                             }'
                     );

@@ -64,7 +64,7 @@ class IniService
         $result = false;
         $configFileAbsPath = Paths::concat(
             array(
-                realpath(Environment::getPublicPath()),
+                realpath(Environment::getProjectPath()),
                 realpath($configFile),
             )
         );

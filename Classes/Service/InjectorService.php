@@ -159,11 +159,10 @@ class InjectorService
                     $providerConfig
                 );
 
-                // Add plugin config of the content elements
-                $this->addPluginConfigForElements(
+                // Add rendering typoscript config of the content elements
+                $this->addRenderingConfigForElements(
                     $contentElements,
-                    $providerNameCamelCase,
-                    $providerConfig
+                    $providerNameCamelCase
                 );
 
                 // Add content elements to the content elements wizard
@@ -181,32 +180,17 @@ class InjectorService
     }
 
     /**
-     * Add plugin config of the content elements
+     * Add rendering typoscript config of the content elements
      *
      * @param $contentElements
      * @param $providerNameCamelCase
-     * @param $providerConfig
      * @return void
      */
-    public function addPluginConfigForElements($contentElements, $providerNameCamelCase, $providerConfig)
+    public function addRenderingConfigForElements($contentElements, $providerNameCamelCase)
     {
         $typoScript = '[GLOBAL] ';
 
-        // Add extension plugin
-        ExtensionUtility::configurePlugin(
-            // unique plugin name
-            $providerConfig['namespace'],
-            $providerConfig['pluginName'],
-            // accessible controller-action-combinations
-            $providerConfig['controllerActions'],
-            // non-cachable controller-action-combinations (they must already be enabled)
-            (isset($providerConfig['nonCacheableControllerActions']) ?
-                $providerConfig['nonCacheableControllerActions'] :
-                array()
-            )
-        );
-
-        // Add all content elements to wizards
+        // Add rendering to all content elements
         if (is_array($contentElements) &&
             empty($contentElements) === false
         ) {
@@ -214,32 +198,14 @@ class InjectorService
                 if (isset($elementConfig['title']) &&
                     isset($elementConfig['fields'])
                 ) {
-                    //Set rendering typoScript
+                    // Set content element rendering typoScript
                     $typoScript .= "\n
-                             tt_content." . lcfirst($key) .
-                        " < tt_content.list.20." .
-                        strtolower($providerNameCamelCase) . "_" . strtolower($providerConfig['pluginName']) . " \n";
-
-                    $controllerActions = $providerConfig['controllerActions'];
-
-                    // Replace controller and actions with nonCacheable version
-                    // if content element config "noCache" is true
-                    if (isset($elementConfig['noCache']) &&
-                        (boolean)$elementConfig['noCache'] === true &&
-                        isset($providerConfig['nonCacheableControllerActions'])
-                    ) {
-                        $controllerActions = $providerConfig['nonCacheableControllerActions'];
-                    }
-
-                    foreach ($controllerActions as $controller => $actions) {
-                        $actionArray = explode(',', $actions);
-                        foreach ($actionArray as $index => $action) {
-                            $typoScript .= "tt_content." .
-                                lcfirst($key) . ".switchableControllerActions." .
-                                $controller . "." . ($index + 1) . " = " .
-                                $action . " \n";
-                        }
-                    }
+                        tt_content {\n
+                          " . lcfirst($key) . " =< lib.contentElement\n
+                          " . lcfirst($key) . " {\n
+                              templateName = " . ucfirst($key) . "\n
+                        }\n
+                    }";
                 }
             }
         }

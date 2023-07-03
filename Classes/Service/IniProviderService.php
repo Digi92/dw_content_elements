@@ -65,10 +65,7 @@ class IniProviderService
             // Use as fallback the provider extension "dw_content_elements_source", if is load
             $providers['dw_content_elements_source'] = $this->mergeConfigurations(
                 array(
-                    'pluginName' => 'ContentRenderer',
-                    'controllerActions' => array(ElementsController::class => 'render'),
-                    'nonCacheableControllerActions' => array(ElementsController::class => 'nonCacheableRender'),
-                    'namespace' => 'Denkwerk.DwContentElementsSource',
+                    'controllerActionClass' => null,
                     'elementsPath' => '/Configuration/Elements'
                 )
             );

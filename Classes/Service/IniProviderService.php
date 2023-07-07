@@ -26,7 +26,6 @@ namespace Denkwerk\DwContentElements\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * **************************************************************/
 
-use Denkwerk\DwContentElementsSource\Controller\ElementsController;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -48,7 +47,7 @@ class IniProviderService
         $providers = [];
 
         // Get global extension configurations
-        $configurations = isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['dw_content_elements']) ?? null;
+        $configurations = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['dw_content_elements'] ?? null;
 
         // Load custom provider extensions, if is set
         if (isset($configurations['providers']) &&
@@ -65,7 +64,6 @@ class IniProviderService
             // Use as fallback the provider extension "dw_content_elements_source", if is load
             $providers['dw_content_elements_source'] = $this->mergeConfigurations(
                 array(
-                    'controllerActionClass' => null,
                     'elementsPath' => '/Configuration/Elements'
                 )
             );

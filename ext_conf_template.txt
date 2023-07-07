@@ -6,3 +6,6 @@ elementWizardTabTitle = Content Elements
 
 # cat=general/paths; type=input; label=Add the plugins category (optgroup) title
 pluginCategory = LLL:EXT:dw_content_elements/Resources/Private/Language/locallang_db.xlf:mlang_tabs_tab
+
+# cat=general/paths; type=input; label=The class that will be loaded by the TODO data processor to execute the function with the name of the content item to be rendered
+controllerActionClass =

@@ -21,7 +21,7 @@ $EM_CONF['dw_content_elements'] = array(
     'constraints' => array(
         'depends' => array(
             'typo3' => '12.4.1-12.4.99',
-            'fluid_styled_content' => '12.4.0-12.4.99',
+            'fluid_styled_content' => '12.4.1-12.4.99',
             'extbase' => '',
         ),
         'conflicts' => array(),

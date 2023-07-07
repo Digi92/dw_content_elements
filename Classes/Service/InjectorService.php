@@ -143,7 +143,7 @@ class InjectorService
      *
      * @return void
      */
-    public function injectPluginConfiguration()
+    public function injectTypoScripConfiguration()
     {
         // Load all provider configurations as array
         $providers = $this->iniProviderService->loadProvider();
@@ -162,7 +162,8 @@ class InjectorService
                 // Add rendering typoscript config of the content elements
                 $this->addRenderingConfigForElements(
                     $contentElements,
-                    $providerNameCamelCase
+                    $providerNameCamelCase,
+                    $providerConfig['controllerActionClass'] ?? ''
                 );
 
                 // Add content elements to the content elements wizard
@@ -183,11 +184,15 @@ class InjectorService
      * Add rendering typoscript config of the content elements
      *
      * @param $contentElements
-     * @param $providerNameCamelCase
+     * @param string $providerNameCamelCase
+     * @param string $controllerActionClass
      * @return void
      */
-    public function addRenderingConfigForElements($contentElements, $providerNameCamelCase)
-    {
+    public function addRenderingConfigForElements(
+        $contentElements,
+        string $providerNameCamelCase,
+        string $controllerActionClass = ''
+    ) {
         $typoScript = '[GLOBAL] ';
 
         // Add rendering to all content elements
@@ -201,9 +206,18 @@ class InjectorService
                     // Set content element rendering typoScript
                     $typoScript .= "\n
                         tt_content {\n
-                          " . lcfirst($key) . " =< lib.contentElement\n
-                          " . lcfirst($key) . " {\n
-                              templateName = " . ucfirst($key) . "\n
+                            " . lcfirst($key) . " =< lib.contentElement\n
+                            " . lcfirst($key) . " {\n
+                                templateName = " . ucfirst($key) . "\n" .
+                                (
+                                    trim($controllerActionClass) !== '' ?
+                                    "dataProcessing.10 = Denkwerk\DwContentElements\DataProcessing\ContentElementActionProcessor\n
+                                    dataProcessing.10 {\n
+                                        controllerActionClass = " . $controllerActionClass . "\n
+                                    }" :
+                                    ""
+                                ) . "
+
                         }\n
                     }";
                 }

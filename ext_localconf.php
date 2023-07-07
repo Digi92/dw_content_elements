@@ -14,6 +14,6 @@ if (isset($GLOBALS['TCA']['tt_content']) && !isset($GLOBALS['TCA']['tt_content']
         'Denkwerk\\DwContentElements\\UserFunc\\Tca->setTtContentTitle';
 }
 
-// Register content element plugins
+// Register content element
 $injectorService = new \Denkwerk\DwContentElements\Service\InjectorService();
-$injectorService->injectPluginConfiguration();
+$injectorService->injectTypoScripConfiguration();

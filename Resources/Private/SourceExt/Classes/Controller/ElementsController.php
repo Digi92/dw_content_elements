@@ -33,19 +33,16 @@ use Denkwerk\DwContentElements\Controller\BaseController;
  */
 class ElementsController extends BaseController
 {
-
     /**
-     * e1000ListAction
+     * e1000List
      */
-    public function e1000ListAction(): ResponseInterface
+    public function e1000List(array $contentObj): array
     {
-        $this->view->assign(
-            'irreRelations',
-            $this->irreService->getRelations(
-                $this->contentObj,
+        return [
+            'irreRelations' => $this->irreService->getRelations(
+                $contentObj,
                 'tx_dwcontentelementssource_domain_model_listitem'
             )
-        );
-        return $this->htmlResponse();
+        ];
     }
 }

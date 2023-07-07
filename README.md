@@ -13,7 +13,7 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['dw_content_elements']['providers']['my_c
     'pluginCategory' => 'My own content elements',
     'controllerActionClass' => null,
     'elementsPath' => '/Configuration/Elements',
-    'addElementsToWizard' => TRUE,
+    'addElementsToWizard' => true,
     'elementWizardTabTitle' => 'My content elements'
 ];
 

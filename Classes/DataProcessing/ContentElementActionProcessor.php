@@ -74,6 +74,7 @@ class ContentElementActionProcessor implements DataProcessorInterface
             $controllerActionClass = GeneralUtility::makeInstance(
                 trim($processorConfiguration['controllerActionClass'])
             );
+            // $elementsController->e1102ThreeColumnTile($contentObj);
             $contentElementVariable = $controllerActionClass->{lcfirst($contentObjectConfiguration['templateName'])}($processedData['data']);
 
             // Add result to view

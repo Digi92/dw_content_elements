@@ -27,6 +27,7 @@ namespace Denkwerk\DwContentElements\Controller;
  ***************************************************************/
 use Denkwerk\DwContentElements\Service\IrreService;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
  * Class BaseController
@@ -35,18 +36,10 @@ use TYPO3\CMS\Core\SingletonInterface;
 abstract class BaseController implements SingletonInterface
 {
     /**
-     * IrreService
-     *
-     * @var IrreService
-     */
-    protected $irreService;
-
-    /**
      * @param IrreService $irreService
      */
-    public function __construct()
-    //public function __construct(IrreService $irreService)
-    {
-        //$this->irreService = $irreService;
+    public function __construct(
+        protected readonly IrreService $irreService
+    ) {
     }
 }

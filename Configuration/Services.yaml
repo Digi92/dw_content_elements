@@ -8,6 +8,10 @@ services:
       resource: '../Classes/*'
       exclude: '../Classes/Domain/Model/*'
 
+  Denkwerk\DwContentElements\Controller\BaseController:
+      arguments:
+          $irreService: '@Denkwerk\DwContentElements\Service\IrreService'
+
   Denkwerk\DwContentElements\Service\FileService:
       public: true
       shared: true

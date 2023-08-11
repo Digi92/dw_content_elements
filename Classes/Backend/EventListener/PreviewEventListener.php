@@ -1,54 +1,26 @@
 <?php
 
-namespace Denkwerk\DwContentElements\Hooks;
+declare(strict_types=1);
 
-/***************************************************************
- *  Copyright notice
- *
- *  (c) 2015 Sascha Zander <sascha.zander@denkwerk.com>
- *  (c) 2016 Johann Derdak <johann.derdak@denkwerk.com>
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
-use TYPO3\CMS\Backend\Form\Exception;
+namespace Denkwerk\DwContentElements\Backend\EventListener;
+
 use Denkwerk\DwContentElements\Service\IniProviderService;
 use Denkwerk\DwContentElements\Service\IniService;
 use Denkwerk\DwContentElements\Service\IrreService;
 use Denkwerk\DwContentElements\Service\UrlService;
+use TYPO3\CMS\Backend\Form\Exception;
 use TYPO3\CMS\Backend\Form\Exception\AccessDeniedTableModifyException;
 use TYPO3\CMS\Backend\Form\FormDataCompiler;
 use TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord;
 use TYPO3\CMS\Backend\Form\NodeFactory;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Backend\View\PageLayoutView;
-use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
+use TYPO3\CMS\Backend\View\Event\PageContentPreviewRenderingEvent;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
-/**
- * Class PageLayoutViewDrawItemHook
- * @package Denkwerk\DwContentElements\Hooks
- */
-class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
+class PreviewEventListener
 {
-
     /**
      * @var IniService $iniService
      */
@@ -67,25 +39,11 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
         $this->iniService = GeneralUtility::makeInstance(IniService::class);
         $this->iniProviderService = GeneralUtility::makeInstance(IniProviderService::class);
     }
-
-    /**
-     * Preprocessed the preview rendering of a content element.
-     *
-     * @param    PageLayoutView $parentObject :  Calling parent object
-     * @param    boolean $drawItem :      Whether to draw the item using the default functionalities
-     * @param    string $headerContent : Header content
-     * @param    string $itemContent :   Item content
-     * @param    array $row :           Record row of tt_content
-     * @return    void
-     * @throws Exception
-     */
-    public function preProcess(
-        PageLayoutView &$parentObject,
-        &$drawItem,
-        &$headerContent,
-        &$itemContent,
-        array &$row
-    ) {
+    public function __invoke(PageContentPreviewRenderingEvent $event): void
+    {
+        if ($event->getTable() !== 'tt_content') {
+            return;
+        }
 
         /// Load all provider configurations as array
         $providers = $this->iniProviderService->loadProvider();
@@ -101,6 +59,8 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                 $elementsConfigFilesArray = array_merge($elementsConfigFilesArray, $providerElementsConfigFiles);
             }
         }
+
+        $row = $event->getRecord();
 
         // If it is an dwc content element
         if (isset($row['CType']) &&
@@ -136,7 +96,8 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                     (isset($field['label']) &&
                     empty($field['label']) === false ?
                         $field['label'] :
-                        $parentObject->itemLabels[$field['name']]
+                        //todo: make sure field exists
+                        $event->getPageLayoutContext()->getItemLabels()[$field['name']]
                     )
                 );
 
@@ -147,6 +108,8 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                 }
             }
             $itemContent .= '</div>';
+
+            $event->setPreviewContent($itemContent);
         }
     }
 
@@ -304,8 +267,8 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                         case "selectCheckBox":
                             $value = explode(',', $fieldValue);
                             foreach ($items as $item) {
-                                $filedContent .= $item[0] . ' ' .
-                                    (in_array($item[1], $value) ? '&#10004;' : '&#10008;') .
+                                $filedContent .= $item['label'] . ' ' .
+                                    (in_array($item['value'], $value) ? '&#10004;' : '&#10008;') .
                                     '<br />';
                             }
                             break;
@@ -315,16 +278,17 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
                             $value = explode(',', $fieldValue);
                             $selectedContent = array();
                             foreach ($items as $item) {
-                                if (in_array($item[1], $value)) {
-                                    $selectedContent[] = $item[0];
+                                if (in_array($item['value'], $value)) {
+                                    $selectedContent[] = $item['label'];
                                 }
                             }
                             $filedContent .= implode("<br />", $selectedContent);
                             break;
                         default:
                             foreach ($items as $item) {
-                                if ($item[1] == $fieldValue) {
-                                    $filedContent .= $item[0];
+                                if ($item['value'] == $fieldValue) {
+
+                                    $filedContent .= $item['label'];
                                 }
                             }
                     }
@@ -397,7 +361,7 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
             $filedContent .= '</div>';
         }
 
-        return $filedContent;
+        return $filedContent ;
     }
 
     /**
@@ -496,8 +460,9 @@ class PageLayoutViewDrawItemHook implements PageLayoutViewDrawItemHookInterface
 
         return array(
             'fieldName' => $fieldArray[0],
-            'fieldLabel' => isset($fieldArray[1]) ?? null,
-            'paletteName' => isset($fieldArray[2]) ?? null,
+            'fieldLabel' => (isset($fieldArray[1]) && trim($fieldArray[1]) !== '' ? $fieldArray[1] : null),
+            'paletteName' => (isset($fieldArray[2]) && trim($fieldArray[2]) !== '' ? $fieldArray[2] : null)
         );
     }
+
 }

@@ -4,13 +4,17 @@ services:
     autoconfigure: true
     public: false
 
-  Denkwerk\DwContentElements\:
-      resource: '../Classes/*'
-      exclude: '../Classes/Domain/Model/*'
+###
+  Denkwerk\DwContentElements\Backend\EventListener\PreviewEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'dw-content-elements/preview-rendering'
+
+###
 
   Denkwerk\DwContentElements\Controller\BaseController:
-      arguments:
-          $irreService: '@Denkwerk\DwContentElements\Service\IrreService'
+    arguments:
+      $irreService: '@Denkwerk\DwContentElements\Service\IrreService'
 
   Denkwerk\DwContentElements\Service\FileService:
       public: true
@@ -35,3 +39,5 @@ services:
   Denkwerk\DwContentElements\Service\UrlService:
       public: true
       shared: true
+
+

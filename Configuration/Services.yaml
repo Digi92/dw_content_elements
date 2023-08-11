@@ -4,13 +4,10 @@ services:
     autoconfigure: true
     public: false
 
-###
   Denkwerk\DwContentElements\Backend\EventListener\PreviewEventListener:
     tags:
       - name: event.listener
         identifier: 'dw-content-elements/preview-rendering'
-
-###
 
   Denkwerk\DwContentElements\Controller\BaseController:
     arguments:

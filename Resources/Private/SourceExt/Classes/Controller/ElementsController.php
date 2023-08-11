@@ -36,11 +36,11 @@ class ElementsController extends BaseController
     /**
      * e1000List
      */
-    public function e1000List(array $contentObj): array
+    public function e1000List(array $elementData): array
     {
         return [
             'irreRelations' => $this->irreService->getRelations(
-                $contentObj,
+                $elementData,
                 'tx_dwcontentelementssource_domain_model_listitem'
             )
         ];

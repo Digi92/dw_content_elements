@@ -323,16 +323,12 @@ class PreviewEventListener
                         $filedContent .= ($filePreview != '' ? $filePreview : 'No File');
                     } else {
                         if (isset($fieldConfig['foreign_table'])) {
-                            /** @var ContentObjectRenderer $contentObj */
-                            $contentObj = GeneralUtility::makeInstance(
-                                ContentObjectRenderer::class
-                            );
-                            $contentObj->data = $row;
+
                             $count = 0;
                             $filedContent .= '<p style="padding-right: 5px;margin:0;">';
 
                             foreach (IrreService::getRelations(
-                                $contentObj,
+                                $row,
                                 $fieldConfig['foreign_table']
                             ) as $item) {
                                 $irreItemLabel = $item[$GLOBALS['TCA'][$fieldConfig['foreign_table']]['ctrl']['label']];

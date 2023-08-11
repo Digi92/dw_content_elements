@@ -46,12 +46,12 @@ class IrreService
      *  Set data for Inline Relational Record Editing entry
      *  If set the repositoryName the function will call the magic function "findByForeignUid"
      *
-     * @param array $contentObj
+     * @param array $elementData data row of content element
      * @param string $tableName Name of the table
      * @param string $repositoryName Name of the repository if any repository exist. (Optional)
      * @return array
      */
-    public static function getRelations($contentObj, $tableName, $repositoryName = '')
+    public static function getRelations($elementData, $tableName, $repositoryName = '')
     {
         $result = array();
 
@@ -66,12 +66,12 @@ class IrreService
             array_key_exists("foreign_uid", $fieldsInDatabase)
         ) {
             // If "$repositoryName" is not set. Get the table data by single select
-            if ($contentObj[$tableName] > 0 &&
+            if ($elementData[$tableName] > 0 &&
                 empty($repositoryName)
             ) {
-                $foreignUid = $contentObj['uid'];
-                if (isset($contentObj['_LOCALIZED_UID'])) {
-                    $foreignUid = $contentObj['_LOCALIZED_UID'];
+                $foreignUid = $elementData['uid'];
+                if (isset($elementData['_LOCALIZED_UID'])) {
+                    $foreignUid = $elementData['_LOCALIZED_UID'];
                 }
 
                 /** @var QueryBuilder $queryBuilder */
@@ -91,17 +91,17 @@ class IrreService
 
                 while ($row = $rows->fetchAssociative()) {
                     // Get "tt_content" content elements of the relations if it exist a row "content_elements"
-                    array_push($result, self::getContentElements($contentObj, $row, $tableName));
+                    array_push($result, self::getContentElements($row));
                 }
             }
 
             // Get the IRRE data by the repository magic function "findByForeignUid"
-            if ($contentObj[$tableName] > 0 &&
+            if ($elementData[$tableName] > 0 &&
                 empty($repositoryName) === false
             ) {
-                $foreignUid = $contentObj['uid'];
-                if (isset($contentObj['_LOCALIZED_UID'])) {
-                    $foreignUid = $contentObj['_LOCALIZED_UID'];
+                $foreignUid = $elementData['uid'];
+                if (isset($elementData['_LOCALIZED_UID'])) {
+                    $foreignUid = $elementData['_LOCALIZED_UID'];
                 }
 
                 /** @var Repository $repository */
@@ -119,8 +119,8 @@ class IrreService
             Logger::simpleErrorLog(
                 'DWC: IRRE Service: Column "foreign_uid" not found on table "' . $tableName . '"',
                 $tableName,
-                $contentObj['uid'],
-                $contentObj['pid']
+                $elementData['uid'],
+                $elementData['pid']
             );
         }
 
@@ -132,12 +132,12 @@ class IrreService
      * @deprecated since 1.2 will be removed in 2.0
      * Please use the "getRelations($repositoryName)" function
      *
-     * @param ContentObjectRenderer $contentObj
+     * @param array $elementData data row of content element
      * @param array $data
      * @param string $parentTable
      * @return array
      */
-    public static function getContentElements($contentObj, $data, $parentTable)
+    public static function getContentElements($data)
     {
         if (is_array($data)
         ) {

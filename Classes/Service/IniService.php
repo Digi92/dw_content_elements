@@ -71,7 +71,9 @@ class IniService
 
         if (is_file($configFileAbsPath) === true) {
             $result = $this->tsParser->parseTypoScriptFile($configFileAbsPath);
-            $result['configFileAbsPath'] = $configFileAbsPath;
+            if (is_array($result)) {
+                $result['configFileAbsPath'] = $configFileAbsPath;
+            }
         }
 
         return $result;

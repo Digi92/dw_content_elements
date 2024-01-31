@@ -71,7 +71,10 @@ class TypoScriptParser
         $result = false;
 
         if (is_file($filePath) &&
-            pathinfo($filePath, PATHINFO_EXTENSION) === 'ts'
+            (
+                pathinfo($filePath, PATHINFO_EXTENSION) === 'ts' ||
+                pathinfo($filePath, PATHINFO_EXTENSION) === 'typoscript'
+            )
         ) {
             $fileContent = file_get_contents($filePath);
 

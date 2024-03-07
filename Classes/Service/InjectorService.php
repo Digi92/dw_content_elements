@@ -29,9 +29,11 @@ namespace Denkwerk\DwContentElements\Service;
 use Denkwerk\DwContentElements\Service\IniProviderService;
 use Denkwerk\DwContentElements\Service\IniService;
 use TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider;
+use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 /**
@@ -266,18 +268,7 @@ class InjectorService
                     if (isset($elementConfig['icon']) &&
                         $elementConfig['icon'] !== ''
                     ) {
-                        /** @var IconRegistry $iconRegistry */
-                        $iconRegistry = GeneralUtility::makeInstance(
-                            IconRegistry::class
-                        );
                         $iconIdentifier = 'dwc-' . lcfirst($key);
-                        $iconRegistry->registerIcon(
-                            $iconIdentifier,
-                            BitmapIconProvider::class,
-                            array(
-                                'source' => (string)$elementConfig['icon'],
-                            )
-                        );
                     }
 
                     // Add the icon to the content element config
@@ -314,5 +305,68 @@ class InjectorService
             },
             $providerName
         );
+    }
+
+    /**
+     * Creates the array with all content element icons for the icon registration in icon.php
+     *
+     * @return array
+     */
+    public function generateIconConfig(): array
+    {
+        $icons = [];
+
+        // Load all provider configurations as array
+        $providers = $this->iniProviderService->loadProvider();
+
+        if (count($providers) > 0) {
+            foreach ($providers as $provider => $providerConfig) {
+
+                // Add content elements to the content elements wizard
+                if (isset($providerConfig['addElementsToWizard']) &&
+                    (bool)$providerConfig['addElementsToWizard'] === true
+                ) {
+
+                    // Generate camelcase version of the provider
+                    $providerNameCamelCase = $this->getCamelCaseProviderName($provider);
+
+                    // Load all content elements configurations
+                    $contentElements = $this->iniService->loadAllContentElementsConfig(
+                        $provider,
+                        $providerConfig
+                    );
+
+                    foreach ($contentElements as $key => $elementConfig) {
+                        // Registration the content element icon, if set
+                        if (isset($elementConfig['icon']) &&
+                            $elementConfig['icon'] !== ''
+                        ) {
+                            $iconProvider = BitmapIconProvider::class;
+                            $filePath = $elementConfig['icon'];
+
+                            // If file not exists we need to set a default
+                            $realFilePath = GeneralUtility::getFileAbsFileName($elementConfig['icon']);
+                            if ($realFilePath === '' ||
+                                file_exists($realFilePath) === false
+                            ) {
+                                $filePath = 'EXT:dw_content_elements/Resources/Public/Icons/content-element-fallback.svg';
+                            }
+
+                            // Change icon provider to SVG on SVG icons
+                            if (PathUtility::pathinfo($filePath, PATHINFO_EXTENSION) === 'svg') {
+                                $iconProvider = SvgIconProvider::class;
+                            }
+
+                            $icons['dwc-' . lcfirst($key)] = [
+                                'provider' => $iconProvider,
+                                'source' => $filePath
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $icons;
     }
 }

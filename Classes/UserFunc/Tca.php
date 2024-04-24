@@ -65,7 +65,11 @@ class Tca
     public function setTtContentTitle(&$params)
     {
         // Set the title by using the header field like the TYPO3 default settings
-        $params['title'] = $params['row']['header'];
+        if (is_array($params) &&
+            isset($params['row']['header'])
+        ) {
+            $params['title'] = $params['row']['header'];
+        }
 
         // Load all provider configurations as array
         $providers = $this->iniProviderService->loadProvider();

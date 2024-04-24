@@ -3,6 +3,9 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+    
+  Denkwerk\DwContentElements\:
+    resource: '../Classes/*'
 
   Denkwerk\DwContentElements\Backend\EventListener\PreviewEventListener:
     tags:

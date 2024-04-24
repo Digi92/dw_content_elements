@@ -314,7 +314,12 @@ class InjectorService
      */
     public function generateIconConfig(): array
     {
-        $icons = [];
+        $icons = [
+            'dw-content-element-module-icon' => [
+                'provider' => SvgIconProvider::class,
+                'source' => 'EXT:dw_content_elements/Resources/Public/Icons/Backend-Module-Icon.svg',
+            ],
+        ];
 
         // Load all provider configurations as array
         $providers = $this->iniProviderService->loadProvider();

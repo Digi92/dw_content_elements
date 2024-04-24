@@ -1,19 +1,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en"
       xmlns:f="http://xsd.helmut-hummel.de/ns/TYPO3/CMS/Fluid/ViewHelpers">
 
-<f:layout name="BackendDefault"/>
+<f:layout name="Module" />
 <f:section name="Content">
 
     <f:if condition="{createFail}">
-        <h3><f:translate key="backend.createSourceExt.error" /></h3>
+        <h3><f:translate key="backend.createSourceExt.error" extensionName="DwContentElements"  /></h3>
     </f:if>
-    <h1><f:translate key="backend.createSourceExt.headline" /></h1>
+    <h1><f:translate key="backend.createSourceExt.headline" extensionName="DwContentElements"  /></h1>
 
-    <h3><f:translate key="backend.createSourceExt.question.headline" /></h3>
-    <p><f:format.raw><f:translate key="backend.createSourceExt.question.text" /></f:format.raw></p>
+    <h3><f:translate key="backend.createSourceExt.question.headline" extensionName="DwContentElements"  /></h3>
+    <p><f:format.raw><f:translate key="backend.createSourceExt.question.text" extensionName="DwContentElements"  /></f:format.raw></p>
 
     <f:form action="createSourceExt" controller="Backend" method="post" name="createSourceExt">
-        <f:form.submit value="{f:translate(key:'backend.createSourceExt.create')}" name="createSourceExt" />
+        <f:form.submit value="{f:translate(key:'backend.createSourceExt.create',extensionName:'DwContentElements')}" name="createSourceExt" />
     </f:form>
 
 </f:section>

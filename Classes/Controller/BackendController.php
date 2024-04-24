@@ -25,7 +25,9 @@ namespace Denkwerk\DwContentElements\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use Denkwerk\DwContentElements\Service\FileService;
@@ -34,6 +36,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 /**
  * Class BackendController
@@ -41,16 +44,25 @@ use TYPO3\CMS\Core\Core\Environment;
  */
 class BackendController extends ActionController
 {
-
+    /**
+     * @param ModuleTemplateFactory $moduleTemplateFactory
+     */
+    public function __construct(
+        protected readonly ModuleTemplateFactory $moduleTemplateFactory
+    ) {
+    }
+    
     /**
      * First load action, will display information about the creation of a content element
      * or send the user to the right step of create the source extension
-     *
      *
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      */
     public function indexAction(): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->setTitle('Dw Content Elements: Overview');
+    
         /** @var IniProviderService $iniProviderService */
         $iniProviderService = GeneralUtility::makeInstance(IniProviderService::class);
 
@@ -63,12 +75,20 @@ class BackendController extends ActionController
         ) {
             // Check if source extension exists
             if (!is_dir(Environment::getPublicPath() . '/typo3conf/ext/dw_content_elements_source')) {
-                return new ForwardResponse('createSourceExt');
+                return $this->redirect(
+                    'createSourceExt',
+                    'Backend',
+                    'dw_content_elements'
+                );
             } else {
-                return new ForwardResponse('loadSourceExt');
+                return $this->redirect(
+                    'loadSourceExt',
+                    'Backend',
+                    'dw_content_elements'
+                );
             }
         }
-        return $this->htmlResponse();
+        return $moduleTemplate->renderResponse('Index');
     }
 
     /**
@@ -79,27 +99,34 @@ class BackendController extends ActionController
      */
     public function createSourceExtAction(): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->setTitle('Dw Content Elements: Create source extension');
+        
         if ($this->request->hasArgument('createSourceExt')) {
             /**
              * @var FileService $fileService
              */
-            $fileService = $this->objectManager->get(
-                FileService::class
-            );
+            $fileService = GeneralUtility::makeInstance(FileService::class);
             $fileService->setSourceExtensionDirectory(
                 Environment::getPublicPath() . '/typo3conf/ext/dw_content_elements_source/'
             );
             $success = $fileService->createSourceExt();
 
             if ($success) {
-                return (new ForwardResponse('loadSourceExt'))->withControllerName('Backend')->withArguments(array(
-                    'hasCreatedSourceExt' => true,
-                ));
+                return $this->redirect(
+                    'loadSourceExt',
+                    'Backend',
+                    'dw_content_elements',
+                    [
+                        'hasCreatedSourceExt' => true,
+                    ]
+                );
             } else {
-                $this->view->assign('createFail', true);
+                $moduleTemplate->assign('createFail', true);
             }
         }
-        return $this->htmlResponse();
+
+        return $moduleTemplate->renderResponse('CreateSourceExt');
     }
 
     /**
@@ -110,12 +137,16 @@ class BackendController extends ActionController
      */
     public function loadSourceExtAction(): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->setTitle('Dw Content Elements: Load source extension');
+
         $hasCreatedSourceExt = false;
 
         if ($this->request->hasArgument('hasCreatedSourceExt')) {
             $hasCreatedSourceExt = $this->request->getArgument('hasCreatedSourceExt');
         }
-        $this->view->assign('hasCreatedSourceExt', $hasCreatedSourceExt);
-        return $this->htmlResponse();
+
+        $moduleTemplate->assign('hasCreatedSourceExt', $hasCreatedSourceExt);
+        return $moduleTemplate->renderResponse('LoadSourceExt');
     }
 }

@@ -29,9 +29,11 @@ namespace Denkwerk\DwContentElements\Service;
 use Denkwerk\DwContentElements\Service\IniProviderService;
 use Denkwerk\DwContentElements\Service\IniService;
 use TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider;
+use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 /**
@@ -143,7 +145,7 @@ class InjectorService
      *
      * @return void
      */
-    public function injectPluginConfiguration()
+    public function injectTypoScripConfiguration()
     {
         // Load all provider configurations as array
         $providers = $this->iniProviderService->loadProvider();
@@ -159,11 +161,11 @@ class InjectorService
                     $providerConfig
                 );
 
-                // Add plugin config of the content elements
-                $this->addPluginConfigForElements(
+                // Add rendering typoscript config of the content elements
+                $this->addRenderingConfigForElements(
                     $contentElements,
                     $providerNameCamelCase,
-                    $providerConfig
+                    $providerConfig['controllerActionClass'] ?? ''
                 );
 
                 // Add content elements to the content elements wizard
@@ -181,32 +183,21 @@ class InjectorService
     }
 
     /**
-     * Add plugin config of the content elements
+     * Add rendering typoscript config of the content elements
      *
      * @param $contentElements
-     * @param $providerNameCamelCase
-     * @param $providerConfig
+     * @param string $providerNameCamelCase
+     * @param string $controllerActionClass
      * @return void
      */
-    public function addPluginConfigForElements($contentElements, $providerNameCamelCase, $providerConfig)
-    {
+    public function addRenderingConfigForElements(
+        $contentElements,
+        string $providerNameCamelCase,
+        string $controllerActionClass = ''
+    ) {
         $typoScript = '[GLOBAL] ';
 
-        // Add extension plugin
-        ExtensionUtility::configurePlugin(
-            // unique plugin name
-            $providerConfig['namespace'],
-            $providerConfig['pluginName'],
-            // accessible controller-action-combinations
-            $providerConfig['controllerActions'],
-            // non-cachable controller-action-combinations (they must already be enabled)
-            (isset($providerConfig['nonCacheableControllerActions']) ?
-                $providerConfig['nonCacheableControllerActions'] :
-                array()
-            )
-        );
-
-        // Add all content elements to wizards
+        // Add rendering to all content elements
         if (is_array($contentElements) &&
             empty($contentElements) === false
         ) {
@@ -214,32 +205,23 @@ class InjectorService
                 if (isset($elementConfig['title']) &&
                     isset($elementConfig['fields'])
                 ) {
-                    //Set rendering typoScript
+                    // Set content element rendering typoScript
                     $typoScript .= "\n
-                             tt_content." . lcfirst($key) .
-                        " < tt_content.list.20." .
-                        strtolower($providerNameCamelCase) . "_" . strtolower($providerConfig['pluginName']) . " \n";
+                        tt_content {\n
+                            " . lcfirst($key) . " =< lib.contentElement\n
+                            " . lcfirst($key) . " {\n
+                                templateName = " . ucfirst($key) . "\n" .
+                                (
+                                    trim($controllerActionClass) !== '' ?
+                                    "dataProcessing.10 = Denkwerk\DwContentElements\DataProcessing\ContentElementActionProcessor\n
+                                    dataProcessing.10 {\n
+                                        controllerActionClass = " . $controllerActionClass . "\n
+                                    }" :
+                                    ""
+                                ) . "
 
-                    $controllerActions = $providerConfig['controllerActions'];
-
-                    // Replace controller and actions with nonCacheable version
-                    // if content element config "noCache" is true
-                    if (isset($elementConfig['noCache']) &&
-                        (boolean)$elementConfig['noCache'] === true &&
-                        isset($providerConfig['nonCacheableControllerActions'])
-                    ) {
-                        $controllerActions = $providerConfig['nonCacheableControllerActions'];
-                    }
-
-                    foreach ($controllerActions as $controller => $actions) {
-                        $actionArray = explode(',', $actions);
-                        foreach ($actionArray as $index => $action) {
-                            $typoScript .= "tt_content." .
-                                lcfirst($key) . ".switchableControllerActions." .
-                                $controller . "." . ($index + 1) . " = " .
-                                $action . " \n";
-                        }
-                    }
+                        }\n
+                    }";
                 }
             }
         }
@@ -283,19 +265,10 @@ class InjectorService
                     $iconIdentifier = 'content-textpic';
 
                     // Registration the content element icon, if set
-                    if ($elementConfig['icon']) {
-                        /** @var IconRegistry $iconRegistry */
-                        $iconRegistry = GeneralUtility::makeInstance(
-                            IconRegistry::class
-                        );
+                    if (isset($elementConfig['icon']) &&
+                        $elementConfig['icon'] !== ''
+                    ) {
                         $iconIdentifier = 'dwc-' . lcfirst($key);
-                        $iconRegistry->registerIcon(
-                            $iconIdentifier,
-                            BitmapIconProvider::class,
-                            array(
-                                'source' => (string)$elementConfig['icon'],
-                            )
-                        );
                     }
 
                     // Add the icon to the content element config
@@ -307,7 +280,8 @@ class InjectorService
                         $providerNameCamelCase . '.elements.' . lcfirst($key) . ' {
                                 ' . $icon . '
                                 title = ' . (string)$elementConfig['title'] . '
-                                description = ' . (string)$elementConfig['description'] . '
+                                description = ' . (isset($elementConfig['description']) ?
+                                    (string)$elementConfig['description'] : '') . '
                                 tt_content_defValues.CType = ' . lcfirst($key) . '
                             }'
                     );
@@ -331,5 +305,73 @@ class InjectorService
             },
             $providerName
         );
+    }
+
+    /**
+     * Creates the array with all content element icons for the icon registration in icon.php
+     *
+     * @return array
+     */
+    public function generateIconConfig(): array
+    {
+        $icons = [
+            'dw-content-element-module-icon' => [
+                'provider' => SvgIconProvider::class,
+                'source' => 'EXT:dw_content_elements/Resources/Public/Icons/Backend-Module-Icon.svg',
+            ],
+        ];
+
+        // Load all provider configurations as array
+        $providers = $this->iniProviderService->loadProvider();
+
+        if (count($providers) > 0) {
+            foreach ($providers as $provider => $providerConfig) {
+
+                // Add content elements to the content elements wizard
+                if (isset($providerConfig['addElementsToWizard']) &&
+                    (bool)$providerConfig['addElementsToWizard'] === true
+                ) {
+
+                    // Generate camelcase version of the provider
+                    $providerNameCamelCase = $this->getCamelCaseProviderName($provider);
+
+                    // Load all content elements configurations
+                    $contentElements = $this->iniService->loadAllContentElementsConfig(
+                        $provider,
+                        $providerConfig
+                    );
+
+                    foreach ($contentElements as $key => $elementConfig) {
+                        // Registration the content element icon, if set
+                        if (isset($elementConfig['icon']) &&
+                            $elementConfig['icon'] !== ''
+                        ) {
+                            $iconProvider = BitmapIconProvider::class;
+                            $filePath = $elementConfig['icon'];
+
+                            // If file not exists we need to set a default
+                            $realFilePath = GeneralUtility::getFileAbsFileName($elementConfig['icon']);
+                            if ($realFilePath === '' ||
+                                file_exists($realFilePath) === false
+                            ) {
+                                $filePath = 'EXT:dw_content_elements/Resources/Public/Icons/content-element-fallback.svg';
+                            }
+
+                            // Change icon provider to SVG on SVG icons
+                            if (PathUtility::pathinfo($filePath, PATHINFO_EXTENSION) === 'svg') {
+                                $iconProvider = SvgIconProvider::class;
+                            }
+
+                            $icons['dwc-' . lcfirst($key)] = [
+                                'provider' => $iconProvider,
+                                'source' => $filePath
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $icons;
     }
 }

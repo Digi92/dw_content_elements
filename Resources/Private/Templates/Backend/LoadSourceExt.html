@@ -1,25 +1,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en"
       xmlns:f="http://xsd.helmut-hummel.de/ns/TYPO3/CMS/Fluid/ViewHelpers">
 
-<f:layout name="BackendDefault"/>
+<f:layout name="Module" />
 <f:section name="Content">
 
     <f:if condition="{hasCreatedSourceExt}">
-        <h3><f:translate key="backend.loadSourceExt.hasCreatedSourceExt" /></h3>
+        <h3><f:translate key="backend.loadSourceExt.hasCreatedSourceExt" extensionName="DwContentElements"  /></h3>
     </f:if>
-    <h1><f:translate key="backend.loadSourceExt.headline" /></h1>
+    <h1><f:translate key="backend.loadSourceExt.headline" extensionName="DwContentElements"  /></h1>
 
-    <h2><f:translate key="backend.loadSourceExt.text" /></h2>
-    <h3><f:translate key="backend.loadSourceExt.install.headline" /></h3>
+    <h2><f:translate key="backend.loadSourceExt.text" extensionName="DwContentElements"  /></h2>
+    <h3><f:translate key="backend.loadSourceExt.install.headline" extensionName="DwContentElements"  /></h3>
     <ul>
-        <li><f:translate key="backend.loadSourceExt.install.step.one" /></li>
-        <li><f:translate key="backend.loadSourceExt.install.step.two" /></li>
-        <li><f:translate key="backend.loadSourceExt.install.step.three" /></li>
-        <li><f:translate key="backend.loadSourceExt.install.step.four" /></li>
+        <li><f:translate key="backend.loadSourceExt.install.step.one" extensionName="DwContentElements"  /></li>
+        <li><f:translate key="backend.loadSourceExt.install.step.two" extensionName="DwContentElements"  /></li>
+        <li><f:translate key="backend.loadSourceExt.install.step.three" extensionName="DwContentElements"  /></li>
+        <li><f:translate key="backend.loadSourceExt.install.step.four" extensionName="DwContentElements"  /></li>
     </ul>
 
-    <h3><f:translate key="backend.loadSourceExt.install.composermode.headline" /></h3>
-    <f:format.raw><f:translate key="backend.loadSourceExt.install.composermode.list" /></f:format.raw>
+    <h3><f:translate key="backend.loadSourceExt.install.composermode.headline" extensionName="DwContentElements"  /></h3>
+    <f:format.raw><f:translate key="backend.loadSourceExt.install.composermode.list" extensionName="DwContentElements"  /></f:format.raw>
 
 </f:section>
 </html>

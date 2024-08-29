@@ -65,7 +65,11 @@ class Tca
     public function setTtContentTitle(&$params)
     {
         // Set the title by using the header field like the TYPO3 default settings
-        $params['title'] = $params['row']['header'];
+        if (is_array($params) &&
+            isset($params['row']['header'])
+        ) {
+            $params['title'] = $params['row']['header'];
+        }
 
         // Load all provider configurations as array
         $providers = $this->iniProviderService->loadProvider();
@@ -110,9 +114,7 @@ class Tca
                 $result = $queryBuilder
                     ->select(...$previewListFields)
                     ->from('tt_content')
-                    ->where('uid=' . $params['row']['uid'])
-                    ->setMaxResults(1)
-                    ->execute();
+                    ->where('uid=' . $params['row']['uid'])->setMaxResults(1)->executeQuery();
                 $row = $result->fetch();
 
                 if (empty($row) === false) {

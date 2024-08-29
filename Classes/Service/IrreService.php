@@ -25,7 +25,7 @@ namespace Denkwerk\DwContentElements\Service;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use Denkwerk\DwContentElements\Utility\Logger;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -34,6 +34,7 @@ use TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\StartTimeRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
  * Class IrreService
@@ -45,12 +46,12 @@ class IrreService
      *  Set data for Inline Relational Record Editing entry
      *  If set the repositoryName the function will call the magic function "findByForeignUid"
      *
-     * @param \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $contentObj
+     * @param array $elementData data row of content element
      * @param string $tableName Name of the table
      * @param string $repositoryName Name of the repository if any repository exist. (Optional)
      * @return array
      */
-    public static function getRelations($contentObj, $tableName, $repositoryName = '')
+    public static function getRelations($elementData, $tableName, $repositoryName = '')
     {
         $result = array();
 
@@ -65,15 +66,15 @@ class IrreService
             array_key_exists("foreign_uid", $fieldsInDatabase)
         ) {
             // If "$repositoryName" is not set. Get the table data by single select
-            if ($contentObj->data[$tableName] > 0 &&
+            if ($elementData[$tableName] > 0 &&
                 empty($repositoryName)
             ) {
-                $foreignUid = $contentObj->data['uid'];
-                if (isset($contentObj->data['_LOCALIZED_UID'])) {
-                    $foreignUid = $contentObj->data['_LOCALIZED_UID'];
+                $foreignUid = $elementData['uid'];
+                if (isset($elementData['_LOCALIZED_UID'])) {
+                    $foreignUid = $elementData['_LOCALIZED_UID'];
                 }
 
-                /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
+                /** @var QueryBuilder $queryBuilder */
                 $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
                     ->getQueryBuilderForTable($tableName);
 
@@ -86,31 +87,25 @@ class IrreService
                 $rows = $queryBuilder
                     ->select('*')
                     ->from($tableName)
-                    ->where('foreign_uid = ' . $foreignUid)
-                    ->orderBy('sorting')
-                    ->execute();
+                    ->where('foreign_uid = ' . $foreignUid)->orderBy('sorting')->executeQuery();
 
-                foreach ($rows as $row) {
+                while ($row = $rows->fetchAssociative()) {
                     // Get "tt_content" content elements of the relations if it exist a row "content_elements"
-                    array_push($result, self::getContentElements($contentObj, $row, $tableName));
+                    array_push($result, self::getContentElements($row));
                 }
             }
 
             // Get the IRRE data by the repository magic function "findByForeignUid"
-            if ($contentObj->data[$tableName] > 0 &&
+            if ($elementData[$tableName] > 0 &&
                 empty($repositoryName) === false
             ) {
-                $foreignUid = $contentObj->data['uid'];
-                if (isset($contentObj->data['_LOCALIZED_UID'])) {
-                    $foreignUid = $contentObj->data['_LOCALIZED_UID'];
+                $foreignUid = $elementData['uid'];
+                if (isset($elementData['_LOCALIZED_UID'])) {
+                    $foreignUid = $elementData['_LOCALIZED_UID'];
                 }
 
-                /*** @var $extbaseObjectManager \TYPO3\CMS\Extbase\Object\ObjectManager */
-                $extbaseObjectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                    'TYPO3\\CMS\\Extbase\\Object\\ObjectManager'
-                );
-                /*** @var $repository \TYPO3\CMS\Extbase\Persistence\Repository */
-                $repository = $extbaseObjectManager->get($repositoryName);
+                /** @var Repository $repository */
+                $repository = GeneralUtility::makeInstance(Repository::class);
 
                 // Get the table data by the given repository
                 $rows = $repository->findByForeignUid($foreignUid);
@@ -124,8 +119,8 @@ class IrreService
             Logger::simpleErrorLog(
                 'DWC: IRRE Service: Column "foreign_uid" not found on table "' . $tableName . '"',
                 $tableName,
-                $contentObj->data['uid'],
-                $contentObj->data['pid']
+                $elementData['uid'],
+                $elementData['pid']
             );
         }
 
@@ -137,12 +132,12 @@ class IrreService
      * @deprecated since 1.2 will be removed in 2.0
      * Please use the "getRelations($repositoryName)" function
      *
-     * @param \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $contentObj
+     * @param array $elementData data row of content element
      * @param array $data
      * @param string $parentTable
      * @return array
      */
-    public static function getContentElements($contentObj, $data, $parentTable)
+    public static function getContentElements($data)
     {
         if (is_array($data)
         ) {
@@ -162,9 +157,7 @@ class IrreService
                 $elementRows = $queryBuilder
                     ->select('uid')
                     ->from('tt_content')
-                    ->where('foreign_uid = ' . $data['uid'])
-                    ->orderBy('sorting')
-                    ->execute();
+                    ->where('foreign_uid = ' . $data['uid'])->orderBy('sorting')->executeQuery();
 
                 $contentElements = array();
                 foreach ($elementRows as $elementRow) {

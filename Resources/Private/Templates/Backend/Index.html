@@ -1,38 +1,33 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en"
       xmlns:f="http://xsd.helmut-hummel.de/ns/TYPO3/CMS/Fluid/ViewHelpers">
 
-<f:layout name="BackendDefault"/>
+<f:layout name="Module" />
 <f:section name="Content">
 
-    <h1><f:translate key="backend.index.headline" /></h1>
+    <h1><f:translate key="backend.index.headline" extensionName="DwContentElements" /></h1>
 
-    <h2><f:translate key="backend.index.subheadline" /></h2>
+    <h2><f:translate key="backend.index.subheadline" extensionName="DwContentElements"  /></h2>
 
-    <p><f:format.raw><f:translate key="backend.index.documentation.introduction" /></f:format.raw></p>
+    <p><f:format.raw><f:translate key="backend.index.documentation.introduction" extensionName="DwContentElements"  /></f:format.raw></p>
 
 
-    <h3><f:translate key="backend.index.documentation.config.headline" /></h3>
-    <f:format.raw><f:translate key="backend.index.documentation.config.list" /></f:format.raw>
+    <h3><f:translate key="backend.index.documentation.config.headline" extensionName="DwContentElements"  /></h3>
+    <f:format.raw><f:translate key="backend.index.documentation.config.list" extensionName="DwContentElements"  /></f:format.raw>
 
-    <h3><f:translate key="backend.index.documentation.template.headline" /></h3>
+    <h3><f:translate key="backend.index.documentation.template.headline" extensionName="DwContentElements"  /></h3>
     <f:format.raw><f:translate key="backend.index.documentation.template.list"
-                 arguments="{0: '{f:image(src: \'EXT:dw_content_elements/Resources/Public/Backend/Images/Documentation/example_element_template.png\', alt:\'Example element template\')}'}"
+                               extensionName="DwContentElements"
+                               arguments="{0: '{f:image(src: \'EXT:dw_content_elements/Resources/Public/Backend/Images/Documentation/example_element_template.png\', alt:\'Example element template\')}'}"
     /></f:format.raw>
 
-    <h3><f:translate key="backend.index.documentation.irre.headline" /></h3>
-    <f:format.raw><f:translate key="backend.index.documentation.irre.list" /></f:format.raw>
+    <h3><f:translate key="backend.index.documentation.irre.headline" extensionName="DwContentElements"  /></h3>
+    <f:format.raw><f:translate key="backend.index.documentation.irre.list" extensionName="DwContentElements"  /></f:format.raw>
 
-    <h3><f:translate key="backend.index.documentation.ts.headline" /></h3>
-    <f:format.raw><f:translate key="backend.index.documentation.ts.list" /></f:format.raw>
+    <h3><f:translate key="backend.index.documentation.ts.headline" extensionName="DwContentElements"  /></h3>
+    <f:format.raw><f:translate key="backend.index.documentation.ts.list" extensionName="DwContentElements"  /></f:format.raw>
 
-    <f:comment>
-        <h2>ToDos</h2>
-        <ul>
-            <li>Layout anpassen (Weiche für TYPO3 V6.2 und V7.4).</li>
-            <li>Texte überarbeiten und mindestens noch ins Englische übersetzen.</li>
-            <li>Dokumentation mit allen einstellungs möglichkeiten erstellen.</li>
-        </ul>
-    </f:comment>
+    <h3><f:translate key="backend.index.documentation.extension.headline" extensionName="DwContentElements"  /></h3>
+    <f:format.raw><f:translate key="backend.index.documentation.extension.list" extensionName="DwContentElements"  /></f:format.raw>
 
 </f:section>
 </html>

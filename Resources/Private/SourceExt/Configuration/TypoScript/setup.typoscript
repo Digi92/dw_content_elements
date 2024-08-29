@@ -1,0 +1,19 @@
+# ================================ BEGIN: Configuration for content item template paths ================================
+lib.contentElement {
+   templateRootPaths {
+      300 = EXT:dw_content_elements_source/Resources/Private/Templates/
+   }
+   partialRootPaths {
+      300 = EXT:dw_content_elements_source/Resources/Private/Partials/
+   }
+   layoutRootPaths {
+      300 = EXT:dw_content_elements_source/Resources/Private/Layouts/
+   }
+    settings {
+    
+    }
+}
+# ================================= END: Configuration for content item template paths =================================
+
+plugin.tx_dwcontentelementssource.settings < lib.contentElement.settings
+module.tx_dwcontentelementssource.settings < lib.contentElement.settings

@@ -132,22 +132,25 @@ class Paths
      */
     public static function getAllDirFiles($dir, &$results = array())
     {
-        $files = scandir($dir);
-
-        foreach ($files as $key => $value) {
-            $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
-
-            if (is_file($path)) {
-                //Set the filename without extension as key
-                $results[str_replace(
-                    '.' . pathinfo($path, PATHINFO_EXTENSION),
-                    '',
-                    $value
-                )] = $path;
-            } elseif (is_dir($path) &&
-                !in_array($value, array(".", ".."))
-            ) {
-                self::getAllDirFiles($path, $results);
+        $results = [];
+        if (is_dir(realpath($dir))) {
+            $files = scandir($dir);
+    
+            foreach ($files as $key => $value) {
+                $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
+    
+                if (is_file($path)) {
+                    //Set the filename without extension as key
+                    $results[str_replace(
+                        '.' . pathinfo($path, PATHINFO_EXTENSION),
+                        '',
+                        $value
+                    )] = $path;
+                } elseif (is_dir($path) &&
+                    !in_array($value, array(".", ".."))
+                ) {
+                    self::getAllDirFiles($path, $results);
+                }
             }
         }
 

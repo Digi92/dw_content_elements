@@ -27,12 +27,11 @@
 								<code>
 									title = E1000 My Content Element<br />
 									description = Content Element with header, subheader <br />
-									icon = EXT:dw_content_elements_source/Resources/Public/Thumbnails/E1000MyContentElement_icon.png
+									icon = EXT:dw_content_elements_source/Resources/Public/Thumbnails/E1000MyContentElement_icon.png<br />
 									fields = header, subheader<br />
 									overWriteShowitem = 0<br />
 									previewFields = header, subheader<br />
                                     previewListFields = header, subheader<br />
-									noCache = 0<br />
 								</code>
 							</li>
 						</ul>
@@ -65,11 +64,10 @@
 						 <ul>
 							<li>IRRE Elemente werden innerhalb eines Conten Elements erzeugt. Dieses muss zuvor angelegt werden (siehe oben).</li>
 							<li>Um einen Content Element mit eine IRRE zu erweitern musst du folgendes machen.</li>
-							<li>Die ext_tables.php (/packages/dw_content_elements_source/ext_tables.php) wird um die IRRE Tabelle Konfig erweitert und das entsprechende TCA in der tt_content Tabelle. <br />
-								Ein entsprechendes Beispiel ist in der ext_tables.php schon angelegt und kann kopiert werden. Geben sie hier auch den Namen der Konfigurations-Datei an (/packages/dw_content_elements_source/Configuration/TCA/IRRE_Bsp.php).</li>
+							<li>In TCA (/packages/dw_content_elements_source/Configuration/TCA/) wird um die IRRE Tabelle Konfig erstellt und das entsprechende TCA in der tt_content Tabelle hinzugefügt. <br />
+								Ein entsprechendes Beispiel ist in der tx_dwcontentelementssource_domain_model_listitem.php schon angelegt und kann kopiert werden.</li>
 							<li>Die ext_tables.sql (/packages/dw_content_elements_source/ext_tables.sql ) muss um das entsprechende Datenbankfeld des IRRE Elements erweitert werden.</li>
-							<li>In der Konfigurations-Datei (/packages/dw_content_elements_source/Configuration/TCA/IRRE_Bsp.php) wird das TCA der IRRE Tabelle definiert.</li>
-							<li>Für den Frontend-Aufruf werden im ElementsController (/packages/dw_content_elements_source/Classes/Controller/ElementsController.php) eine Action mit dem Element Namen und folgender Zeile hinzugefügt:</li>
+							li>Für den Frontend-Aufruf werden im ElementsController (/packages/dw_content_elements_source/Classes/Controller/ElementsController.php) eine Action mit dem Element Namen und folgender Zeile hinzugefügt:</li>
 							<li>$this->view->assign('irreRelations', $this->irreService->getRelations($this->contentObj, 'NAMEDERIRRETABELLE'));</li>
 							<li>Hierdurch erhält das FLUID-Template ein Array "irreRelations" welche die Daten der IRRE Tabelle enthalten.</li>
 						</ul>
@@ -85,6 +83,22 @@
 						 <ul>
 							<li>TypoScript settings und globale Constanten werden in der setup.txt verwaltet (/packages/dw_content_elements_source/Configuration/TypoScript/setup.txt eintragen).</li>
 							<li>Im FLUID-Template können diese mit der Variable "settings" abgefragt werden.</li>
+						</ul>
+					]]>
+				</source>
+			</trans-unit>
+			<trans-unit id="backend.index.documentation.extension.headline">
+				<source>Extension Settings</source>
+			</trans-unit>
+			<trans-unit id="backend.index.documentation.extension.list">
+				<source>
+					<![CDATA[
+						 <ul>
+							<li><b>pluginCategory:</b> The plugins category (optgroup) for the CType Select.</li>
+							<li><b>controllerActionClass:</b> The class that will be loaded by the TODO data processor to execute the function with the name of the content item to be rendered</li>
+							<li><b>elementsPath:</b> The path to the content elements configuration</li>
+							<li><b>addElementsToWizard:</b> If true, add a tab with the elements of this provider into the new elements wizard</li>
+							<li><b>elementWizardTabTitle:</b> The label of the new elements wizard tab</li>
 						</ul>
 					]]>
 				</source>

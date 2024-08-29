@@ -5,4 +5,3 @@ fields = --palette--;Headline;headerText, tx_dwcontentelementssource_domain_mode
 overWriteShowitem = 0
 previewFields = tx_dwc_headline, subheader
 previewListFields = tx_dwc_headline, subheader
-noCache=0

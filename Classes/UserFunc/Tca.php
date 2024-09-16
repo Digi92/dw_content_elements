@@ -106,6 +106,7 @@ class Tca
                     'trim',
                     explode(',', $elementConfig['previewListFields'])
                 )) &&
+                isset($params['row']['uid']) &&
                 is_numeric($params['row']['uid'])
             ) {
                 /** @var QueryBuilder $queryBuilder */

@@ -105,7 +105,7 @@ class IrreService
                 }
 
                 /** @var Repository $repository */
-                $repository = GeneralUtility::makeInstance(Repository::class);
+                $repository = GeneralUtility::makeInstance($repositoryName);
 
                 // Get the table data by the given repository
                 $rows = $repository->findByForeignUid($foreignUid);
